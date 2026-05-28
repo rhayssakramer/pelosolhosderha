@@ -1,0 +1,139 @@
+<nav class="navbar">
+  <div class="nav-logo">
+    <a routerLink="/"><img src="logo.png" alt="Logo"></a>
+  </div>
+  <div class="nav-links">
+    <a routerLink="/#">Home</a>
+    <a routerLink="/">Sobre</a>
+    <a routerLink="/">Tags</a>
+    <a routerLink="/">Newsletter</a>
+    <a routerLink="/">Contato</a>
+  </div>
+  <div class="nav-social">
+    <a href="https://instagram.com/pelosolhosderha" target="_blank" aria-label="Instagram">
+      <img src="instagram.svg" alt="Instagram" width="20" height="20">
+    </a>
+    <a href="https://pinterest.com/pelosolhosderha" target="_blank" aria-label="Pinterest">
+      <img src="pinterest.svg" alt="Pinterest" width="20" height="20">
+    </a>
+    <a href="mailto:rhakramer@gmail.com" aria-label="Email">
+      <img src="envelope.svg" alt="Email" width="20" height="20">
+    </a>
+  </div>
+  <a routerLink="/login" class="nav-user" aria-label="Login">
+    <img src="user.png" alt="User">
+  </a>
+</nav>
+
+<div class="blog-container">
+  <div class="blog-layout">
+    <main class="posts-grid">
+    @for (post of filteredPosts; track post.id) {
+      <article class="post-card">
+        @if (post.coverImage) {
+          <img [src]="post.coverImage" [alt]="post.title" class="post-cover">
+        }
+        <div class="post-content">
+          <div class="post-tags">
+            @for (tag of post.tags; track tag) {
+              <span class="tag">{{ tag }}</span>
+            }
+          </div>
+          <h2><a [routerLink]="['/post', post.id]">{{ post.title }}</a></h2>
+          <p class="excerpt">{{ post.excerpt }}</p>
+          <time class="post-date">{{ post.createdAt | date:'dd/MM/yyyy' }}</time>
+        </div>
+      </article>
+    } @empty {
+      <div class="empty-state">
+        <h2>Nenhuma postagem ainda</h2>
+        <p>Em breve teremos conteúdo por aqui! ✨</p>
+      </div>
+    }
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-widget">
+        <h3 class="widget-title">PROCURANDO ALGO?</h3>
+        <div class="sidebar-search">
+          <span class="search-icon">🔍</span>
+          <input type="text" placeholder="Procure aqui..." (input)="onSearch($event)">
+        </div>
+      </div>
+
+      <div class="sidebar-widget widget-about">
+        <h3 class="widget-title">A BLOGUEIRA</h3>
+        <div class="about-photo">
+          <img src="profile.jpg" alt="Foto da blogueira">
+        </div>
+        <p class="about-text">
+          Rha Kramer, criadora do Pelos Olhos de Rha. Apaixonada por compartilhar ideias, reflexões e descobertas com o mundo.
+        </p>
+      </div>
+
+      <div class="sidebar-widget widget-social">
+        <h3 class="widget-title">O BLOG NAS REDES</h3>
+        <div class="social-icons">
+          <a href="https://instagram.com/pelosolhosderha" target="_blank" aria-label="Instagram">
+            <img src="instagram.svg" alt="Instagram">
+          </a>
+          <a href="https://pinterest.com/pelosolhosderha" target="_blank" aria-label="Pinterest">
+            <img src="pinterest.svg" alt="Pinterest">
+          </a>
+          <a href="mailto:rhakramer@gmail.com" aria-label="Email">
+            <img src="envelope.svg" alt="Email">
+          </a>
+        </div>
+      </div>
+
+      <div class="sidebar-widget widget-categories">
+        <h3 class="widget-title">CATEGORIAS</h3>
+        <div class="categories-cloud">
+          @for (tag of blog.tags(); track tag.id) {
+            <a [routerLink]="['/']" class="category-item">
+              {{ tag.name }} <span class="category-count">({{ getPostCountByTag(tag.name) }})</span>
+            </a>
+          } @empty {
+            <p class="empty-categories">Nenhuma categoria ainda.</p>
+          }
+        </div>
+      </div>
+
+      <div class="sidebar-widget widget-popular">
+        <h3 class="widget-title">OS MAIS LIDOS DO ÚLTIMO MÊS</h3>
+        <div class="popular-list">
+          @for (item of getMostReadPosts(); track item.id) {
+            <a [routerLink]="['/post', item.id]" class="popular-item">
+              <div class="popular-thumb">
+                @if (item.coverImage) {
+                  <img [src]="item.coverImage" [alt]="item.title">
+                } @else {
+                  <div class="thumb-placeholder">📖</div>
+                }
+              </div>
+              <div class="popular-info">
+                <h4>{{ item.title }}</h4>
+                <p>{{ item.excerpt | slice:0:80 }}...</p>
+              </div>
+            </a>
+          } @empty {
+            <p class="empty-categories">Nenhum post lido ainda.</p>
+          }
+        </div>
+      </div>
+
+      <div class="sidebar-widget widget-instagram">
+        <h3 class="widget-title">INSTAGRAM</h3>
+        <div class="instagram-grid">
+          @for (post of instagram.posts(); track post.id) {
+            <a [href]="post.permalink" target="_blank" class="insta-item">
+              <img [src]="post.imageUrl" alt="Instagram" loading="lazy">
+            </a>
+          } @empty {
+            <p class="empty-categories">Adicione fotos pelo painel admin.</p>
+          }
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
