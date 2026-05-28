@@ -1,0 +1,20 @@
+<article class="card">
+  @if (post.coverImage) {
+    <div class="card-cover-wrapper">
+      <img [src]="post.coverImage" [alt]="post.title" class="card-cover">
+    </div>
+  }
+  <div class="card-body">
+    <div class="card-meta">
+      @for (tag of post.tags; track tag) {
+        <span class="card-tag">{{ tag | uppercase }}</span>
+      }
+      <span class="card-date">{{ post.createdAt | date:"MMMM dd, yyyy" | uppercase }}</span>
+    </div>
+    <h2 class="card-title">
+      <a [routerLink]="['/post', post.id]">{{ post.title }}</a>
+    </h2>
+    <div class="card-excerpt" [innerHTML]="post.content"></div>
+    <a [routerLink]="['/post', post.id]" class="card-read-more">READ ›</a>
+  </div>
+</article>
