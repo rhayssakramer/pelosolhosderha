@@ -3,7 +3,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  background: url('/tela-de-login.png') center/cover no-repeat fixed;
 }
 
 .login-card {
@@ -59,13 +59,13 @@
 
 .form-group input:focus {
   outline: none;
-  border-color: #e94560;
+  border-color: #8c6add;
 }
 
 .btn-login {
   width: 100%;
   padding: 0.85rem;
-  background: #e94560;
+  background: #8c6add;
   color: white;
   border: none;
   border-radius: 8px;
@@ -76,7 +76,7 @@
 }
 
 .btn-login:hover {
-  background: #d63851;
+  opacity: 0.6;
 }
 
 .back-link {
