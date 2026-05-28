@@ -21,10 +21,10 @@
         </div>
         <div class="post-actions">
           <button (click)="togglePublish(post.id, post.published)" class="btn-toggle">
-            {{ post.published ? '📥 Despublicar' : '📤 Publicar' }}
+            {{ post.published ? 'Despublicar' : 'Publicar' }}
           </button>
-          <a [routerLink]="['/dashboard/editor', post.id]" class="btn-edit">✏️ Editar</a>
-          <button (click)="deletePost(post.id)" class="btn-delete">🗑️</button>
+          <a [routerLink]="['/dashboard/editor', post.id]" class="btn-edit">Editar</a>
+          <button (click)="deletePost(post.id)" class="btn-delete">Excluir</button>
         </div>
       </div>
     } @empty {

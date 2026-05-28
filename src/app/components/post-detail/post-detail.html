@@ -1,23 +1,338 @@
-<div class="post-detail" *ngIf="post">
-  <a routerLink="/" class="back-link">← Voltar</a>
-
-  @if (post.coverImage) {
-    <img [src]="post.coverImage" [alt]="post.title" class="cover">
-  }
-
-  <article>
-    <div class="post-tags">
-      @for (tag of post.tags; track tag) {
-        <span class="tag">{{ tag }}</span>
-      }
+<header class="header">
+  <nav class="top-bar" [class.hidden]="isStuck">
+    <div class="top-links">
+      <a routerLink="/">Home</a>
+      <a routerLink="/sobre">Sobre</a>
+      <a routerLink="/contato">Contato</a>
     </div>
-    <h1>{{ post.title }}</h1>
-    <time>{{ post.createdAt | date:'dd/MM/yyyy \'às\' HH:mm' }}</time>
-    <div class="content" [innerHTML]="post.content"></div>
-  </article>
+    <div class="top-search">
+      <input type="text" placeholder="Buscar" (input)="onSearch($event)">
+      <span class="search-icon">🔍</span>
+    </div>
+  </nav>
+
+  <div class="banner">
+    <img src="banner.png" alt="Banner">
+  </div>
+
+  <nav class="tags-menu-overlay" [class.hidden]="isStuck">
+    @for (tag of blog.tags().slice(0, 8); track tag.id) {
+      <a routerLink="/" class="tag-menu-item">{{ tag.name | uppercase }}</a>
+    }
+    @if (blog.tags().length > 8) {
+      <div class="tag-menu-more">
+        <button class="tag-menu-item">MAIS ▾</button>
+        <div class="more-tags-dropdown">
+          @for (tag of blog.tags().slice(8); track tag.id) {
+            <a routerLink="/" class="dropdown-item">{{ tag.name }}</a>
+          }
+        </div>
+      </div>
+    }
+  </nav>
+</header>
+
+<div class="sticky-nav" [class.is-stuck]="isStuck">
+  <nav class="sticky-top-bar">
+    <div class="top-links">
+      <a routerLink="/">Home</a>
+      <a routerLink="/sobre">Sobre</a>
+      <a routerLink="/contato">Contato</a>
+    </div>
+    <div class="top-search">
+      <input type="text" placeholder="Buscar" (input)="onSearch($event)">
+      <span class="search-icon">🔍</span>
+    </div>
+  </nav>
+  <nav class="tags-menu">
+    @for (tag of blog.tags().slice(0, 8); track tag.id) {
+      <a routerLink="/" class="tag-menu-item">{{ tag.name | uppercase }}</a>
+    }
+    @if (blog.tags().length > 8) {
+      <div class="tag-menu-more">
+        <button class="tag-menu-item">MAIS ▾</button>
+        <div class="more-tags-dropdown">
+          @for (tag of blog.tags().slice(8); track tag.id) {
+            <a routerLink="/" class="dropdown-item">{{ tag.name }}</a>
+          }
+        </div>
+      </div>
+    }
+  </nav>
 </div>
 
-<div class="not-found" *ngIf="!post">
-  <h2>Post não encontrado</h2>
-  <a routerLink="/">Voltar ao início</a>
+<div class="blog-container">
+  <div class="blog-layout">
+    <main class="post-content">
+      @if (post) {
+        <article class="post-article">
+          <div class="post-header">
+            <span class="post-date">{{ post.createdAt | date:"dd 'de' MMMM 'de' yyyy" }}</span>
+            <h1 class="post-title">{{ post.title }}</h1>
+            <a href="#comments-section" class="post-comments"><i class="fa fa-comments-o"></i> 0 COMENTÁRIOS</a>
+            @if (post.coverImage) {
+              <img [src]="post.coverImage" [alt]="post.title" class="post-cover">
+            }
+          </div>
+          <div class="post-body" [innerHTML]="post.content"></div>
+
+          <!-- Post Footer -->
+          <div class="post-footer">
+            @if (post.tags.length) {
+              <div class="post-tags-footer">
+                <span class="tags-icon">Tags:</span>
+                @for (tag of post.tags; track tag) {
+                  <a routerLink="/" class="tag-link">{{ tag }}</a>
+                }
+                <div class="tags-share">
+                  <a [href]="'https://www.instagram.com/share?url=' + encodeURI(currentUrl)" target="_blank" class="tags-share-btn" title="Compartilhar no Instagram">
+                    <img src="instagram.svg" alt="Instagram"> Compartilhe
+                  </a>
+                  <a [href]="'https://www.pinterest.com/pin/create/button/?url=' + encodeURI(currentUrl) + '&description=' + encodeURI(post.title)" target="_blank" class="tags-share-btn" title="Compartilhar no Pinterest">
+                    <img src="pinterest.svg" alt="Pinterest"> Compartilhe
+                  </a>
+                </div>
+              </div>
+            }
+
+            <div class="post-author-box">
+              <img src="/profile-2.png" alt="Rha Kramer" class="author-avatar">
+              <div class="author-info">
+                <span class="author-label">por</span>
+                <span class="author-name">Rha Kramer</span>
+              </div>
+              <div class="share-buttons">
+                <a href="https://instagram.com/pelosolhosderha" target="_blank" aria-label="Instagram" class="share-btn">
+                  <img src="instagram.svg" alt="Instagram">
+                </a>
+                <a href="https://pinterest.com/pelosolhosderha" target="_blank" aria-label="Pinterest" class="share-btn">
+                  <img src="pinterest.svg" alt="Pinterest">
+                </a>
+                <a href="https://youtube.com/@pelosolhosderha" target="_blank" aria-label="YouTube" class="share-btn">
+                  <img src="/youtube.png" alt="YouTube">
+                </a>
+                <a href="https://www.skoob.com.br/pt/user/67bd149970c4abc337a4bde0/bookshelf" target="_blank" aria-label="Skoob" class="share-btn social-skoob">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26 32"><path fill="white" d="M22.2 18.9v-1.6a7 7 0 0 0 .6-10.8c.7-.4 1.3-1.4 1.3-2.2V0L14 5.1c-.8.4-1.4 1.4-1.4 2.3 0-.9-.6-1.9-1.3-2.3L1.4 0v4.3c0 .8.5 1.8 1.2 2.2a7 7 0 0 0 .6 10.8V19L0 17.2v4.6c0 1.4.9 2.9 2 3.5l1.3.6c.2 1.3 1 4.3 5.2 4.3 2.2 0 3.5.8 4.2 1.8.8-1 2-1.8 4.2-1.8 4.2 0 5-3 5.2-4.3l1.2-.6a4.1 4.1 0 0 0 2.1-3.5v-4.6L22.2 19Zm-8.5-7.2c0-2.7 2.1-4.8 4.7-4.8s4.7 2.1 4.7 4.8c0 2.6-2.1 4.8-4.7 4.8a4.8 4.8 0 0 1-4.7-4.8Zm-1 3.4c.7 0 1.3.6 1.3 1.3 0 .7-1.3 2.6-1.3 2.6s-1.3-2-1.3-2.6c0-.7.6-1.3 1.3-1.3ZM2.3 11.7C2.3 9 4.4 6.9 7 6.9s4.7 2.1 4.7 4.8c0 2.6-2 4.8-4.7 4.8a4.8 4.8 0 0 1-4.7-4.8Zm21.8 10.1c0 .9-.6 1.9-1.4 2.2l-10 5.2-10-5.2a2.7 2.7 0 0 1-1.4-2.2v-2.3l10 5.1c.8.4 1.4 1.4 1.4 2.2 0-.8.6-1.8 1.4-2.2l10-5.1v2.3ZM7 15.5a2 2 0 0 0 1.8-2c0-1-.8-2-1.9-2a2 2 0 0 0-1.9 2c0 1.1.9 2 2 2Zm11.3 0a2 2 0 0 0 1.9-2c0-1-.8-2-1.9-2a2 2 0 0 0-1.9 2c0 1.1.9 2 1.9 2Z"/></svg>
+                </a>
+              </div>
+            </div>
+
+            <div class="post-navigation">
+              @if (previousPost) {
+                <a [routerLink]="['/post', previousPost.id]" class="nav-item nav-prev">
+                  @if (previousPost.coverImage) {
+                    <img [src]="previousPost.coverImage" [alt]="previousPost.title" class="nav-thumb">
+                  }
+                  <div class="nav-info">
+                    <span class="nav-label">POST ANTERIOR</span>
+                    <span class="nav-title">{{ previousPost.title }}</span>
+                  </div>
+                </a>
+              }
+              @if (nextPost) {
+                <a [routerLink]="['/post', nextPost.id]" class="nav-item nav-next">
+                  <div class="nav-info">
+                    <span class="nav-label">PRÓXIMO POST</span>
+                    <span class="nav-title">{{ nextPost.title }}</span>
+                  </div>
+                  @if (nextPost.coverImage) {
+                    <img [src]="nextPost.coverImage" [alt]="nextPost.title" class="nav-thumb">
+                  }
+                </a>
+              }
+            </div>
+          </div>
+        </article>
+
+        <div class="related-posts">
+          <h3 class="related-title">VEJA TAMBÉM ESSAS OUTRAS POSTAGENS</h3>
+          <div class="related-grid">
+            @for (item of getRelatedPosts(); track item.id) {
+              <a [routerLink]="['/post', item.id]" class="related-item">
+                @if (item.coverImage) {
+                  <img [src]="item.coverImage" [alt]="item.title">
+                } @else {
+                  <div class="related-placeholder">📖</div>
+                }
+                <div class="related-overlay">
+                  <span>{{ item.title }}</span>
+                </div>
+              </a>
+            }
+          </div>
+        </div>
+
+        <div class="comments-section" id="comments-section">
+          <h3 class="comments-title">DEIXE SEU COMENTÁRIO</h3>
+          <form class="comment-form">
+            <div class="comment-fields">
+              <input type="text" placeholder="Seu nome" class="comment-input">
+              <input type="email" placeholder="Seu e-mail" class="comment-input">
+              <input type="text" placeholder="site/blog" class="comment-input">
+            </div>
+            <label class="comment-save">
+              <input type="checkbox"> Salvar meus dados neste navegador para a próxima vez que eu comentar.
+            </label>
+            <textarea placeholder="Deixe aqui seu comentário..." class="comment-textarea"></textarea>
+            <button type="submit" class="comment-submit">ENVIAR COMENTÁRIO</button>
+          </form>
+
+          @if (post.comments?.length) {
+            <div class="comments-list-section">
+              <h3 class="comments-count">{{ post.comments!.length }} COMENTÁRIO{{ post.comments!.length > 1 ? 'S' : '' }}</h3>
+              @for (comment of post.comments; track comment.id) {
+                <div class="comment-item">
+                  <div class="comment-avatar">
+                    @if (comment.avatar) {
+                      <img [src]="comment.avatar" [alt]="comment.name">
+                    } @else {
+                      <div class="avatar-placeholder"></div>
+                    }
+                  </div>
+                  <div class="comment-body">
+                    <div class="comment-header">
+                      <span class="comment-author">{{ comment.name }}</span>
+                      <span class="comment-date">{{ comment.date }}</span>
+                    </div>
+                    <div class="comment-text">{{ comment.text }}</div>
+                    <button class="comment-reply">↩ RESPONDER</button>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="not-found">
+          <h2>Post não encontrado</h2>
+          <a routerLink="/">Voltar ao início</a>
+        </div>
+      }
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-widget widget-about">
+        <div class="about-photo">
+          <img src="/profile.png" alt="Foto da blogueira">
+          <img src="/profile-2.png" alt="" class="about-photo-overlay">
+        </div>
+        <h2 class="about-name">Rha Kramer</h2>
+        <p class="about-text">
+          Comunicadora e leitora voraz, 35 anos, apaixonada por compartilhar ideias, reflexões e descobertas com o mundo. Leitora voraz, criativa e sonhadora, ama escrever sobre tudo que toca o coração.
+        </p>
+        <a routerLink="/contato" class="about-link">Saiba mais</a>
+        <div class="social-icons">
+          <a href="https://instagram.com/pelosolhosderha" target="_blank" aria-label="Instagram">
+            <img src="instagram.svg" alt="Instagram">
+          </a>
+          <a href="https://pinterest.com/pelosolhosderha" target="_blank" aria-label="Pinterest">
+            <img src="pinterest.svg" alt="Pinterest">
+          </a>
+          <a href="https://youtube.com/@pelosolhosderha" target="_blank" aria-label="YouTube">
+            <img src="/youtube.png" alt="YouTube">
+          </a>
+          <a href="https://www.skoob.com.br/pt/user/67bd149970c4abc337a4bde0/bookshelf" target="_blank" aria-label="Skoob" class="social-skoob">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26 32"><path fill="white" d="M22.2 18.9v-1.6a7 7 0 0 0 .6-10.8c.7-.4 1.3-1.4 1.3-2.2V0L14 5.1c-.8.4-1.4 1.4-1.4 2.3 0-.9-.6-1.9-1.3-2.3L1.4 0v4.3c0 .8.5 1.8 1.2 2.2a7 7 0 0 0 .6 10.8V19L0 17.2v4.6c0 1.4.9 2.9 2 3.5l1.3.6c.2 1.3 1 4.3 5.2 4.3 2.2 0 3.5.8 4.2 1.8.8-1 2-1.8 4.2-1.8 4.2 0 5-3 5.2-4.3l1.2-.6a4.1 4.1 0 0 0 2.1-3.5v-4.6L22.2 19Zm-8.5-7.2c0-2.7 2.1-4.8 4.7-4.8s4.7 2.1 4.7 4.8c0 2.6-2.1 4.8-4.7 4.8a4.8 4.8 0 0 1-4.7-4.8Zm-1 3.4c.7 0 1.3.6 1.3 1.3 0 .7-1.3 2.6-1.3 2.6s-1.3-2-1.3-2.6c0-.7.6-1.3 1.3-1.3ZM2.3 11.7C2.3 9 4.4 6.9 7 6.9s4.7 2.1 4.7 4.8c0 2.6-2 4.8-4.7 4.8a4.8 4.8 0 0 1-4.7-4.8Zm21.8 10.1c0 .9-.6 1.9-1.4 2.2l-10 5.2-10-5.2a2.7 2.7 0 0 1-1.4-2.2v-2.3l10 5.1c.8.4 1.4 1.4 1.4 2.2 0-.8.6-1.8 1.4-2.2l10-5.1v2.3ZM7 15.5a2 2 0 0 0 1.8-2c0-1-.8-2-1.9-2a2 2 0 0 0-1.9 2c0 1.1.9 2 2 2Zm11.3 0a2 2 0 0 0 1.9-2c0-1-.8-2-1.9-2a2 2 0 0 0-1.9 2c0 1.1.9 2 1.9 2Z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="sidebar-widget widget-categories">
+        <h3 class="widget-title">CATEGORIAS</h3>
+        <div class="categories-cloud">
+          @for (tag of blog.tags(); track tag.id) {
+            <a [routerLink]="['/']" class="category-item">
+              {{ tag.name }} <span class="category-count">({{ getPostCountByTag(tag.name) }})</span>
+            </a>
+          } @empty {
+            <p class="empty-categories">Nenhuma categoria ainda.</p>
+          }
+        </div>
+      </div>
+
+      <div class="sidebar-widget widget-popular">
+        <h3 class="widget-title">OS MAIS LIDOS DO ÚLTIMO MÊS</h3>
+        <div class="popular-list">
+          @for (item of getMostReadPosts(); track item.id) {
+            <a [routerLink]="['/post', item.id]" class="popular-item">
+              @if (item.coverImage) {
+                <img [src]="item.coverImage" [alt]="item.title">
+              } @else {
+                <div class="thumb-placeholder">📖</div>
+              }
+              <div class="popular-overlay">
+                <span>{{ item.title }}</span>
+              </div>
+            </a>
+          } @empty {
+            <p class="empty-categories">Nenhum post lido ainda.</p>
+          }
+        </div>
+      </div>
+
+      <div class="sidebar-widget widget-archive">
+        <h3 class="widget-title">ARQUIVO</h3>
+        <ul class="archive-list">
+          @for (month of showAllArchive ? getArchiveMonths() : getArchiveMonths().slice(0, 5); track month.label) {
+            <li>
+              <a (click)="filterByMonth(month.label)" class="archive-item">
+                {{ month.label }} <span class="archive-count">({{ month.count }})</span>
+              </a>
+            </li>
+          } @empty {
+            <li class="empty-categories">Nenhum post ainda.</li>
+          }
+        </ul>
+        @if (getArchiveMonths().length > 5) {
+          <button class="archive-toggle" (click)="showAllArchive = !showAllArchive">
+            {{ showAllArchive ? '▲ Recolher' : '▼ Ver todos' }}
+          </button>
+        }
+      </div>
+
+      <div class="sidebar-widget widget-instagram">
+        <h3 class="widget-title">INSTAGRAM</h3>
+        <div class="instagram-grid">
+          @for (p of instagram.posts(); track p.id) {
+            <a [href]="p.permalink" target="_blank" class="insta-item">
+              <img [src]="p.imageUrl" alt="Instagram" loading="lazy">
+            </a>
+          } @empty {
+            <p class="empty-categories">Adicione fotos pelo painel admin.</p>
+          }
+        </div>
+        <a href="https://www.instagram.com/pelosolhosderha/" target="_blank" class="pinterest-follow-btn">
+          Seguir
+        </a>
+      </div>
+
+      <div>
+        <a data-pin-do="embedBoard" data-pin-board-width="450" data-pin-scale-height="240" data-pin-scale-width="60" href="https://br.pinterest.com/pelosolhosderha/pelosolhosderha/"></a>
+      </div>
+      <div>
+        <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/playlist/0LJHJnkRnfEAtnJPQBZmxD?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+      </div>
+
+      <div class="sidebar-widget widget-youtube">
+        <h3 class="widget-title">YOUTUBE</h3>
+        <div class="youtube-grid">
+          @for (video of youtube.getLatestVideos(2); track video.id) {
+            <a [href]="video.url" target="_blank" class="youtube-item">
+              <div class="youtube-thumb">
+                <img [src]="video.thumbnail" [alt]="video.title" loading="lazy">
+                <div class="youtube-play">▶</div>
+              </div>
+              <p class="youtube-title">{{ video.title }}</p>
+            </a>
+          } @empty {
+            <p class="empty-categories">Nenhum vídeo adicionado ainda.</p>
+          }
+        </div>
+        <a href="https://www.youtube.com/@pelosolhosderha" target="_blank" class="youtube-subscribe-btn">
+          Inscreva-se
+        </a>
+      </div>
+    </aside>
+  </div>
 </div>
+

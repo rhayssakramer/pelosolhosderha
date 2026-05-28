@@ -11,6 +11,14 @@ export const routes: Routes = [
     loadComponent: () => import('./components/post-detail/post-detail').then(m => m.PostDetailComponent)
   },
   {
+    path: 'sobre',
+    loadComponent: () => import('./components/about/about').then(m => m.AboutComponent)
+  },
+  {
+    path: 'contato',
+    loadComponent: () => import('./components/contact/contact').then(m => m.ContactComponent)
+  },
+  {
     path: 'login',
     loadComponent: () => import('./components/login/login').then(m => m.LoginComponent)
   },
@@ -34,10 +42,6 @@ export const routes: Routes = [
       {
         path: 'tags',
         loadComponent: () => import('./components/dashboard/tag-manager/tag-manager').then(m => m.TagManagerComponent)
-      },
-      {
-        path: 'settings',
-        loadComponent: () => import('./components/dashboard/blog-settings/blog-settings').then(m => m.BlogSettingsComponent)
       },
       {
         path: 'stats',

@@ -8,6 +8,15 @@ export interface Post {
   published: boolean;
   createdAt: string;
   updatedAt: string;
+  comments?: Comment[];
+}
+
+export interface Comment {
+  id: string;
+  name: string;
+  date: string;
+  text: string;
+  avatar?: string;
 }
 
 export interface Tag {
