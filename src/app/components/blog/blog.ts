@@ -1,21 +1,48 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { BlogService } from '../../services/blog.service';
 import { StatsService } from '../../services/stats.service';
 import { InstagramService } from '../../services/instagram.service';
+import { YouTubeService } from '../../services/youtube.service';
 import { Post } from '../../models/post.model';
+import { PostCardComponent } from './post-card/post-card';
 
 @Component({
   selector: 'app-blog',
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, PostCardComponent],
   templateUrl: './blog.html',
   styleUrl: './blog.css'
 })
 export class BlogComponent {
   searchTerm = '';
+  showMoreTags = false;
+  isStuck = false;
+  sliderIndex = 0;
+  showAllArchive = false;
 
-  constructor(public blog: BlogService, private stats: StatsService, public instagram: InstagramService) {}
+  @HostListener('window:scroll')
+  onScroll() {
+    this.isStuck = window.scrollY > 320;
+  }
+
+  constructor(public blog: BlogService, private stats: StatsService, public instagram: InstagramService, public youtube: YouTubeService) {}
+
+  get featuredPosts(): Post[] {
+    return this.blog.getPublishedPosts().slice(0, 9);
+  }
+
+  get totalSlides(): number {
+    return Math.ceil(this.featuredPosts.length / 3);
+  }
+
+  sliderPrev() {
+    this.sliderIndex = (this.sliderIndex - 1 + this.totalSlides) % this.totalSlides;
+  }
+
+  sliderNext() {
+    this.sliderIndex = (this.sliderIndex + 1) % this.totalSlides;
+  }
 
   onSearch(event: Event): void {
     this.searchTerm = (event.target as HTMLInputElement).value.toLowerCase();
@@ -40,5 +67,21 @@ export class BlogComponent {
     return mostViewed
       .map(s => this.blog.getPostById(s.postId))
       .filter((p): p is Post => !!p && p.published);
+  }
+
+  getArchiveMonths(): { label: string; count: number }[] {
+    const posts = this.blog.getPublishedPosts();
+    const map = new Map<string, number>();
+    posts.forEach(p => {
+      const d = new Date(p.createdAt);
+      const month = d.toLocaleDateString('pt-BR', { month: 'long' });
+      const label = `${month.charAt(0).toUpperCase() + month.slice(1)} ${d.getFullYear()}`;
+      map.set(label, (map.get(label) || 0) + 1);
+    });
+    return Array.from(map.entries()).map(([label, count]) => ({ label, count }));
+  }
+
+  filterByMonth(label: string) {
+    this.searchTerm = label.split(' de ')[0];
   }
 }
