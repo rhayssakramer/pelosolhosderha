@@ -3,5 +3,5 @@
   "framework": "angular",
   "buildCommand": "npm run build",
   "outputDirectory": "dist/pelosolhosderha",
-  "installCommand": "npm install"
+  "installCommand": "npm install --legacy-peer-deps"
 }
