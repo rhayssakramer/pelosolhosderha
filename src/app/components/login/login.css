@@ -16,14 +16,18 @@
   text-align: center;
 }
 
-.login-card h1 {
-  margin-bottom: 0.25rem;
+.login-card h2 {
+  margin-bottom: 0.1rem;
   color: #1a1a2e;
+}
+
+.login-card img{
+  width: 80px;
 }
 
 .subtitle {
   color: #666;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .error-msg {
