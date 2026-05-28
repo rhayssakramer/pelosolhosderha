@@ -1,0 +1,20 @@
+<div class="tag-manager">
+  <h1>🏷️ Gerenciar Tags</h1>
+
+  <div class="add-tag">
+    <input type="text" [(ngModel)]="newTagName" placeholder="Nome da tag" (keyup.enter)="addTag()">
+    <input type="color" [(ngModel)]="newTagColor">
+    <button (click)="addTag()" class="btn-add">Adicionar</button>
+  </div>
+
+  <div class="tags-list">
+    @for (tag of blog.tags(); track tag.id) {
+      <div class="tag-item">
+        <span class="tag-preview" [style.background]="tag.color">{{ tag.name }}</span>
+        <button (click)="deleteTag(tag.id)" class="btn-delete">✕</button>
+      </div>
+    } @empty {
+      <p class="empty">Nenhuma tag criada ainda.</p>
+    }
+  </div>
+</div>

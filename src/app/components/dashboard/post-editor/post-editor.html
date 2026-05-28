@@ -1,0 +1,55 @@
+<div class="editor">
+  <div class="editor-header">
+    <h1>{{ isEditing ? 'Editar Postagem' : 'Nova Postagem' }}</h1>
+  </div>
+
+  <form (ngSubmit)="save()" class="editor-form">
+    <div class="form-group">
+      <label>Título</label>
+      <input type="text" [(ngModel)]="title" name="title" placeholder="Título da postagem" required>
+    </div>
+
+    <div class="form-group">
+      <label>Resumo</label>
+      <textarea [(ngModel)]="excerpt" name="excerpt" rows="2" placeholder="Breve descrição..."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Conteúdo (HTML)</label>
+      <textarea [(ngModel)]="content" name="content" rows="15" placeholder="Escreva seu conteúdo aqui... Suporta HTML." class="content-area"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Imagem de Capa (URL)</label>
+      <input type="url" [(ngModel)]="coverImage" name="coverImage" placeholder="https://...">
+    </div>
+
+    <div class="form-group">
+      <label>Tags</label>
+      <div class="tags-selector">
+        @for (tag of blog.tags(); track tag.id) {
+          <button type="button"
+            class="tag-btn"
+            [class.selected]="selectedTags.includes(tag.name)"
+            [style.--tag-color]="tag.color"
+            (click)="toggleTag(tag.name)">
+            {{ tag.name }}
+          </button>
+        } @empty {
+          <span class="no-tags">Nenhuma tag criada. <a routerLink="/dashboard/tags">Criar tags</a></span>
+        }
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <label class="publish-toggle">
+        <input type="checkbox" [(ngModel)]="published" name="published">
+        Publicar imediatamente
+      </label>
+      <div class="action-buttons">
+        <button type="button" (click)="router.navigate(['/dashboard'])" class="btn-cancel">Cancelar</button>
+        <button type="submit" class="btn-save">{{ isEditing ? 'Salvar' : 'Criar' }}</button>
+      </div>
+    </div>
+  </form>
+</div>

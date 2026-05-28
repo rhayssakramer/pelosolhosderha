@@ -1,0 +1,64 @@
+<div class="stats-page">
+  <h1>📊 Estatísticas</h1>
+
+  <div class="stats-cards">
+    <div class="stat-card">
+      <span class="stat-number">{{ stats.analytics().totalViews }}</span>
+      <span class="stat-label">Visualizações Totais</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-number">{{ stats.analytics().totalComments }}</span>
+      <span class="stat-label">Comentários Totais</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-number">{{ blog.posts().length }}</span>
+      <span class="stat-label">Total de Posts</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-number">{{ blog.getPublishedPosts().length }}</span>
+      <span class="stat-label">Posts Publicados</span>
+    </div>
+  </div>
+
+  <div class="stats-section">
+    <h2>🔥 Mais Lidos</h2>
+    <div class="stats-list">
+      @for (item of stats.getMostViewed(10); track item.postId) {
+        <div class="stats-row">
+          <a [routerLink]="['/post', item.postId]">{{ getPostTitle(item.postId) }}</a>
+          <span class="stats-value">{{ item.views }} views</span>
+        </div>
+      } @empty {
+        <p class="empty">Nenhuma visualização registrada ainda.</p>
+      }
+    </div>
+  </div>
+
+  <div class="stats-section">
+    <h2>💬 Mais Comentados</h2>
+    <div class="stats-list">
+      @for (item of stats.getMostCommented(10); track item.postId) {
+        <div class="stats-row">
+          <a [routerLink]="['/post', item.postId]">{{ getPostTitle(item.postId) }}</a>
+          <span class="stats-value">{{ item.comments }} comentários</span>
+        </div>
+      } @empty {
+        <p class="empty">Nenhum comentário registrado ainda.</p>
+      }
+    </div>
+  </div>
+
+  <div class="stats-section">
+    <h2>📅 Acessos Recentes (30 dias)</h2>
+    <div class="daily-chart">
+      @for (day of stats.getRecentViews(30); track day.date) {
+        <div class="chart-bar">
+          <div class="bar" [style.height.px]="day.count * 5"></div>
+          <span class="bar-label">{{ day.date | date:'dd/MM' }}</span>
+        </div>
+      } @empty {
+        <p class="empty">Sem dados de acesso ainda.</p>
+      }
+    </div>
+  </div>
+</div>

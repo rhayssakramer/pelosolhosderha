@@ -1,0 +1,37 @@
+<div class="posts-list">
+  <div class="list-header">
+    <h1>Postagens</h1>
+    <a routerLink="/dashboard/editor" class="btn-new">+ Nova Postagem</a>
+  </div>
+
+  <div class="posts-table">
+    @for (post of blog.posts(); track post.id) {
+      <div class="post-row">
+        <div class="post-info">
+          <h3>{{ post.title }}</h3>
+          <div class="post-meta">
+            <span class="status" [class.published]="post.published">
+              {{ post.published ? 'Publicado' : 'Rascunho' }}
+            </span>
+            <span>{{ post.createdAt | date:'dd/MM/yyyy' }}</span>
+            @for (tag of post.tags; track tag) {
+              <span class="tag">{{ tag }}</span>
+            }
+          </div>
+        </div>
+        <div class="post-actions">
+          <button (click)="togglePublish(post.id, post.published)" class="btn-toggle">
+            {{ post.published ? '📥 Despublicar' : '📤 Publicar' }}
+          </button>
+          <a [routerLink]="['/dashboard/editor', post.id]" class="btn-edit">✏️ Editar</a>
+          <button (click)="deletePost(post.id)" class="btn-delete">🗑️</button>
+        </div>
+      </div>
+    } @empty {
+      <div class="empty">
+        <p>Nenhuma postagem criada ainda.</p>
+        <a routerLink="/dashboard/editor">Criar primeira postagem →</a>
+      </div>
+    }
+  </div>
+</div>

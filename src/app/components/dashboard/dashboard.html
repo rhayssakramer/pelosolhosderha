@@ -1,0 +1,23 @@
+<div class="dashboard">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h2>✍️ Dashboard</h2>
+      <span class="blog-name">{{ blog.settings().blogTitle }}</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">📝 Postagens</a>
+      <a routerLink="/dashboard/editor" routerLinkActive="active">➕ Nova Postagem</a>
+      <a routerLink="/dashboard/tags" routerLinkActive="active">🏷️ Tags</a>
+      <a routerLink="/dashboard/settings" routerLinkActive="active">🎨 Aparência</a>
+      <a routerLink="/dashboard/stats" routerLinkActive="active">📊 Estatísticas</a>
+      <a routerLink="/dashboard/instagram" routerLinkActive="active">📸 Instagram</a>
+    </nav>
+    <div class="sidebar-footer">
+      <a routerLink="/" class="view-blog">👁️ Ver Blog</a>
+      <button (click)="auth.logout()" class="btn-logout">Sair</button>
+    </div>
+  </aside>
+  <main class="dashboard-content">
+    <router-outlet />
+  </main>
+</div>

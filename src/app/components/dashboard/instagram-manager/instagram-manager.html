@@ -1,0 +1,22 @@
+<div class="instagram-manager">
+  <h1>📸 Instagram</h1>
+  <p class="subtitle">Posts carregados automaticamente do seu perfil.</p>
+
+  <button (click)="refresh()" class="btn-add">🔄 Atualizar</button>
+
+  @if (instagram.loading()) {
+    <p class="hint">Carregando...</p>
+  }
+
+  <div class="photos-grid">
+    @for (post of instagram.posts(); track post.id) {
+      <div class="photo-item">
+        <a [href]="post.permalink" target="_blank">
+          <img [src]="post.imageUrl" alt="Instagram">
+        </a>
+      </div>
+    } @empty {
+      <p class="empty">Nenhum post encontrado. Verifique se o token está válido.</p>
+    }
+  </div>
+</div>

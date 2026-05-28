@@ -1,0 +1,73 @@
+.tag-manager { padding: 1rem; max-width: 600px; }
+.tag-manager h1 { color: #1a1a2e; margin-bottom: 1.5rem; }
+
+.add-tag {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  margin-bottom: 2rem;
+  background: white;
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+.add-tag input[type="text"] {
+  flex: 1;
+  padding: 0.6rem 1rem;
+  border: 2px solid #eee;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.add-tag input[type="text"]:focus { outline: none; border-color: #e94560; }
+
+.add-tag input[type="color"] {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-add {
+  padding: 0.6rem 1.2rem;
+  background: #e94560;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.tags-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.tag-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+}
+
+.tag-preview {
+  color: white;
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-weight: 500;
+}
+
+.btn-delete {
+  background: transparent;
+  border: none;
+  color: #c00;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.empty { color: #999; text-align: center; padding: 2rem; }
