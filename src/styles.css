@@ -16,3 +16,8 @@ body {
 a { 
     color: inherit; 
 }
+
+span[class*="embed_grid"][class*="board"] {
+    width: 280px;
+    border: 1px solid #8c6add;
+}
