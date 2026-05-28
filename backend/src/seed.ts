@@ -17,7 +17,18 @@ async function main() {
     },
   });
 
-  console.log('✅ Seed completed. Admin user:', user.email);
+  const user2 = await prisma.user.upsert({
+    where: { email: 'rhakramer@gmail.com' },
+    update: {},
+    create: {
+      email: 'rhakramer@gmail.com',
+      password: hashedPassword,
+      name: 'Rha Kramer',
+      role: 'admin',
+    },
+  });
+
+  console.log('✅ Seed completed. Admin users:', user.email, user2.email);
 }
 
 main()
