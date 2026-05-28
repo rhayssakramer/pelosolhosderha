@@ -1,0 +1,23 @@
+<div class="post-detail" *ngIf="post">
+  <a routerLink="/" class="back-link">← Voltar</a>
+
+  @if (post.coverImage) {
+    <img [src]="post.coverImage" [alt]="post.title" class="cover">
+  }
+
+  <article>
+    <div class="post-tags">
+      @for (tag of post.tags; track tag) {
+        <span class="tag">{{ tag }}</span>
+      }
+    </div>
+    <h1>{{ post.title }}</h1>
+    <time>{{ post.createdAt | date:'dd/MM/yyyy \'às\' HH:mm' }}</time>
+    <div class="content" [innerHTML]="post.content"></div>
+  </article>
+</div>
+
+<div class="not-found" *ngIf="!post">
+  <h2>Post não encontrado</h2>
+  <a routerLink="/">Voltar ao início</a>
+</div>
