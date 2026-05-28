@@ -24,6 +24,36 @@ const angularApp = new AngularNodeAppEngine();
  * ```
  */
 
+// Instagram feed endpoint (API oficial com token)
+const INSTAGRAM_TOKEN = 'REMOVED';
+
+app.get('/api/instagram/feed', async (req, res) => {
+  const limit = parseInt(req.query['limit'] as string) || 9;
+
+  try {
+    const response = await fetch(
+      `https://graph.instagram.com/me/media?fields=id,media_url,permalink,thumbnail_url,media_type&limit=${limit}&access_token=${INSTAGRAM_TOKEN}`
+    );
+
+    if (!response.ok) {
+      const err = await response.json();
+      res.status(response.status).json({ posts: [], error: err.error?.message || 'Erro na API' });
+      return;
+    }
+
+    const data = await response.json();
+    const posts = (data.data || []).map((item: any) => ({
+      id: item.id,
+      imageUrl: item.media_type === 'VIDEO' ? item.thumbnail_url : item.media_url,
+      permalink: item.permalink,
+    }));
+
+    res.json({ posts });
+  } catch (error: any) {
+    res.status(500).json({ posts: [], error: error.message });
+  }
+});
+
 /**
  * Serve static files from /browser
  */
