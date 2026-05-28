@@ -10,18 +10,33 @@
     </div>
 
     <div class="form-group">
-      <label>Resumo</label>
-      <textarea [(ngModel)]="excerpt" name="excerpt" rows="2" placeholder="Breve descrição..."></textarea>
+      <label>Conteúdo</label>
+      <quill-editor
+        [(ngModel)]="content"
+        name="content"
+        [modules]="quillModules"
+        placeholder="Escreva seu conteúdo aqui..."
+        [styles]="{ height: '350px' }">
+      </quill-editor>
     </div>
 
     <div class="form-group">
-      <label>Conteúdo (HTML)</label>
-      <textarea [(ngModel)]="content" name="content" rows="15" placeholder="Escreva seu conteúdo aqui... Suporta HTML." class="content-area"></textarea>
-    </div>
-
-    <div class="form-group">
-      <label>Imagem de Capa (URL)</label>
-      <input type="url" [(ngModel)]="coverImage" name="coverImage" placeholder="https://...">
+      <label>Imagem de Capa</label>
+      <div class="cover-upload">
+        @if (coverPreview) {
+          <div class="cover-preview">
+            <img [src]="coverPreview" alt="Preview da capa">
+            <button type="button" class="btn-remove-cover" (click)="removeCover()">✕ Remover</button>
+          </div>
+        } @else {
+          <label class="upload-area" for="coverFile">
+            <span class="upload-icon">📷</span>
+            <span>Clique para selecionar uma imagem</span>
+            <small>JPG, PNG ou WebP</small>
+          </label>
+        }
+        <input type="file" id="coverFile" accept="image/*" (change)="onCoverFileChange($event)" hidden>
+      </div>
     </div>
 
     <div class="form-group">
