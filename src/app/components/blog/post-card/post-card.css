@@ -2,7 +2,7 @@
   display: flex;
   width: 320px;
   flex-direction: column;
-  background: #fff;
+  background: #fafafa;
   border-radius: 4px;
   overflow: hidden;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
@@ -80,7 +80,7 @@
 }
 
 .card-tag {
-  color: #e94560;
+  color: #8c6add;
   font-weight: 700;
 }
 
@@ -109,7 +109,7 @@
 }
 
 .card-title a:hover {
-  color: #e94560;
+  color: #8c6add;
 }
 
 .card-excerpt {
@@ -134,7 +134,13 @@
 }
 
 .card-read-more {
+  display: block;
+  text-align: center;
+  width: 200px;
+  margin: 0 auto;
   color: #555;
+  border: 1px solid;
+  padding: 5px;
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 1px;
@@ -144,5 +150,6 @@
 }
 
 .card-read-more:hover {
-  color: #e94560;
+  color: white;
+  background-color: #8c6add;
 }

@@ -6,8 +6,8 @@
   }
   <div class="card-body">
     <div class="card-meta">
-      @for (tag of post.tags; track tag) {
-        <span class="card-tag">{{ tag | uppercase }}</span>
+      @if (post.tags.length) {
+        <span class="card-tag">{{ post.tags[0] | uppercase }}</span>
       }
       <span class="card-date">{{ post.createdAt | date:"MMMM dd, yyyy" | uppercase }}</span>
     </div>
@@ -15,6 +15,6 @@
       <a [routerLink]="['/post', post.id]">{{ post.title }}</a>
     </h2>
     <div class="card-excerpt" [innerHTML]="post.content"></div>
-    <a [routerLink]="['/post', post.id]" class="card-read-more">READ ›</a>
+    <a [routerLink]="['/post', post.id]" class="card-read-more">Continue lendo</a>
   </div>
 </article>

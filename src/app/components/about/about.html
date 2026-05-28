@@ -61,44 +61,41 @@
   </nav>
 </div>
 
-@if (featuredPosts.length > 0) {
-<section class="featured-slider">
-  <button class="slider-arrow slider-arrow-left" (click)="sliderPrev()">&#10094;</button>
-  <div class="slider-track" [style.transform]="'translateX(-' + (sliderIndex * 100) + '%)'">
-    @for (post of featuredPosts; track post.id) {
-      <a [routerLink]="['/post', post.id]" class="slider-slide">
-        @if (post.coverImage) {
-          <img [src]="post.coverImage" [alt]="post.title">
-        } @else {
-          <div class="slider-placeholder">📖</div>
-        }
-        <div class="slider-overlay">
-          <h3>{{ post.title }}</h3>
-        </div>
-      </a>
-    }
-  </div>
-  <button class="slider-arrow slider-arrow-right" (click)="sliderNext()">&#10095;</button>
-  <div class="slider-dots">
-    @for (dot of featuredPosts.slice(0, totalSlides); track $index; let i = $index) {
-      <span class="slider-dot" [class.active]="i === sliderIndex" (click)="sliderIndex = i"></span>
-    }
-  </div>
-</section>
-}
+<main class="content-wrapper">
+  <div class="content-grid">
+    <div class="main-content">
+      <article class="about-card">
+        <h1 class="about-title">Sobre</h1>
 
-<div class="blog-container">
-  <div class="blog-layout">
-    <main class="posts-grid">
-    @for (post of filteredPosts; track post.id) {
-      <app-post-card [post]="post"></app-post-card>
-    } @empty {
-      <div class="empty-state">
-        <h2>Nenhuma postagem ainda</h2>
-        <p>Em breve teremos conteúdo por aqui! ✨</p>
-      </div>
-    }
-    </main>
+        <div class="about-photo-section">
+          <img src="profile-3.jpg" alt="Rha Kramer" class="about-profile-photo">
+        </div>
+
+        <div class="about-text">
+          <p>
+            Olá! Eu sou a <strong>Rha</strong>, criadora do <em>Pelos Olhos de Rha</em> 💜
+          </p>
+          <p>
+            Este blog é o meu cantinho na internet onde compartilho um pouco do meu mundo: arte, criatividade, desenhos, pinturas, filmes, séries, músicas, livros e tudo aquilo que me inspira no dia a dia.
+          </p>
+          <p>
+            Acredito que a arte está em tudo — nas pequenas coisas, nos detalhes, nas cores e nas histórias que nos rodeiam. Aqui você vai encontrar reflexões, recomendações e muita inspiração para ver o mundo com outros olhos.
+          </p>
+          <p>
+            Seja bem-vindo(a) a esse universo! Espero que se sinta em casa. ✨
+          </p>
+        </div>
+
+        <div class="about-social">
+          <a href="https://instagram.com/pelosolhosderha" target="_blank" class="about-social-btn">
+            <img src="instagram.svg" alt="Instagram"> Instagram
+          </a>
+          <a href="https://pinterest.com/pelosolhosderha" target="_blank" class="about-social-btn">
+            <img src="pinterest.svg" alt="Pinterest"> Pinterest
+          </a>
+        </div>
+      </article>
+    </div>
 
     <aside class="sidebar">
       <div class="sidebar-widget widget-about">
@@ -107,7 +104,7 @@
           <img src="/profile-2.png" alt="" class="about-photo-overlay">
         </div>
         <h2 class="about-name">Rha Kramer</h2>
-        <p class="about-text">
+        <p class="about-text-widget">
           Comunicadora e leitora voraz, 35 anos, apaixonada por compartilhar ideias, reflexões e descobertas com o mundo. Leitora voraz, criativa e sonhadora, ama escrever sobre tudo que toca o coração.
         </p>
         <a routerLink="/contato" class="about-link">Saiba mais</a>
@@ -200,18 +197,8 @@
         <a data-pin-do="embedBoard" data-pin-board-width="450" data-pin-scale-height="240" data-pin-scale-width="60" href="https://br.pinterest.com/pelosolhosderha/pelosolhosderha/"></a>
       </div>
 
-      <!-- <div class="sidebar-widget widget-pinterest">
-        <h3 class="widget-title">PINTEREST</h3>
-        <div class="pinterest-embed">
-          <a data-pin-do="embedBoard" data-pin-board-width="260" data-pin-scale-height="240" data-pin-scale-width="60" href="https://br.pinterest.com/pelosolhosderha/pelosolhosderha/"></a>
-        </div>
-        <a href="https://br.pinterest.com/pelosolhosderha" target="_blank" class="pinterest-follow-btn">
-          Seguir
-        </a>
-      </div> -->
-
       <div>
-        <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/playlist/0LJHJnkRnfEAtnJPQBZmxD?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+        <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/0LJHJnkRnfEAtnJPQBZmxD?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
       </div>
 
       <div class="sidebar-widget widget-youtube">
@@ -235,7 +222,7 @@
       </div>
     </aside>
   </div>
-</div>
+</main>
 
 <footer class="footer">
   <div class="footer-content">
