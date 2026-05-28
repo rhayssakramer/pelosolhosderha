@@ -1,6 +1,7 @@
 {
   "name": "pelosolhosderha-backend",
   "version": "1.0.0",
+  "type": "module",
   "description": "Backend API for Pelos Olhos de Rha",
   "main": "dist/index.js",
   "scripts": {
