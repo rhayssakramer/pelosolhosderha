@@ -14,6 +14,7 @@ export class LoginComponent {
   email = '';
   password = '';
   error = signal('');
+  loading = signal(false);
 
   constructor(private auth: AuthService, private router: Router) {
     if (this.auth.isLoggedIn()) {
@@ -21,11 +22,15 @@ export class LoginComponent {
     }
   }
 
-  onSubmit(): void {
-    if (this.auth.login(this.email, this.password)) {
+  async onSubmit(): Promise<void> {
+    this.loading.set(true);
+    this.error.set('');
+    const result = await this.auth.login(this.email, this.password);
+    this.loading.set(false);
+    if (result.success) {
       this.router.navigate(['/dashboard']);
     } else {
-      this.error.set('Acesso negado. Apenas o administrador pode entrar.');
+      this.error.set(result.error || 'Acesso negado. Apenas o administrador pode entrar.');
     }
   }
 }
