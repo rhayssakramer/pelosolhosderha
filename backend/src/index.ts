@@ -13,7 +13,10 @@ import { statsRoutes } from './routes/stats.routes';
 const app = express();
 
 // Middleware
-app.use(cors({ origin: config.frontendUrl, credentials: true }));
+app.use(cors({
+  origin: [config.frontendUrl, 'https://pelosolhosderha.vercel.app'],
+  credentials: true
+}));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
