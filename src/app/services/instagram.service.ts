@@ -1,5 +1,6 @@
 import { Injectable, signal, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { environment } from '../../environments/environment';
 
 export interface InstagramPost {
   id: string;
@@ -48,7 +49,7 @@ export class InstagramService {
     this.loading.set(true);
 
     try {
-      const res = await fetch('/api/instagram/feed?limit=9');
+      const res = await fetch(`${environment.apiUrl}/instagram/feed?limit=9`);
       const data = await res.json();
 
       if (data.posts && data.posts.length > 0) {

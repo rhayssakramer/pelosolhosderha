@@ -44,3 +44,7 @@ Thumbs.db
 # Environment files
 backend/.env*
 .env*
+
+# Deploy artifacts
+backend/deploy.zip
+backend/dist/
