@@ -1,6 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": "angular",
+  "buildCommand": "npx ng build --configuration production",
+  "outputDirectory": "dist/pelosolhosderha/browser",
   "installCommand": "npm install --legacy-peer-deps",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
