@@ -25,7 +25,7 @@ const angularApp = new AngularNodeAppEngine();
  */
 
 // Instagram feed endpoint (API oficial com token)
-const INSTAGRAM_TOKEN = 'REMOVED';
+const INSTAGRAM_TOKEN = process.env['INSTAGRAM_TOKEN'] || '';
 
 app.get('/api/instagram/feed', async (req, res) => {
   const limit = parseInt(req.query['limit'] as string) || 9;
