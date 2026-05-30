@@ -8,7 +8,7 @@ await build({
   outfile: 'dist/index.js',
   format: 'esm',
   banner: { js: "import { createRequire } from 'module'; const require = createRequire(import.meta.url);" },
-  external: ['@prisma/client', '@prisma/adapter-neon', '@neondatabase/serverless', 'dotenv'],
+  external: ['@prisma/client', 'dotenv'],
   sourcemap: true,
   minify: false,
 });
