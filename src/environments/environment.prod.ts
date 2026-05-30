@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://pelosolhosderha-backend.onrender.com/api'
+  apiUrl: 'https://pelosolhosderha-api.bluesea-ecfbf889.brazilsouth.azurecontainerapps.io/api'
 };
