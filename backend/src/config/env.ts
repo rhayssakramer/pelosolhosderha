@@ -1,17 +1,13 @@
 import dotenv from 'dotenv';
 import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const env = process.env.NODE_ENV || 'development';
 
-// Load environment-specific .env file
-dotenv.config({ path: path.resolve(__dirname, `../../.env.${env}`) });
-
-// Fallback to .env
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+// Only load .env files in development
+if (env === 'development') {
+  dotenv.config({ path: path.resolve(process.cwd(), `.env.${env}`) });
+  dotenv.config({ path: path.resolve(process.cwd(), '.env') });
+}
 
 export const config = {
   env,

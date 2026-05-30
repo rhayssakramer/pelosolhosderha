@@ -1,4 +1,6 @@
 import { PrismaClient } from '@prisma/client';
+import { PrismaNeon } from '@prisma/adapter-neon';
+import { neonConfig, Pool } from '@neondatabase/serverless';
 import { config } from './env';
 
 let prisma: PrismaClient;
@@ -10,9 +12,12 @@ if (config.isDevelopment) {
     log: ['query', 'info', 'warn', 'error'],
   });
 } else {
-  // PostgreSQL (Neon) for homolog/production
+  // PostgreSQL (Neon) with serverless driver (no native binary needed)
+  neonConfig.useSecureWebSocket = true;
+  const pool = new Pool({ connectionString: config.databaseUrl });
+  const adapter = new PrismaNeon(pool);
   prisma = new PrismaClient({
-    datasources: { db: { url: config.databaseUrl } },
+    adapter,
     log: config.isHomolog ? ['warn', 'error'] : ['error'],
   });
 }
