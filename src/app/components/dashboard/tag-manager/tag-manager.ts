@@ -16,7 +16,7 @@ export class TagManagerComponent {
 
   addTag(): void {
     if (this.newTagName.trim()) {
-      this.blog.createTag(this.newTagName.trim(), '#6366f1');
+      this.blog.createTag(this.newTagName.trim(), '#8c6add');
       this.newTagName = '';
     }
   }
