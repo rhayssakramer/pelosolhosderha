@@ -125,7 +125,7 @@ export class BlogService {
   // Tags
   createTag(name: string, color: string = '#6366f1'): void {
     const token = this.isBrowser ? localStorage.getItem('blog_auth_token') : null;
-    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
     this.http.post<Tag>(`${this.apiUrl}/tags`, { name, color }, { headers }).subscribe({
       next: () => {
         this.loadTagsFromApi();
@@ -136,7 +136,7 @@ export class BlogService {
 
   deleteTag(id: string): void {
     const token = this.isBrowser ? localStorage.getItem('blog_auth_token') : null;
-    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
     this.http.delete(`${this.apiUrl}/tags/${id}`, { headers }).subscribe({
       next: () => {
         this.loadTagsFromApi();
