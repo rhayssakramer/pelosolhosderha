@@ -7,8 +7,12 @@
   </div>
 
   <div class="tags-list">
-    @for (tag of blog.tags(); track tag.id) {
+    @for (tag of blog.tags(); track tag.id; let i = $index) {
       <div class="tag-item">
+        <div class="tag-order-controls">
+          <button (click)="moveUp(i)" class="btn-move" [disabled]="i === 0" title="Mover para cima">▲</button>
+          <button (click)="moveDown(i)" class="btn-move" [disabled]="i === blog.tags().length - 1" title="Mover para baixo">▼</button>
+        </div>
         <span class="tag-preview" [style.background]="tag.color">{{ tag.name }}</span>
         <button (click)="deleteTag(tag.id)" class="btn-delete">✕</button>
       </div>

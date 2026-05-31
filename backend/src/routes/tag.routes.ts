@@ -9,7 +9,7 @@ tagRoutes.get('/', async (_req: Request, res: Response) => {
   try {
     const tags = await prisma.tag.findMany({
       include: { _count: { select: { posts: true } } },
-      orderBy: { name: 'asc' },
+      orderBy: { order: 'asc' },
     });
     res.json(tags.map((t) => ({ ...t, postCount: t._count.posts })));
   } catch (error) {
@@ -21,10 +21,27 @@ tagRoutes.get('/', async (_req: Request, res: Response) => {
 tagRoutes.post('/', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const { name, color } = req.body;
-    const tag = await prisma.tag.create({ data: { name, color } });
+    const maxOrder = await prisma.tag.aggregate({ _max: { order: true } });
+    const order = (maxOrder._max.order ?? -1) + 1;
+    const tag = await prisma.tag.create({ data: { name, color, order } });
     res.status(201).json(tag);
   } catch (error) {
     res.status(500).json({ error: 'Erro ao criar tag' });
+  }
+});
+
+// Reorder tags (admin)
+tagRoutes.put('/reorder', authMiddleware, async (req: AuthRequest, res: Response) => {
+  try {
+    const { orderedIds } = req.body as { orderedIds: string[] };
+    await Promise.all(
+      orderedIds.map((id, index) =>
+        prisma.tag.update({ where: { id }, data: { order: index } })
+      )
+    );
+    res.json({ message: 'Ordem atualizada' });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao reordenar tags' });
   }
 });
 
