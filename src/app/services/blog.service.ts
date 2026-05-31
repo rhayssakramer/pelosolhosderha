@@ -12,6 +12,7 @@ export class BlogService {
   private readonly TAGS_KEY = 'blog_tags';
   private readonly SETTINGS_KEY = 'blog_settings';
   private readonly apiUrl = environment.apiUrl;
+  private readonly useApi = environment.production;
   private isBrowser: boolean;
   private http = inject(HttpClient);
 
@@ -22,8 +23,10 @@ export class BlogService {
   constructor() {
     this.isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
     this.loadAll();
-    this.loadTagsFromApi();
-    this.loadPostsFromApi();
+    if (this.useApi) {
+      this.loadTagsFromApi();
+      this.loadPostsFromApi();
+    }
   }
 
   private getDefaultSettings(): BlogSettings {
@@ -124,6 +127,12 @@ export class BlogService {
 
   // Tags
   createTag(name: string, color: string = '#6366f1'): void {
+    if (!this.useApi) {
+      const newTag: Tag = { id: crypto.randomUUID(), name, color };
+      this.tags.update(tags => [...tags, newTag]);
+      this.saveTags();
+      return;
+    }
     const token = this.isBrowser ? localStorage.getItem('blog_auth_token') : null;
     const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
     this.http.post<Tag>(`${this.apiUrl}/tags`, { name, color }, { headers }).subscribe({
@@ -135,6 +144,11 @@ export class BlogService {
   }
 
   deleteTag(id: string): void {
+    if (!this.useApi) {
+      this.tags.update(tags => tags.filter(t => t.id !== id));
+      this.saveTags();
+      return;
+    }
     const token = this.isBrowser ? localStorage.getItem('blog_auth_token') : null;
     const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
     this.http.delete(`${this.apiUrl}/tags/${id}`, { headers }).subscribe({
@@ -146,6 +160,13 @@ export class BlogService {
   }
 
   reorderTags(orderedIds: string[]): void {
+    if (!this.useApi) {
+      const currentTags = this.tags();
+      const reordered = orderedIds.map(id => currentTags.find(t => t.id === id)!).filter(Boolean);
+      this.tags.set(reordered);
+      this.saveTags();
+      return;
+    }
     const token = this.isBrowser ? localStorage.getItem('blog_auth_token') : null;
     const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
     this.http.put(`${this.apiUrl}/tags/reorder`, { orderedIds }, { headers }).subscribe({
