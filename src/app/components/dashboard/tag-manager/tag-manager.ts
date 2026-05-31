@@ -26,4 +26,20 @@ export class TagManagerComponent {
       this.blog.deleteTag(id);
     }
   }
+
+  moveUp(index: number): void {
+    if (index <= 0) return;
+    const tags = [...this.blog.tags()];
+    [tags[index - 1], tags[index]] = [tags[index], tags[index - 1]];
+    this.blog.tags.set(tags);
+    this.blog.reorderTags(tags.map(t => t.id));
+  }
+
+  moveDown(index: number): void {
+    const tags = [...this.blog.tags()];
+    if (index >= tags.length - 1) return;
+    [tags[index], tags[index + 1]] = [tags[index + 1], tags[index]];
+    this.blog.tags.set(tags);
+    this.blog.reorderTags(tags.map(t => t.id));
+  }
 }

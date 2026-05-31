@@ -145,6 +145,17 @@ export class BlogService {
     });
   }
 
+  reorderTags(orderedIds: string[]): void {
+    const token = this.isBrowser ? localStorage.getItem('blog_auth_token') : null;
+    const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
+    this.http.put(`${this.apiUrl}/tags/reorder`, { orderedIds }, { headers }).subscribe({
+      next: () => {
+        this.loadTagsFromApi();
+      },
+      error: (err) => console.error('Erro ao reordenar tags:', err)
+    });
+  }
+
   // Settings
   updateSettings(newSettings: Partial<BlogSettings>): void {
     this.settings.update(s => ({ ...s, ...newSettings }));
