@@ -127,9 +127,8 @@ export class BlogService {
     const token = this.isBrowser ? localStorage.getItem('blog_auth_token') : null;
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
     this.http.post<Tag>(`${this.apiUrl}/tags`, { name, color }, { headers }).subscribe({
-      next: (tag) => {
-        this.tags.update(tags => [...tags, tag]);
-        this.saveTags();
+      next: () => {
+        this.loadTagsFromApi();
       },
       error: (err) => console.error('Erro ao criar tag:', err)
     });
@@ -140,8 +139,7 @@ export class BlogService {
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
     this.http.delete(`${this.apiUrl}/tags/${id}`, { headers }).subscribe({
       next: () => {
-        this.tags.update(tags => tags.filter(t => t.id !== id));
-        this.saveTags();
+        this.loadTagsFromApi();
       },
       error: (err) => console.error('Erro ao deletar tag:', err)
     });
