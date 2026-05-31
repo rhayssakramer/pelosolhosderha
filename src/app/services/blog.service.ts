@@ -123,16 +123,28 @@ export class BlogService {
   }
 
   // Tags
-  createTag(name: string, color: string = '#e94560'): Tag {
-    const tag: Tag = { id: crypto.randomUUID(), name, color };
-    this.tags.update(tags => [...tags, tag]);
-    this.saveTags();
-    return tag;
+  createTag(name: string, color: string = '#6366f1'): void {
+    const token = this.isBrowser ? localStorage.getItem('blog_auth_token') : null;
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    this.http.post<Tag>(`${this.apiUrl}/tags`, { name, color }, { headers }).subscribe({
+      next: (tag) => {
+        this.tags.update(tags => [...tags, tag]);
+        this.saveTags();
+      },
+      error: (err) => console.error('Erro ao criar tag:', err)
+    });
   }
 
   deleteTag(id: string): void {
-    this.tags.update(tags => tags.filter(t => t.id !== id));
-    this.saveTags();
+    const token = this.isBrowser ? localStorage.getItem('blog_auth_token') : null;
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    this.http.delete(`${this.apiUrl}/tags/${id}`, { headers }).subscribe({
+      next: () => {
+        this.tags.update(tags => tags.filter(t => t.id !== id));
+        this.saveTags();
+      },
+      error: (err) => console.error('Erro ao deletar tag:', err)
+    });
   }
 
   // Settings
