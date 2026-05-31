@@ -22,4 +22,4 @@ RUN mkdir -p uploads
 EXPOSE 3000
 ENV NODE_ENV=production
 
-CMD ["sh", "-c", "npx prisma migrate deploy && node dist/index.js"]
+CMD ["sh", "-c", "npx prisma migrate resolve --applied 20260528134716_pelosolhosderha 2>/dev/null; npx prisma migrate deploy && node dist/index.js"]
