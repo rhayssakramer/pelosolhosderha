@@ -1,229 +1,536 @@
+<div align="center">
+
 # 👁️ Pelos Olhos de Rha
 
-Blog pessoal desenvolvido com **Angular 20** (frontend) e **Express + Prisma** (backend), com deploy automatizado na **Vercel** (frontend) e **Azure Container Apps** (backend).
+**Blog Pessoal & Portfólio Criativo**
+
+Pelos Olhos de Rha é um blog pessoal e portfólio criativo que combina escrita, fotografia e conteúdo visual. Uma plataforma para compartilhar experiências, reflexões e criações artísticas com o mundo — tudo isso através de uma interface moderna e intuitiva.
+
+[![Backend](https://img.shields.io/badge/Backend-Node.js%20%2B%20Express-339933?style=for-the-badge&logo=nodedotjs)](https://nodejs.org)
+[![Frontend](https://img.shields.io/badge/Frontend-Angular%2020-DD0031?style=for-the-badge&logo=angular)](https://angular.dev)
+[![Database](https://img.shields.io/badge/Database-PostgreSQL%20(Neon)-4169E1?style=for-the-badge&logo=postgresql)](https://neon.tech)
+[![Deploy Backend](https://img.shields.io/badge/Deploy-Azure%20Container%20Apps-0078D4?style=for-the-badge&logo=microsoftazure)](https://azure.microsoft.com)
+[![Deploy Frontend](https://img.shields.io/badge/Deploy-Vercel-000000?style=for-the-badge&logo=vercel)](https://vercel.com)
+
+</div>
 
 ---
 
-## 🌐 Links de Produção
+## 📋 Índice
 
-| Serviço | URL |
-|---------|-----|
-| Frontend | https://pelosolhosderha.vercel.app |
-| Backend API | https://pelosolhosderha-api.bluesea-ecfbf889.brazilsouth.azurecontainerapps.io |
-| Banco de Dados | Neon PostgreSQL (us-east-1) |
-
----
-
-## 🏗️ Arquitetura
-
-```
-┌──────────────┐     ┌────────────────────────┐     ┌─────────────┐
-│   Vercel     │────▶│  Azure Container Apps  │────▶│  Neon DB    │
-│  (Angular)   │     │  (Express + Prisma)    │     │ (PostgreSQL)│
-└──────────────┘     └────────────────────────┘     └─────────────┘
-     Frontend              Backend API                  Database
-```
+- [Sobre o Projeto](#-sobre-o-projeto)
+- [Funcionalidades](#-funcionalidades)
+- [Arquitetura](#-arquitetura)
+- [Tecnologias](#-tecnologias)
+- [Estrutura do Repositório](#-estrutura-do-repositório)
+- [Pré-requisitos](#-pré-requisitos)
+- [Instalação e Configuração](#-instalação-e-configuração)
+- [Executando o Projeto](#-executando-o-projeto)
+- [API Endpoints](#-api-endpoints)
+- [Variáveis de Ambiente](#-variáveis-de-ambiente)
+- [Deploy](#-deploy)
+- [Modelos de Dados](#-modelos-de-dados)
+- [Créditos](#-créditos)
 
 ---
 
-## 📁 Estrutura do Projeto
+## 🌟 Sobre o Projeto
+
+O **Pelos Olhos de Rha** é um blog pessoal que une escrita criativa, fotografia e conteúdo multimídia em uma plataforma elegante e responsiva. O projeto foi desenvolvido como uma aplicação full stack moderna com foco em performance, SEO e experiência do usuário.
+
+A plataforma permite:
+
+- 📝 Publicar posts com editor rich-text (Quill)
+- 📸 Galeria de fotos integrada a cada post
+- 🏷️ Organizar conteúdo com tags coloridas
+- 💬 Sistema de comentários interativo
+- 📊 Dashboard administrativo com estatísticas
+- 📷 Integração com Instagram Feed
+- 🎥 Integração com YouTube
+
+Ideal para **criadores de conteúdo**, **fotógrafos**, **escritores** e **artistas** que desejam manter um portfólio digital completo e profissional.
+
+---
+
+## ✨ Funcionalidades
+
+### Para Administradores
+- ✅ Dashboard completo com estatísticas do blog
+- ✅ Criar, editar e publicar posts com editor rich-text
+- ✅ Gerenciar tags (criar, editar, excluir com cores personalizadas)
+- ✅ Upload de imagens de capa e fotos nos posts
+- ✅ Gerenciar integração com Instagram
+- ✅ Visualizar métricas de acesso e engajamento
+
+### Para Visitantes
+- ✅ Navegar pelo blog com design responsivo
+- ✅ Buscar posts por título, conteúdo ou tags
+- ✅ Visualizar posts completos com galeria de fotos
+- ✅ Deixar comentários nos posts
+- ✅ Filtrar posts por tags
+- ✅ Acessar feed do Instagram integrado
+- ✅ Página Sobre e Contato
+
+### Geral
+- ✅ Autenticação JWT para área administrativa
+- ✅ Server-Side Rendering (SSR) para SEO
+- ✅ Design responsivo (mobile-first)
+- ✅ Upload de imagens com armazenamento seguro
+- ✅ API RESTful com paginação
+- ✅ Sistema de tags com cores personalizáveis
+
+---
+
+## 🏛️ Arquitetura
+
+O projeto é uma aplicação **full stack** dividida em dois serviços independentes:
 
 ```
 pelosolhosderha/
-├── src/                    # Frontend Angular 20 (SSR)
-│   ├── app/
-│   │   ├── components/     # Páginas e componentes
-│   │   │   ├── blog/       # Página principal do blog
-│   │   │   ├── post-detail/# Detalhe do post
-│   │   │   ├── dashboard/  # Painel administrativo
-│   │   │   ├── login/      # Autenticação
-│   │   │   ├── about/      # Sobre
-│   │   │   └── contact/    # Contato
-│   │   ├── services/       # Serviços (API, auth, Instagram, YouTube)
-│   │   ├── guards/         # Guards de autenticação
-│   │   ├── models/         # Interfaces/tipos
-│   │   └── pipes/          # Pipes customizados
-│   └── environments/       # Configurações por ambiente
-├── backend/                # API Node.js
-│   ├── src/
-│   │   ├── index.ts        # Entry point (Express)
-│   │   ├── config/         # Configurações (DB, env)
-│   │   ├── routes/         # Rotas da API
-│   │   ├── middleware/     # Auth middleware (JWT)
-│   │   └── seed.ts         # Seed do banco
-│   ├── prisma/             # Schema e migrations
-│   ├── Dockerfile          # Container para deploy
-│   └── esbuild.config.js   # Build config
-├── azure/                  # Scripts de provisionamento Azure
-└── vercel.json             # Config do Vercel
+├── backend/   → API REST em Node.js + Express + Prisma
+└── src/       → SPA em Angular 20 com SSR
 ```
 
----
+### Backend — Arquitetura em Camadas
 
-## 🛠️ Tech Stack
+```
+Routes  →  Middleware (Auth)  →  Prisma ORM  →  PostgreSQL (Neon)
+```
 
-### Frontend
-- **Angular 20** com SSR (Server-Side Rendering)
-- **Ngx-Quill** — Editor rich text para posts
-- **TypeScript 5.8**
-- Deploy: **Vercel**
+- **Routes**: Definem os endpoints REST e contêm a lógica de negócio
+- **Middleware**: Autenticação JWT para rotas protegidas
+- **Prisma ORM**: Acesso ao banco de dados com type-safety
+- **Config**: Variáveis de ambiente e configurações centralizadas
 
-### Backend
-- **Express 5** — API REST
-- **Prisma 6** — ORM
-- **JWT** — Autenticação
-- **Multer** — Upload de imagens
-- **esbuild** — Bundler
-- Deploy: **Azure Container Apps** (Docker)
+### Frontend — Angular 20 com SSR
+
+```
+Components  →  Services  →  HTTP Client  →  Backend API
+```
+
+- **Components**: Componentes reutilizáveis (blog, dashboard, post-detail, etc.)
+- **Services**: Serviços para comunicação com a API
+- **Guards**: Proteção de rotas administrativas
+- **Pipes**: Transformações de dados (SafePipe para HTML)
 
 ### Banco de Dados
-- **PostgreSQL** via **Neon** (serverless)
-- SQLite em desenvolvimento local
 
-### Integrações
-- **Instagram Graph API** — Feed de posts
-- **YouTube Data API** — Vídeos recentes
+| Ambiente | Banco de Dados |
+|----------|----------------|
+| Homolog | PostgreSQL (Neon) |
+| Production | PostgreSQL (Neon) |
 
 ---
 
-## 🚀 Setup Local
+## 💻 Tecnologias
 
-### Pré-requisitos
-- Node.js 20+
-- npm 10+
+### Backend
+
+| Categoria | Tecnologia | Versão |
+|-----------|-----------|--------|
+| Runtime | Node.js | 20+ |
+| Framework | Express | 5.1 |
+| Linguagem | TypeScript | 5.7 |
+| ORM | Prisma | 6.0 |
+| Banco | PostgreSQL (Neon) | 15+ |
+| Autenticação | JWT (jsonwebtoken) | 9.0 |
+| Hash de Senha | bcryptjs | 2.4 |
+| Upload | Multer | 1.4 |
+| Build | esbuild | 0.24 |
+| Containerização | Docker | — |
 
 ### Frontend
 
-```bash
-npm install
-npm start
-# Acesse http://localhost:4200
+| Categoria | Tecnologia | Versão |
+|-----------|-----------|--------|
+| Framework | Angular | 20.0 |
+| Linguagem | TypeScript | 5.7 |
+| SSR | Angular SSR | 20.0 |
+| Editor Rich-Text | ngx-quill + Quill | 30.1 / 2.0 |
+| Reatividade | RxJS | 7.8 |
+| Build | Angular CLI | 20.0 |
+
+### DevOps & Infraestrutura
+
+| Serviço | Finalidade |
+|---------|-----------|
+| Azure Container Apps | Deploy do backend (Docker) |
+| Vercel | Deploy do frontend (SPA Angular) |
+| Neon | Banco de dados PostgreSQL serverless |
+| GitHub | Controle de versão |
+| Azure Pipelines | CI/CD |
+
+---
+
+## 📁 Estrutura do Repositório
+
 ```
+pelosolhosderha/
+├── README.md                          # Este arquivo
+├── angular.json                       # Configuração do Angular CLI
+├── package.json                       # Dependências do frontend
+├── tsconfig.json                      # Configuração TypeScript
+├── vercel.json                        # Configuração de deploy Vercel
+│
+├── azure/                             # Scripts de infraestrutura Azure
+│   ├── deploy.yml                     # Pipeline de deploy
+│   └── provision.sh                   # Provisionamento de recursos
+│
+├── backend/                           # API REST Node.js + Express
+│   ├── Dockerfile                     # Imagem Docker do backend
+│   ├── package.json                   # Dependências do backend
+│   ├── esbuild.config.js             # Configuração de build
+│   ├── tsconfig.json                  # TypeScript config
+│   ├── prisma/
+│   │   ├── schema.prisma             # Schema do banco (produção)
+│   │   ├── schema.dev.prisma         # Schema do banco (desenvolvimento)
+│   │   └── migrations/               # Migrações do Prisma
+│   └── src/
+│       ├── index.ts                   # Ponto de entrada do servidor
+│       ├── seed.ts                    # Seed do banco de dados
+│       ├── config/
+│       │   ├── database.ts            # Configuração do Prisma Client
+│       │   └── env.ts                 # Variáveis de ambiente
+│       ├── middleware/
+│       │   └── auth.middleware.ts     # Middleware de autenticação JWT
+│       └── routes/
+│           ├── auth.routes.ts         # Autenticação (login)
+│           ├── post.routes.ts         # CRUD de posts
+│           ├── comment.routes.ts      # Comentários
+│           ├── tag.routes.ts          # CRUD de tags
+│           ├── upload.routes.ts       # Upload de imagens
+│           └── stats.routes.ts        # Estatísticas do blog
+│
+└── src/                               # Frontend Angular 20
+    ├── index.html                     # Template HTML
+    ├── main.ts                        # Bootstrap do Angular
+    ├── main.server.ts                 # Bootstrap SSR
+    ├── server.ts                      # Servidor Express para SSR
+    ├── styles.css                     # Estilos globais
+    └── app/
+        ├── app.ts                     # Componente raiz
+        ├── app.routes.ts              # Rotas da aplicação
+        ├── app.config.ts              # Configuração (providers)
+        ├── components/
+        │   ├── blog/                  # Página principal do blog
+        │   ├── post-detail/           # Detalhe de um post
+        │   ├── about/                 # Página Sobre
+        │   ├── contact/               # Página Contato
+        │   ├── login/                 # Página de Login
+        │   └── dashboard/             # Painel Administrativo
+        │       ├── post-editor/       # Editor de posts (Quill)
+        │       ├── posts-list/        # Lista de posts
+        │       ├── tag-manager/       # Gerenciador de tags
+        │       ├── stats/             # Estatísticas
+        │       └── instagram-manager/ # Gerenciar Instagram
+        ├── guards/
+        │   └── auth.guard.ts          # Guard de autenticação
+        ├── models/
+        │   └── post.model.ts          # Interfaces (Post, Tag, Comment)
+        ├── pipes/
+        │   └── safe.pipe.ts           # Pipe para HTML seguro
+        └── services/
+            ├── auth.service.ts        # Serviço de autenticação
+            ├── blog.service.ts        # Serviço do blog (posts, tags)
+            ├── instagram.service.ts   # Serviço Instagram
+            ├── stats.service.ts       # Serviço de estatísticas
+            └── youtube.service.ts     # Serviço YouTube
+```
+
+---
+
+## 📌 Pré-requisitos
+
+### Para rodar o backend localmente
+- [Node.js 20+](https://nodejs.org/)
+- npm 10+
+- PostgreSQL 15+ (ou conta no [Neon](https://neon.tech))
+
+### Para rodar o frontend localmente
+- [Node.js 20+](https://nodejs.org/)
+- npm 10+
+
+### Opcional
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (para rodar o backend containerizado)
+
+---
+
+## 🔧 Instalação e Configuração
+
+### 1. Clone o repositório
+
+```bash
+git clone https://github.com/rhayssakramer/pelosolhosderha.git
+cd pelosolhosderha
+```
+
+### 2. Configuração do Backend
+
+```bash
+cd backend
+
+# Instalar dependências
+npm install
+
+# Configurar variáveis de ambiente
+cp .env.example .env
+# Edite o .env com suas configurações (DATABASE_URL, JWT_SECRET, etc.)
+
+# Gerar o Prisma Client
+npm run db:generate
+
+# Executar migrações
+npm run db:migrate:dev
+
+# (Opcional) Popular banco com dados iniciais
+npm run db:seed
+```
+
+### 3. Configuração do Frontend
+
+```bash
+# Na raiz do projeto
+npm install
+```
+
+---
+
+## 🚀 Executando o Projeto
 
 ### Backend
 
 ```bash
 cd backend
-npm install
-npx prisma generate
-npx prisma migrate dev
-npm run db:seed
+
+# Modo desenvolvimento com hot reload
 npm run dev
-# API em http://localhost:3000
 ```
 
-### Variáveis de Ambiente (backend/.env.development)
+Disponível em: **`http://localhost:3000`**
 
-```env
-NODE_ENV=development
-PORT=3000
-DATABASE_URL="file:./dev.db"
-JWT_SECRET="dev-secret-change-in-production"
-UPLOAD_DIR="./uploads"
-FRONTEND_URL="http://localhost:4200"
-INSTAGRAM_TOKEN="seu-token-aqui"
+### Frontend
+
+```bash
+# Na raiz do projeto
+npm start
+```
+
+Disponível em: **`http://localhost:4200`**
+
+### Com Docker (Backend)
+
+```bash
+cd backend
+docker build -t pelosolhosderha-backend .
+docker run -p 3000:3000 --env-file .env pelosolhosderha-backend
 ```
 
 ---
 
 ## 📡 API Endpoints
 
-### Auth
-| Método | Rota | Descrição |
-|--------|------|-----------|
-| POST | `/api/auth/login` | Login (retorna JWT) |
-| GET | `/api/auth/me` | Dados do usuário logado |
+### Autenticação — `/api/auth`
 
-### Posts
-| Método | Rota | Descrição |
-|--------|------|-----------|
-| GET | `/api/posts` | Listar posts publicados |
-| GET | `/api/posts/:id` | Detalhe do post |
-| POST | `/api/posts` | Criar post (auth) |
-| PUT | `/api/posts/:id` | Editar post (auth) |
-| DELETE | `/api/posts/:id` | Deletar post (auth) |
+| Método | Endpoint | Descrição | Auth |
+|--------|----------|-----------|------|
+| POST | `/api/auth/login` | Login e obtenção do JWT | ❌ |
+| GET | `/api/auth/me` | Dados do usuário autenticado | ✅ |
 
-### Tags
-| Método | Rota | Descrição |
-|--------|------|-----------|
-| GET | `/api/tags` | Listar tags |
-| POST | `/api/tags` | Criar tag (auth) |
-| DELETE | `/api/tags/:id` | Deletar tag (auth) |
+### Posts — `/api/posts`
 
-### Comments
-| Método | Rota | Descrição |
-|--------|------|-----------|
-| GET | `/api/posts/:id/comments` | Listar comentários |
-| POST | `/api/posts/:id/comments` | Criar comentário |
+| Método | Endpoint | Descrição | Auth |
+|--------|----------|-----------|------|
+| GET | `/api/posts` | Listar posts publicados (paginado) | ❌ |
+| GET | `/api/posts/:id` | Buscar post por ID | ❌ |
+| POST | `/api/posts` | Criar novo post | ✅ |
+| PUT | `/api/posts/:id` | Atualizar post | ✅ |
+| DELETE | `/api/posts/:id` | Deletar post | ✅ |
 
-### Upload
-| Método | Rota | Descrição |
-|--------|------|-----------|
-| POST | `/api/upload` | Upload de imagem (auth) |
+**Query params de listagem:**
+- `page` — Página (default: 1)
+- `limit` — Posts por página (default: 10)
+- `tag` — Filtrar por tag
 
-### Instagram
-| Método | Rota | Descrição |
-|--------|------|-----------|
-| GET | `/api/instagram/feed` | Feed do Instagram |
+### Tags — `/api/tags`
 
-### Stats
-| Método | Rota | Descrição |
-|--------|------|-----------|
-| GET | `/api/stats` | Estatísticas do blog (auth) |
+| Método | Endpoint | Descrição | Auth |
+|--------|----------|-----------|------|
+| GET | `/api/tags` | Listar todas as tags | ❌ |
+| POST | `/api/tags` | Criar nova tag | ✅ |
+| PUT | `/api/tags/:id` | Atualizar tag | ✅ |
+| DELETE | `/api/tags/:id` | Deletar tag | ✅ |
+
+### Comentários — `/api/comments`
+
+| Método | Endpoint | Descrição | Auth |
+|--------|----------|-----------|------|
+| GET | `/api/comments/:postId` | Listar comentários de um post | ❌ |
+| POST | `/api/comments` | Criar comentário | ❌ |
+| DELETE | `/api/comments/:id` | Deletar comentário | ✅ |
+
+### Upload — `/api/upload`
+
+| Método | Endpoint | Descrição | Auth |
+|--------|----------|-----------|------|
+| POST | `/api/upload` | Upload de imagem | ✅ |
+
+### Estatísticas — `/api/stats`
+
+| Método | Endpoint | Descrição | Auth |
+|--------|----------|-----------|------|
+| GET | `/api/stats` | Estatísticas do blog | ✅ |
+
+### Instagram — `/api/instagram`
+
+| Método | Endpoint | Descrição | Auth |
+|--------|----------|-----------|------|
+| GET | `/api/instagram/feed` | Feed do Instagram | ❌ |
+
+Endpoints marcados com ✅ requerem o header:
+```
+Authorization: Bearer <seu_jwt_token>
+```
 
 ---
 
-## 🗄️ Modelos do Banco
+## 🔐 Variáveis de Ambiente
 
-- **User** — Administradores do blog
-- **Post** — Posts com título, conteúdo, excerpt, cover image
-- **Photo** — Fotos adicionais do post
-- **Comment** — Comentários nos posts
-- **Tag** — Categorias/tags
-- **PostTag** — Relação many-to-many Post ↔ Tag
+### Backend
+
+| Variável | Descrição | Obrigatória |
+|----------|-----------|-------------|
+| `DATABASE_URL` | URL de conexão PostgreSQL (Neon) | ✅ |
+| `JWT_SECRET` | Chave secreta para assinatura JWT | ✅ |
+| `PORT` | Porta do servidor (default: 3000) | ❌ |
+| `NODE_ENV` | Ambiente (`development`, `homolog`, `production`) | ❌ |
+| `FRONTEND_URL` | URL do frontend para CORS | ❌ |
+| `UPLOAD_DIR` | Diretório de uploads (default: `./uploads`) | ❌ |
+| `INSTAGRAM_TOKEN` | Token de acesso da API do Instagram | ❌ |
 
 ---
 
 ## 🚢 Deploy
 
-### Frontend (Vercel)
-Deploy automático a cada push na branch `main`. Configurado via `vercel.json`.
+### Backend — Azure Container Apps (Docker)
 
-### Backend (Azure Container Apps)
-
-```bash
-# Build da imagem no Azure Container Registry
-az acr build --registry pelosolhosderhaacr \
-  --image pelosolhosderha-api:latest \
-  --file backend/Dockerfile backend/
-
-# Atualizar Container App
-az containerapp update \
-  --name pelosolhosderha-api \
-  --resource-group rg-pelosolhosderha \
-  --image pelosolhosderhaacr.azurecr.io/pelosolhosderha-api:latest
-```
-
-### Migrations em produção
+O backend é containerizado e deployado no **Azure Container Apps**.
 
 ```bash
-DATABASE_URL="sua-url-neon" npx prisma db push
-DATABASE_URL="sua-url-neon" npx tsx src/seed.ts
+# Build da imagem Docker
+cd backend
+docker build -t pelosolhosderha-backend .
+
+# Build para produção
+npm run build
 ```
+
+O pipeline de CI/CD está configurado em [`azure/deploy.yml`](azure/deploy.yml).
+
+### Frontend — Vercel
+
+O frontend é deployado automaticamente na **Vercel** a cada push na branch `main`.
+
+A configuração está em [`vercel.json`](vercel.json):
+- **Build command:** `npx ng build --configuration production`
+- **Output directory:** `dist/pelosolhosderha/browser`
+
+#### Build Manual
+
+```bash
+# Build para produção
+npm run build
+
+# Teste local do SSR
+npm run serve:ssr:pelosolhosderha
+```
+
+### URLs dos Ambientes
+
+| Ambiente | Backend | Frontend |
+|----------|---------|---------|
+| Development | `http://localhost:3000` | `http://localhost:4200` |
+| Production | Azure Container Apps | `https://pelosolhosderha.vercel.app` |
 
 ---
 
-## 👤 Credenciais Padrão (Seed)
+## 📐 Modelos de Dados
 
-| Email | Senha |
-|-------|-------|
-| admin@pelosolhosderha.com.br | admin123 |
-| rhakramer@gmail.com | admin123 |
+### User
 
-> ⚠️ Altere as senhas após o primeiro acesso em produção.
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `id` | String (UUID) | Identificador único |
+| `email` | String | E-mail único |
+| `password` | String | Hash BCrypt |
+| `name` | String | Nome completo |
+| `role` | String | Papel (default: "admin") |
+| `createdAt` | DateTime | Data de criação |
+| `updatedAt` | DateTime | Data da última atualização |
+
+### Post
+
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `id` | String (UUID) | Identificador único |
+| `title` | String | Título do post |
+| `content` | String | Conteúdo HTML (rich-text) |
+| `excerpt` | String | Resumo do post |
+| `coverImage` | String? | URL da imagem de capa |
+| `published` | Boolean | Se está publicado |
+| `authorId` | String | FK para User |
+| `createdAt` | DateTime | Data de criação |
+| `updatedAt` | DateTime | Data da última atualização |
+
+### Tag
+
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `id` | String (UUID) | Identificador único |
+| `name` | String | Nome único da tag |
+| `color` | String | Cor hexadecimal (default: "#6366f1") |
+
+### Photo
+
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `id` | String (UUID) | Identificador único |
+| `url` | String | URL da imagem |
+| `caption` | String? | Legenda |
+| `order` | Int | Ordem de exibição |
+| `postId` | String | FK para Post |
+
+### Comment
+
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `id` | String (UUID) | Identificador único |
+| `text` | String | Texto do comentário |
+| `name` | String | Nome do autor |
+| `avatar` | String? | URL do avatar |
+| `postId` | String | FK para Post |
+| `userId` | String? | FK para User (opcional) |
+| `createdAt` | DateTime | Data de criação |
 
 ---
 
-## 📄 Licença
+## 👥 Créditos
 
-Projeto pessoal — Todos os direitos reservados © Rha Kramer
+<p><strong>Veja o mundo pelos olhos de Rha.</strong></p>
+
+_Nota: Este projeto é apenas para fins pessoais e educacionais e não possui nenhuma afiliação oficial._
+
+## 👩🏼‍💻 Autora:
+<table style="border=0">
+  <tr>
+    <td align="left">
+      <a href="https://github.com/rhayssakramer">
+        <span><b>Rhayssa Kramer</b></span>
+      </a>
+      <br>
+      <span>Sr. Assoc, Full-Stack Development</span>
+    </td>
+  </tr>
+</table>
+<div align="center"><p>© 2026 Pelos Olhos de Rha. Todos os direitos reservados.</p></div>
+
+<div align="center"><a href="https://github.com/rhayssakramer"><img src="https://github.com/rhayssakramer/rhayssakramer/blob/main/img/rodape.png"></a></div>
