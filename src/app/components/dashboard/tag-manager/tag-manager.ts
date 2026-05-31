@@ -11,15 +11,13 @@ import { BlogService } from '../../../services/blog.service';
 })
 export class TagManagerComponent {
   newTagName = '';
-  newTagColor = '#e94560';
 
   constructor(public blog: BlogService) {}
 
   addTag(): void {
     if (this.newTagName.trim()) {
-      this.blog.createTag(this.newTagName.trim(), this.newTagColor);
+      this.blog.createTag(this.newTagName.trim(), '#6366f1');
       this.newTagName = '';
-      this.newTagColor = '#e94560';
     }
   }
 

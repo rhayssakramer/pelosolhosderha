@@ -28,7 +28,19 @@ async function main() {
     },
   });
 
+  // Default tags
+  const defaultTags = ['Arte', 'Criatividade', 'Pintura', 'Desenho', 'Filme', 'Série', 'Música'];
+
+  for (const tagName of defaultTags) {
+    await prisma.tag.upsert({
+      where: { name: tagName },
+      update: {},
+      create: { name: tagName, color: '#6366f1' },
+    });
+  }
+
   console.log('✅ Seed completed. Admin users:', user.email, user2.email);
+  console.log('✅ Default tags created:', defaultTags.join(', '));
 }
 
 main()
