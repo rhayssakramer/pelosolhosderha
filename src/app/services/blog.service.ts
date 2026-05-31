@@ -60,22 +60,26 @@ export class BlogService {
   }
 
   private loadTagsFromApi(): void {
-    this.http.get<Tag[]>(`${this.apiUrl}/tags`).subscribe({
+    if (!this.isBrowser) return;
+    this.http.get<any[]>(`${this.apiUrl}/tags`).subscribe({
       next: (tags) => {
-        this.tags.set(tags);
+        const mapped: Tag[] = tags.map(t => ({ id: t.id, name: t.name, color: t.color }));
+        this.tags.set(mapped);
         this.saveTags();
       },
-      error: () => {} // fallback to localStorage data
+      error: (err) => console.error('Erro ao carregar tags da API:', err)
     });
   }
 
   private loadPostsFromApi(): void {
-    this.http.get<Post[]>(`${this.apiUrl}/posts`).subscribe({
-      next: (posts) => {
+    if (!this.isBrowser) return;
+    this.http.get<any>(`${this.apiUrl}/posts`).subscribe({
+      next: (response) => {
+        const posts = Array.isArray(response) ? response : response.posts || [];
         this.posts.set(posts);
         this.savePosts();
       },
-      error: () => {} // fallback to localStorage data
+      error: (err) => console.error('Erro ao carregar posts da API:', err)
     });
   }
 
