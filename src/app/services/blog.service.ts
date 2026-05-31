@@ -1,6 +1,8 @@
 import { Injectable, signal, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { Post, Tag, BlogSettings } from '../models/post.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +11,9 @@ export class BlogService {
   private readonly POSTS_KEY = 'blog_posts';
   private readonly TAGS_KEY = 'blog_tags';
   private readonly SETTINGS_KEY = 'blog_settings';
+  private readonly apiUrl = environment.apiUrl;
   private isBrowser: boolean;
+  private http = inject(HttpClient);
 
   posts = signal<Post[]>([]);
   tags = signal<Tag[]>([]);
@@ -18,6 +22,8 @@ export class BlogService {
   constructor() {
     this.isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
     this.loadAll();
+    this.loadTagsFromApi();
+    this.loadPostsFromApi();
   }
 
   private getDefaultSettings(): BlogSettings {
@@ -51,6 +57,26 @@ export class BlogService {
 
   private saveSettings(): void {
     if (this.isBrowser) localStorage.setItem(this.SETTINGS_KEY, JSON.stringify(this.settings()));
+  }
+
+  private loadTagsFromApi(): void {
+    this.http.get<Tag[]>(`${this.apiUrl}/tags`).subscribe({
+      next: (tags) => {
+        this.tags.set(tags);
+        this.saveTags();
+      },
+      error: () => {} // fallback to localStorage data
+    });
+  }
+
+  private loadPostsFromApi(): void {
+    this.http.get<Post[]>(`${this.apiUrl}/posts`).subscribe({
+      next: (posts) => {
+        this.posts.set(posts);
+        this.savePosts();
+      },
+      error: () => {} // fallback to localStorage data
+    });
   }
 
   // Posts
