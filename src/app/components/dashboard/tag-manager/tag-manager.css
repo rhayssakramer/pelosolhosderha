@@ -1,5 +1,13 @@
-.tag-manager { padding: 1rem; max-width: 500px; }
-.tag-manager h1 { color: #1a1a2e; margin-bottom: 1rem; font-size: 1.4rem; }
+.tag-manager { 
+  padding: 1rem; 
+  max-width: 500px; 
+}
+
+.tag-manager h1 { 
+  color: #1a1a2e; 
+  margin-bottom: 1rem; 
+  font-size: 1.4rem; 
+}
 
 .add-tag {
   display: flex;
@@ -44,7 +52,9 @@
 .tags-list {
   display: flex;
   flex-direction: column;
+  text-align: center;
   gap: 0.35rem;
+  max-width: 200px;
 }
 
 .tag-item {
@@ -81,6 +91,7 @@
 .tag-preview {
   color: white;
   padding: 0.25rem 0.7rem;
+
   border-radius: 14px;
   font-weight: 500;
   font-size: 0.85rem;
