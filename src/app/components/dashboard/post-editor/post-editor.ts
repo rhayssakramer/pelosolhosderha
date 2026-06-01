@@ -33,28 +33,41 @@ export class PostEditorComponent {
     '💪', '🤗', '💃', '🏠', '✈️', '🗺️', '📝', '💡', '🎯', '🏆', '🎉', '💐', '🎁', '👑', '💎'];
 
   quillModules = {
-    toolbar: [
-      ['bold', 'italic', 'underline', 'strike'],
-      ['blockquote', 'code-block'],
-      [{ 'header': 1 }, { 'header': 2 }],
-      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-      [{ 'align': [] }],
-      ['link', 'image', 'video'],
-      [{ 'color': [] }, { 'background': [] }],
-      [{ 'font': [] }],
-      [{ 'size': ['small', false, 'large', 'huge'] }],
-      ['clean']
-    ]
+    toolbar: {
+      container: [
+        ['bold', 'italic', 'underline', 'strike'],
+        ['blockquote', 'code-block'],
+        [{ 'header': 1 }, { 'header': 2 }],
+        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+        [{ 'align': [] }],
+        ['link', 'image', 'video'],
+        [{ 'color': [] }, { 'background': [] }],
+        [{ 'font': [] }],
+        [{ 'size': ['small', false, 'large', 'huge'] }],
+        ['emoji'],
+        ['clean']
+      ],
+      handlers: {
+        'emoji': function() {}
+      }
+    }
   };
 
   quillEditor: any;
 
   onEditorCreated(editor: any): void {
     this.quillEditor = editor;
-  }
-
-  toggleEmojiPicker(): void {
-    this.showEmojiPicker = !this.showEmojiPicker;
+    // Setup emoji button in toolbar
+    const toolbar = editor.getModule('toolbar');
+    toolbar.addHandler('emoji', () => {
+      this.showEmojiPicker = !this.showEmojiPicker;
+    });
+    // Style the emoji button
+    const emojiBtn = document.querySelector('.ql-emoji') as HTMLElement;
+    if (emojiBtn) {
+      emojiBtn.innerHTML = '😊';
+      emojiBtn.style.fontSize = '1.2rem';
+    }
   }
 
   insertEmoji(emoji: string): void {
