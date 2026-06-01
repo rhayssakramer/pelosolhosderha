@@ -34,13 +34,17 @@ tagRoutes.post('/', authMiddleware, async (req: AuthRequest, res: Response) => {
 tagRoutes.put('/reorder', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const { orderedIds } = req.body as { orderedIds: string[] };
-    await Promise.all(
+    if (!orderedIds || !Array.isArray(orderedIds) || orderedIds.length === 0) {
+      return res.status(400).json({ error: 'orderedIds é obrigatório' });
+    }
+    await prisma.$transaction(
       orderedIds.map((id, index) =>
         prisma.tag.update({ where: { id }, data: { order: index } })
       )
     );
     res.json({ message: 'Ordem atualizada' });
   } catch (error) {
+    console.error('Erro ao reordenar tags:', error);
     res.status(500).json({ error: 'Erro ao reordenar tags' });
   }
 });
