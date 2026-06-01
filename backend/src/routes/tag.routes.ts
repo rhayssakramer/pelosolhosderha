@@ -37,8 +37,13 @@ tagRoutes.put('/reorder', authMiddleware, async (req: AuthRequest, res: Response
     if (!orderedIds || !Array.isArray(orderedIds) || orderedIds.length === 0) {
       return res.status(400).json({ error: 'orderedIds é obrigatório' });
     }
-    for (let i = 0; i < orderedIds.length; i++) {
-      await prisma.tag.update({ where: { id: orderedIds[i] }, data: { order: i } });
+    // Get existing tags to validate IDs
+    const existingTags = await prisma.tag.findMany({ select: { id: true } });
+    const existingIds = new Set(existingTags.map(t => t.id));
+    const validIds = orderedIds.filter(id => existingIds.has(id));
+
+    for (let i = 0; i < validIds.length; i++) {
+      await prisma.tag.update({ where: { id: validIds[i] }, data: { order: i } });
     }
     res.json({ message: 'Ordem atualizada' });
   } catch (error: any) {

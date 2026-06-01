@@ -67,7 +67,21 @@ export class BlogService {
     this.http.get<any[]>(`${this.apiUrl}/tags`).subscribe({
       next: (tags) => {
         const mapped: Tag[] = tags.map(t => ({ id: t.id, name: t.name, color: t.color }));
-        this.tags.set(mapped);
+        const localTags = this.tags();
+
+        // If we have local tags, preserve local order and just add any new ones from API
+        if (localTags.length > 0) {
+          const apiIds = new Set(mapped.map(t => t.id));
+          const localIds = new Set(localTags.map(t => t.id));
+          // Keep local order, remove tags that no longer exist on server
+          const kept = localTags.filter(t => apiIds.has(t.id));
+          // Add new tags from API that aren't local yet
+          const newFromApi = mapped.filter(t => !localIds.has(t.id));
+          const merged = [...kept, ...newFromApi];
+          this.tags.set(merged);
+        } else {
+          this.tags.set(mapped);
+        }
         this.saveTags();
       },
       error: (err) => console.error('Erro ao carregar tags da API:', err)
@@ -136,8 +150,9 @@ export class BlogService {
     const token = this.isBrowser ? localStorage.getItem('blog_auth_token') : null;
     const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
     this.http.post<Tag>(`${this.apiUrl}/tags`, { name, color }, { headers }).subscribe({
-      next: () => {
-        this.loadTagsFromApi();
+      next: (tag) => {
+        this.tags.update(tags => [...tags, { id: tag.id, name: tag.name, color: tag.color }]);
+        this.saveTags();
       },
       error: (err) => console.error('Erro ao criar tag:', err)
     });
@@ -153,7 +168,8 @@ export class BlogService {
     const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
     this.http.delete(`${this.apiUrl}/tags/${id}`, { headers }).subscribe({
       next: () => {
-        this.loadTagsFromApi();
+        this.tags.update(tags => tags.filter(t => t.id !== id));
+        this.saveTags();
       },
       error: (err) => console.error('Erro ao deletar tag:', err)
     });
