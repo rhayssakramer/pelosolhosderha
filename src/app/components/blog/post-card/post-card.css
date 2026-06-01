@@ -121,6 +121,14 @@
   position: relative;
   margin-bottom: 1rem;
   flex: 1;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.card-excerpt * {
+  max-width: 100%;
+  overflow-wrap: break-word;
 }
 
 .card-excerpt::after {

@@ -24,6 +24,14 @@ export class PostEditorComponent {
   editingId = '';
   private isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
+  showEmojiPicker = false;
+
+  emojis = ['😀', '😂', '🥹', '😍', '🥰', '😎', '🤩', '😢', '😭', '🥺', '😤', '🤔', '🫣', '🙃', '😇',
+    '❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '🤍', '💕', '💖', '✨', '🌟', '⭐', '🔥', '💫',
+    '🌸', '🌺', '🌻', '🌷', '🌹', '🍃', '🍂', '🌊', '☀️', '🌙', '🌈', '☁️', '🦋', '🐾', '🕊️',
+    '📖', '📚', '🎬', '🎵', '🎨', '🖌️', '📷', '🎭', '☕', '🍷', '🧁', '🍰', '🫶', '👏', '🙏',
+    '💪', '🤗', '💃', '🏠', '✈️', '🗺️', '📝', '💡', '🎯', '🏆', '🎉', '💐', '🎁', '👑', '💎'];
+
   quillModules = {
     toolbar: [
       ['bold', 'italic', 'underline', 'strike'],
@@ -38,6 +46,25 @@ export class PostEditorComponent {
       ['clean']
     ]
   };
+
+  quillEditor: any;
+
+  onEditorCreated(editor: any): void {
+    this.quillEditor = editor;
+  }
+
+  toggleEmojiPicker(): void {
+    this.showEmojiPicker = !this.showEmojiPicker;
+  }
+
+  insertEmoji(emoji: string): void {
+    if (this.quillEditor) {
+      const range = this.quillEditor.getSelection(true);
+      this.quillEditor.insertText(range.index, emoji);
+      this.quillEditor.setSelection(range.index + emoji.length);
+    }
+    this.showEmojiPicker = false;
+  }
 
   constructor(
     public blog: BlogService,
