@@ -37,15 +37,13 @@ tagRoutes.put('/reorder', authMiddleware, async (req: AuthRequest, res: Response
     if (!orderedIds || !Array.isArray(orderedIds) || orderedIds.length === 0) {
       return res.status(400).json({ error: 'orderedIds é obrigatório' });
     }
-    await prisma.$transaction(
-      orderedIds.map((id, index) =>
-        prisma.tag.update({ where: { id }, data: { order: index } })
-      )
-    );
+    for (let i = 0; i < orderedIds.length; i++) {
+      await prisma.tag.update({ where: { id: orderedIds[i] }, data: { order: i } });
+    }
     res.json({ message: 'Ordem atualizada' });
-  } catch (error) {
-    console.error('Erro ao reordenar tags:', error);
-    res.status(500).json({ error: 'Erro ao reordenar tags' });
+  } catch (error: any) {
+    console.error('Erro ao reordenar tags:', error?.message || error);
+    res.status(500).json({ error: 'Erro ao reordenar tags', details: error?.message });
   }
 });
 
