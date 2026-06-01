@@ -21,3 +21,24 @@ span[class*="embed_grid"][class*="board"] {
     width: 280px;
     border: 1px solid #8c6add;
 }
+
+/* Allow Quill formatted content (colors, fonts) to render inside post cards */
+app-post-card .card-excerpt span[style],
+app-post-card .card-excerpt p,
+app-post-card .card-excerpt strong,
+app-post-card .card-excerpt em,
+app-post-card .card-excerpt h1,
+app-post-card .card-excerpt h2 {
+    all: revert;
+    max-width: 100%;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+app-post-card .card-excerpt {
+    max-width: 100%;
+    overflow: hidden;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
