@@ -11,13 +11,26 @@
 
     <div class="form-group">
       <label>Conteúdo</label>
-      <quill-editor
-        [(ngModel)]="content"
-        name="content"
-        [modules]="quillModules"
-        placeholder="Escreva seu conteúdo aqui..."
-        [styles]="{ height: '350px' }">
-      </quill-editor>
+      <div class="editor-wrapper">
+        <quill-editor
+          [(ngModel)]="content"
+          name="content"
+          [modules]="quillModules"
+          placeholder="Escreva seu conteúdo aqui..."
+          [styles]="{ height: '350px' }"
+          (onEditorCreated)="onEditorCreated($event)">
+        </quill-editor>
+        <div class="emoji-container">
+          <button type="button" class="btn-emoji-toggle" (click)="toggleEmojiPicker()">😊</button>
+          @if (showEmojiPicker) {
+            <div class="emoji-picker">
+              @for (emoji of emojis; track emoji) {
+                <button type="button" class="emoji-item" (click)="insertEmoji(emoji)">{{ emoji }}</button>
+              }
+            </div>
+          }
+        </div>
+      </div>
     </div>
 
     <div class="form-group">

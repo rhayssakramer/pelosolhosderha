@@ -124,6 +124,28 @@ export class BlogService {
     };
     this.posts.update(posts => [...posts, newPost]);
     this.savePosts();
+
+    if (this.useApi) {
+      const token = this.isBrowser ? localStorage.getItem('blog_auth_token') : null;
+      const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
+      this.http.post<any>(`${this.apiUrl}/posts`, {
+        title: post.title,
+        content: post.content,
+        excerpt: post.excerpt,
+        coverImage: post.coverImage,
+        published: post.published,
+        tags: post.tags
+      }, { headers }).subscribe({
+        next: (saved) => {
+          // Update local post with server ID
+          this.posts.update(posts => posts.map(p =>
+            p.id === newPost.id ? { ...p, id: saved.id } : p
+          ));
+          this.savePosts();
+        },
+        error: (err) => console.error('Erro ao criar post na API:', err)
+      });
+    }
     return newPost;
   }
 
@@ -132,11 +154,34 @@ export class BlogService {
       p.id === id ? { ...p, ...updates, updatedAt: new Date().toISOString() } : p
     ));
     this.savePosts();
+
+    if (this.useApi) {
+      const token = this.isBrowser ? localStorage.getItem('blog_auth_token') : null;
+      const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
+      this.http.put<any>(`${this.apiUrl}/posts/${id}`, {
+        title: updates.title,
+        content: updates.content,
+        excerpt: updates.excerpt,
+        coverImage: updates.coverImage,
+        published: updates.published,
+        tags: updates.tags
+      }, { headers }).subscribe({
+        error: (err) => console.error('Erro ao atualizar post na API:', err)
+      });
+    }
   }
 
   deletePost(id: string): void {
     this.posts.update(posts => posts.filter(p => p.id !== id));
     this.savePosts();
+
+    if (this.useApi) {
+      const token = this.isBrowser ? localStorage.getItem('blog_auth_token') : null;
+      const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
+      this.http.delete(`${this.apiUrl}/posts/${id}`, { headers }).subscribe({
+        error: (err) => console.error('Erro ao deletar post na API:', err)
+      });
+    }
   }
 
   // Tags
