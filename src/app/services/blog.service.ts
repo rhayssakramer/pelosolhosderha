@@ -160,20 +160,20 @@ export class BlogService {
   }
 
   reorderTags(orderedIds: string[]): void {
-    if (!this.useApi) {
-      const currentTags = this.tags();
-      const reordered = orderedIds.map(id => currentTags.find(t => t.id === id)!).filter(Boolean);
-      this.tags.set(reordered);
-      this.saveTags();
-      return;
-    }
+    const currentTags = this.tags();
+    const reordered = orderedIds.map(id => currentTags.find(t => t.id === id)!).filter(Boolean);
+    this.tags.set(reordered);
+    this.saveTags();
+
+    if (!this.useApi) return;
+
     const token = this.isBrowser ? localStorage.getItem('blog_auth_token') : null;
     const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
     this.http.put(`${this.apiUrl}/tags/reorder`, { orderedIds }, { headers }).subscribe({
-      next: () => {
+      error: (err) => {
+        console.error('Erro ao reordenar tags:', err);
         this.loadTagsFromApi();
-      },
-      error: (err) => console.error('Erro ao reordenar tags:', err)
+      }
     });
   }
 
