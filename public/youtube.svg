@@ -1,7 +1,1 @@
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<!-- Uploaded to: SVG Repo, www.svgrepo.com, Transformed by: SVG Repo Mixer Tools -->
-<svg fill="#8c6add" height="800px" width="800px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-143 145 512 512" xml:space="preserve">
-<g id="SVGRepo_bgCarrier" stroke-width="0"/>
-<g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
-<g id="SVGRepo_iconCarrier"> <g> <polygon points="78.9,450.3 162.7,401.1 78.9,351.9 "/> <path d="M113,145c-141.4,0-256,114.6-256,256s114.6,256,256,256s256-114.6,256-256S254.4,145,113,145z M241,446.8L241,446.8 c0,44.1-44.1,44.1-44.1,44.1H29.1c-44.1,0-44.1-44.1-44.1-44.1v-91.5c0-44.1,44.1-44.1,44.1-44.1h167.8c44.1,0,44.1,44.1,44.1,44.1 V446.8z"/> </g> </g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" fill="#8c6add"/><path fill-rule="evenodd" clip-rule="evenodd" d="M35.3 16.38c.4.4.69.9.83 1.44.85 3.42.65 8.81.02 12.36-.15.54-.44 1.04-.84 1.44-.4.4-.9.69-1.44.83C31.88 33 23.85 33 23.85 33s-8.03 0-10.02-.54c-.55-.15-1.04-.44-1.44-.84-.4-.4-.69-.9-.83-1.44-.86-3.4-.62-8.8-.02-12.35.15-.54.44-1.04.84-1.44.4-.4.9-.69 1.44-.83C15.81 15.02 23.84 15 23.84 15s8.03 0 10.02.54c.55.15 1.04.44 1.44.84zM27.94 24L21.28 27.86V20.14L27.94 24z" fill="white"/></svg>
