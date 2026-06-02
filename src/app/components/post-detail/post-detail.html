@@ -74,7 +74,7 @@
               <img [src]="post.coverImage" [alt]="post.title" class="post-cover">
             }
           </div>
-          <div class="post-body" [innerHTML]="post.content"></div>
+          <div class="post-body" [innerHTML]="post.content | safe:'html'"></div>
 
           <!-- Post Footer -->
           <div class="post-footer">
