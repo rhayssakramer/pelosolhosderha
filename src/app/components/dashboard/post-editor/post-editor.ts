@@ -67,6 +67,9 @@ export class PostEditorComponent {
     if (emojiBtn) {
       emojiBtn.innerHTML = '😊';
       emojiBtn.style.fontSize = '1.2rem';
+      emojiBtn.style.position = 'relative';
+      emojiBtn.style.left = '-5px';
+      emojiBtn.style.top = '-5px';
     }
   }
 
