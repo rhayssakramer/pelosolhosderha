@@ -315,6 +315,11 @@
   line-height: 1.9;
   color: #333;
   font-size: 1.05rem;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow: hidden;
 }
 
 .post-body p {

@@ -6,10 +6,11 @@ import { StatsService } from '../../services/stats.service';
 import { InstagramService } from '../../services/instagram.service';
 import { YouTubeService } from '../../services/youtube.service';
 import { Post } from '../../models/post.model';
+import { SafePipe } from '../../pipes/safe.pipe';
 
 @Component({
   selector: 'app-post-detail',
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, SafePipe],
   templateUrl: './post-detail.html',
   styleUrl: './post-detail.css'
 })
