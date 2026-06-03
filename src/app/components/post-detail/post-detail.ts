@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { BlogService } from '../../services/blog.service';
@@ -12,7 +12,8 @@ import { SafePipe } from '../../pipes/safe.pipe';
   selector: 'app-post-detail',
   imports: [CommonModule, RouterLink, SafePipe],
   templateUrl: './post-detail.html',
-  styleUrl: './post-detail.css'
+  styleUrl: './post-detail.css',
+  encapsulation: ViewEncapsulation.None
 })
 export class PostDetailComponent {
   post?: Post;
@@ -25,6 +26,11 @@ export class PostDetailComponent {
 
   encodeURI(str: string) {
     return encodeURIComponent(str);
+  }
+
+  getSanitizedContent(): string {
+    if (!this.post?.content) return '';
+    return this.post.content.replace(/&nbsp;/g, ' ').replace(/\u00A0/g, ' ');
   }
 
   getFullImageUrl(url: string): string {
