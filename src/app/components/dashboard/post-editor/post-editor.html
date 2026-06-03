@@ -54,7 +54,7 @@
         @for (tag of blog.tags(); track tag.id) {
           <button type="button"
             class="tag-btn"
-            [class.selected]="selectedTags.includes(tag.name)"
+            [class.selected]="selectedTags().includes(tag.name)"
             [style.--tag-color]="tag.color"
             (click)="toggleTag(tag.name)">
             {{ tag.name }}
