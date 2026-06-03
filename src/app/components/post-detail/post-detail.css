@@ -260,13 +260,49 @@
   margin-top: -30px;
 }
 
+.pin-image-wrapper {
+  position: relative;
+  display: inline-block;
+  max-width: 600px;
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+.pin-image-wrapper:hover .pin-save-btn {
+  opacity: 1;
+}
+
+.pin-save-btn {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #e60023;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 14px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s;
+  z-index: 2;
+}
+
+.pin-save-btn:hover {
+  background: #ad081b;
+}
+
 .post-cover {
   width: 100%;
   max-width: 600px;
   height: auto;
   object-fit: contain;
   border-radius: 8px;
-  margin-bottom: 2rem;
 }
 
 .post-article {
