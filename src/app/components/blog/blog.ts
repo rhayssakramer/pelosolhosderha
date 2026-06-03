@@ -1,6 +1,6 @@
 import { Component, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { BlogService } from '../../services/blog.service';
 import { StatsService } from '../../services/stats.service';
 import { InstagramService } from '../../services/instagram.service';
@@ -28,7 +28,19 @@ export class BlogComponent {
     this.isStuck = window.scrollY > 320;
   }
 
-  constructor(public blog: BlogService, private stats: StatsService, public instagram: InstagramService, public youtube: YouTubeService) {}
+  constructor(public blog: BlogService, private stats: StatsService, public instagram: InstagramService, public youtube: YouTubeService, private route: ActivatedRoute) {
+    this.route.queryParamMap.subscribe(params => {
+      const tag = params.get('tag');
+      const month = params.get('month');
+      if (tag) {
+        this.selectedTag = tag;
+        this.selectedMonth = '';
+      } else if (month) {
+        this.selectedMonth = month;
+        this.selectedTag = '';
+      }
+    });
+  }
 
   get featuredPosts(): Post[] {
     return this.blog.getPublishedPosts().slice(0, 9);
