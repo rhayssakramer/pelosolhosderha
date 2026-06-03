@@ -196,13 +196,13 @@
   border-radius: 12px;
   padding: 0.75rem;
   display: grid;
-  grid-template-columns: repeat(10, 1fr);
+  grid-template-columns: repeat(12, 1fr);
   gap: 2px;
-  max-height: 250px;
+  max-height: 320px;
   overflow-y: auto;
   box-shadow: 0 4px 16px rgba(0,0,0,0.15);
   z-index: 1000;
-  width: 360px;
+  width: 420px;
 }
 
 .emoji-item {
