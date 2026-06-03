@@ -275,6 +275,9 @@
   border: 1px solid #8c6add;
   padding: 2rem;
   border-radius: 8px;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
 }
 
 .post-header {
