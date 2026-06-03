@@ -27,6 +27,32 @@ export class PostDetailComponent {
     return encodeURIComponent(str);
   }
 
+  getFullImageUrl(url: string): string {
+    if (!url) return '';
+    if (url.startsWith('http')) return url;
+    if (typeof window !== 'undefined') {
+      return window.location.origin + (url.startsWith('/') ? url : '/' + url);
+    }
+    return url;
+  }
+
+  pinIt(event: Event): void {
+    event.preventDefault();
+    if (typeof window === 'undefined') return;
+    const w: any = window;
+    if (w.PinUtils) {
+      w.PinUtils.pinOne({
+        url: this.currentUrl,
+        media: this.getFullImageUrl(this.post?.coverImage || ''),
+        description: this.post?.title || ''
+      });
+    } else {
+      // Fallback: open Pinterest pin builder letting user pick image from page
+      const pinUrl = `https://www.pinterest.com/pin-builder/?url=${encodeURIComponent(this.currentUrl)}&description=${encodeURIComponent(this.post?.title || '')}`;
+      window.open(pinUrl, '_blank', 'width=750,height=550');
+    }
+  }
+
   @HostListener('window:scroll')
   onScroll() {
     this.isStuck = window.scrollY > 320;
