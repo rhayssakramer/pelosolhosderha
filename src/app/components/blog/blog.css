@@ -393,7 +393,7 @@
   grid-template-columns: repeat(3, 1fr);
   gap: 0.5rem 0.8rem;
   align-items: start;
-  margin-bottom: 950px;
+  margin-bottom: 900px;
 }
 
 .sidebar {
