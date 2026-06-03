@@ -21,6 +21,7 @@ export class PostDetailComponent {
   showAllArchive = false;
   searchTerm = '';
   currentUrl = '';
+  mobileMenuOpen = false;
 
   encodeURI(str: string) {
     return encodeURIComponent(str);
