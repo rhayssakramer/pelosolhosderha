@@ -17,14 +17,14 @@
 
   <nav class="tags-menu-overlay" [class.hidden]="isStuck">
     @for (tag of blog.tags().slice(0, 8); track tag.id) {
-      <a routerLink="/" class="tag-menu-item">{{ tag.name | uppercase }}</a>
+      <a (click)="filterByTag(tag.name)" class="tag-menu-item" [class.active]="selectedTag === tag.name">{{ tag.name | uppercase }}</a>
     }
     @if (blog.tags().length > 8) {
       <div class="tag-menu-more">
         <button class="tag-menu-item">MAIS ▾</button>
         <div class="more-tags-dropdown">
           @for (tag of blog.tags().slice(8); track tag.id) {
-            <a routerLink="/" class="dropdown-item">{{ tag.name }}</a>
+            <a (click)="filterByTag(tag.name)" class="dropdown-item" [class.active]="selectedTag === tag.name">{{ tag.name }}</a>
           }
         </div>
       </div>
@@ -46,14 +46,14 @@
   </nav>
   <nav class="tags-menu">
     @for (tag of blog.tags().slice(0, 8); track tag.id) {
-      <a routerLink="/" class="tag-menu-item">{{ tag.name | uppercase }}</a>
+      <a (click)="filterByTag(tag.name)" class="tag-menu-item" [class.active]="selectedTag === tag.name">{{ tag.name | uppercase }}</a>
     }
     @if (blog.tags().length > 8) {
       <div class="tag-menu-more">
         <button class="tag-menu-item">MAIS ▾</button>
         <div class="more-tags-dropdown">
           @for (tag of blog.tags().slice(8); track tag.id) {
-            <a routerLink="/" class="dropdown-item">{{ tag.name }}</a>
+            <a (click)="filterByTag(tag.name)" class="dropdown-item" [class.active]="selectedTag === tag.name">{{ tag.name }}</a>
           }
         </div>
       </div>
@@ -131,7 +131,7 @@
         <h3 class="widget-title">CATEGORIAS</h3>
         <div class="categories-cloud">
           @for (tag of blog.tags(); track tag.id) {
-            <a [routerLink]="['/']" class="category-item">
+            <a (click)="filterByTag(tag.name)" class="category-item" [class.active]="selectedTag === tag.name">
               {{ tag.name }} <span class="category-count">({{ getPostCountByTag(tag.name) }})</span>
             </a>
           } @empty {
@@ -165,7 +165,7 @@
         <ul class="archive-list">
           @for (month of showAllArchive ? getArchiveMonths() : getArchiveMonths().slice(0, 5); track month.label) {
             <li>
-              <a (click)="filterByMonth(month.label)" class="archive-item">
+              <a (click)="filterByMonth(month.label)" class="archive-item" [class.active]="selectedMonth === month.label">
                 {{ month.label }} <span class="archive-count">({{ month.count }})</span>
               </a>
             </li>

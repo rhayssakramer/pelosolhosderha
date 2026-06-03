@@ -16,6 +16,8 @@ import { PostCardComponent } from './post-card/post-card';
 })
 export class BlogComponent {
   searchTerm = '';
+  selectedTag = '';
+  selectedMonth = '';
   showMoreTags = false;
   isStuck = false;
   sliderIndex = 0;
@@ -48,8 +50,25 @@ export class BlogComponent {
     this.searchTerm = (event.target as HTMLInputElement).value.toLowerCase();
   }
 
+  filterByTag(tagName: string): void {
+    this.selectedTag = this.selectedTag === tagName ? '' : tagName;
+    this.selectedMonth = '';
+    this.searchTerm = '';
+  }
+
   get filteredPosts() {
-    const posts = this.blog.getPublishedPosts();
+    let posts = this.blog.getPublishedPosts();
+    if (this.selectedTag) {
+      posts = posts.filter(p => p.tags.some(t => t.toLowerCase() === this.selectedTag.toLowerCase()));
+    }
+    if (this.selectedMonth) {
+      posts = posts.filter(p => {
+        const d = new Date(p.createdAt);
+        const month = d.toLocaleDateString('pt-BR', { month: 'long' });
+        const label = `${month.charAt(0).toUpperCase() + month.slice(1)} ${d.getFullYear()}`;
+        return label === this.selectedMonth;
+      });
+    }
     if (!this.searchTerm) return posts;
     return posts.filter(p =>
       p.title.toLowerCase().includes(this.searchTerm) ||
@@ -82,6 +101,8 @@ export class BlogComponent {
   }
 
   filterByMonth(label: string) {
-    this.searchTerm = label.split(' de ')[0];
+    this.selectedMonth = this.selectedMonth === label ? '' : label;
+    this.selectedTag = '';
+    this.searchTerm = '';
   }
 }
