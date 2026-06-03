@@ -198,7 +198,21 @@
 }
 
 .tag-menu-item:hover {
-  opacity: 0.6;
+  opacity: 0.7;
+}
+
+.tag-menu-item.active {
+  text-decoration: none;
+  opacity: 0.8;
+}
+
+.category-item {
+  cursor: pointer;
+}
+
+.category-item.active {
+  font-weight: 700;
+  color: #8c6add;
 }
 
 .tag-menu-more {
@@ -653,6 +667,12 @@
 }
 
 .archive-item:hover {
+  opacity: 0.7;
+  color: #8c6add;
+}
+
+.archive-item.active {
+  font-weight: 700;
   color: #8c6add;
 }
 
