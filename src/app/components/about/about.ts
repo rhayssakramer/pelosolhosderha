@@ -18,6 +18,7 @@ export class AboutComponent {
   isStuck = false;
   searchTerm = '';
   showAllArchive = false;
+  mobileMenuOpen = false;
 
   @HostListener('window:scroll')
   onScroll() {

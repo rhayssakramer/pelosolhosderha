@@ -44,3 +44,4 @@ Thumbs.db
 # Environment files
 backend/.env*
 .env*
+src/app/components/blog/blog.css

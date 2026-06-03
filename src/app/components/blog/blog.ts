@@ -20,6 +20,8 @@ export class BlogComponent {
   isStuck = false;
   sliderIndex = 0;
   showAllArchive = false;
+  mobileMenuOpen = false;
+  mobileSearchOpen = false;
 
   @HostListener('window:scroll')
   onScroll() {
