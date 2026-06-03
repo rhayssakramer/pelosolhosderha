@@ -65,21 +65,26 @@ export class PostDetailComponent {
     public instagram: InstagramService,
     public youtube: YouTubeService
   ) {
-    if (typeof window !== 'undefined') {
-      this.currentUrl = window.location.href;
-    }
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.post = this.blog.getPostById(id);
-      if (this.post) {
-        this.stats.trackView(id);
-        const allPosts = this.blog.getPublishedPosts()
-          .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-        const idx = allPosts.findIndex(p => p.id === id);
-        if (idx > 0) this.previousPost = allPosts[idx - 1];
-        if (idx < allPosts.length - 1) this.nextPost = allPosts[idx + 1];
+    this.route.paramMap.subscribe(params => {
+      const id = params.get('id');
+      if (typeof window !== 'undefined') {
+        this.currentUrl = window.location.href;
       }
-    }
+      if (id) {
+        this.post = this.blog.getPostById(id);
+        if (this.post) {
+          this.stats.trackView(id);
+          const allPosts = this.blog.getPublishedPosts()
+            .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+          const idx = allPosts.findIndex(p => p.id === id);
+          this.previousPost = idx > 0 ? allPosts[idx - 1] : undefined;
+          this.nextPost = idx < allPosts.length - 1 ? allPosts[idx + 1] : undefined;
+        }
+      }
+      if (typeof window !== 'undefined') {
+        window.scrollTo(0, 0);
+      }
+    });
   }
 
   onSearch(event: Event): void {
