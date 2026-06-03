@@ -256,6 +256,7 @@
 /* Post content */
 .post-content {
   min-width: 0;
+  max-width: 100%;
   padding: 2rem 1rem;
   margin-top: -30px;
 }
@@ -306,14 +307,13 @@
 }
 
 .post-article {
-  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
   background: #fafafa;
   border: 1px solid #8c6add;
   padding: 2rem;
   border-radius: 8px;
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-  word-break: break-word;
+  overflow: hidden;
 }
 
 .post-header {
@@ -351,19 +351,51 @@
 }
 
 .post-body {
-  line-height: 1.9;
+  line-height: 1.7;
   color: #333;
   font-size: 1.05rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.post-body p {
+  white-space: normal;
+}
+
+.post-body * {
   max-width: 100%;
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-  word-break: break-word;
-  overflow: hidden;
 }
 
 .post-body p {
   margin-bottom: 1.5rem;
 }
+
+.post-body ol,
+.post-body ul {
+  padding-left: 1.5em;
+  margin-bottom: 1.5rem;
+}
+
+.post-body li {
+  padding-left: 0.5em;
+}
+
+.post-body li.ql-indent-1 { padding-left: 3em !important; }
+.post-body li.ql-indent-2 { padding-left: 6em !important; }
+.post-body li.ql-indent-3 { padding-left: 9em !important; }
+.post-body li.ql-indent-4 { padding-left: 12em !important; }
+.post-body li.ql-indent-5 { padding-left: 15em !important; }
+.post-body li.ql-indent-6 { padding-left: 18em !important; }
+.post-body li.ql-indent-7 { padding-left: 21em !important; }
+.post-body li.ql-indent-8 { padding-left: 24em !important; }
+.post-body .ql-indent-1 { padding-left: 3em; }
+.post-body .ql-indent-2 { padding-left: 6em; }
+.post-body .ql-indent-3 { padding-left: 9em; }
+.post-body .ql-indent-4 { padding-left: 12em; }
+.post-body .ql-indent-5 { padding-left: 15em; }
+.post-body .ql-indent-6 { padding-left: 18em; }
+.post-body .ql-indent-7 { padding-left: 21em; }
+.post-body .ql-indent-8 { padding-left: 24em; }
 
 .post-body img {
   max-width: 100%;
