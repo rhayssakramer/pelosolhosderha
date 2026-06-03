@@ -1,4 +1,4 @@
-import { Component, signal, PLATFORM_ID, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, signal, PLATFORM_ID, inject, ChangeDetectorRef, WritableSignal } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -18,7 +18,7 @@ export class PostEditorComponent {
   excerpt = '';
   coverImage = '';
   coverPreview = '';
-  selectedTags: string[] = [];
+  selectedTags = signal<string[]>([]);
   published = false;
   isEditing = false;
   editingId = '';
@@ -128,18 +128,19 @@ export class PostEditorComponent {
         this.excerpt = post.excerpt;
         this.coverImage = post.coverImage || '';
         this.coverPreview = post.coverImage || '';
-        this.selectedTags = [...post.tags];
+        this.selectedTags.set([...post.tags]);
         this.published = post.published;
       }
     }
   }
 
   toggleTag(tagName: string): void {
-    const idx = this.selectedTags.indexOf(tagName);
+    const current = this.selectedTags();
+    const idx = current.indexOf(tagName);
     if (idx >= 0) {
-      this.selectedTags.splice(idx, 1);
+      this.selectedTags.set(current.filter((_, i) => i !== idx));
     } else {
-      this.selectedTags.push(tagName);
+      this.selectedTags.set([...current, tagName]);
     }
   }
 
@@ -171,7 +172,7 @@ export class PostEditorComponent {
         content: this.content,
         excerpt: this.excerpt,
         coverImage: this.coverImage || undefined,
-        tags: this.selectedTags,
+        tags: this.selectedTags(),
         published: this.published
       });
     } else {
@@ -180,7 +181,7 @@ export class PostEditorComponent {
         content: this.content,
         excerpt: this.excerpt,
         coverImage: this.coverImage || undefined,
-        tags: this.selectedTags,
+        tags: this.selectedTags(),
         published: this.published
       });
     }
