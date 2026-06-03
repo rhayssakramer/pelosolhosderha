@@ -17,14 +17,14 @@
 
   <nav class="tags-menu-overlay" [class.hidden]="isStuck">
     @for (tag of blog.tags().slice(0, 8); track tag.id) {
-      <a routerLink="/" class="tag-menu-item">{{ tag.name | uppercase }}</a>
+      <a (click)="filterByTag(tag.name)" class="tag-menu-item">{{ tag.name | uppercase }}</a>
     }
     @if (blog.tags().length > 8) {
       <div class="tag-menu-more">
         <button class="tag-menu-item">MAIS ▾</button>
         <div class="more-tags-dropdown">
           @for (tag of blog.tags().slice(8); track tag.id) {
-            <a routerLink="/" class="dropdown-item">{{ tag.name }}</a>
+            <a (click)="filterByTag(tag.name)" class="dropdown-item">{{ tag.name }}</a>
           }
         </div>
       </div>
@@ -46,14 +46,14 @@
   </nav>
   <nav class="tags-menu">
     @for (tag of blog.tags().slice(0, 8); track tag.id) {
-      <a routerLink="/" class="tag-menu-item">{{ tag.name | uppercase }}</a>
+      <a (click)="filterByTag(tag.name)" class="tag-menu-item">{{ tag.name | uppercase }}</a>
     }
     @if (blog.tags().length > 8) {
       <div class="tag-menu-more">
         <button class="tag-menu-item">MAIS ▾</button>
         <div class="more-tags-dropdown">
           @for (tag of blog.tags().slice(8); track tag.id) {
-            <a routerLink="/" class="dropdown-item">{{ tag.name }}</a>
+            <a (click)="filterByTag(tag.name)" class="dropdown-item">{{ tag.name }}</a>
           }
         </div>
       </div>
@@ -88,7 +88,7 @@
               <div class="post-tags-footer">
                 <span class="tags-icon">Tags:</span>
                 @for (tag of post.tags; track tag) {
-                  <a routerLink="/" class="tag-link">{{ tag }}</a>
+                  <a (click)="filterByTag(tag)" class="tag-link">{{ tag }}</a>
                 }
                 <div class="tags-share">
                   <a [href]="'https://www.instagram.com/share?url=' + encodeURI(currentUrl)" target="_blank" class="tags-share-btn" title="Compartilhar no Instagram">
@@ -247,7 +247,7 @@
         <h3 class="widget-title">CATEGORIAS</h3>
         <div class="categories-cloud">
           @for (tag of blog.tags(); track tag.id) {
-            <a [routerLink]="['/']" class="category-item">
+            <a (click)="filterByTag(tag.name)" class="category-item">
               {{ tag.name }} <span class="category-count">({{ getPostCountByTag(tag.name) }})</span>
             </a>
           } @empty {

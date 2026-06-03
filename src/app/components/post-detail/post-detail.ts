@@ -1,6 +1,6 @@
 import { Component, HostListener, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { BlogService } from '../../services/blog.service';
 import { StatsService } from '../../services/stats.service';
 import { InstagramService } from '../../services/instagram.service';
@@ -66,6 +66,7 @@ export class PostDetailComponent {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     public blog: BlogService,
     private stats: StatsService,
     public instagram: InstagramService,
@@ -120,7 +121,13 @@ export class PostDetailComponent {
     return Array.from(map.entries()).map(([label, count]) => ({ label, count }));
   }
 
-  filterByMonth(label: string) {}
+  filterByMonth(label: string) {
+    this.router.navigate(['/'], { queryParams: { month: label } });
+  }
+
+  filterByTag(tagName: string) {
+    this.router.navigate(['/'], { queryParams: { tag: tagName } });
+  }
 
   getRelatedPosts(): Post[] {
     if (!this.post) return [];
