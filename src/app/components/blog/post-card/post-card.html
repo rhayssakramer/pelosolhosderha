@@ -14,7 +14,7 @@
     <h2 class="card-title">
       <a [routerLink]="['/post', post.id]">{{ post.title }}</a>
     </h2>
-    <div class="card-excerpt" [innerHTML]="(post.excerpt || post.content) | safe:'html'"></div>
+    <div class="card-excerpt">{{ excerptText }}</div>
     <a [routerLink]="['/post', post.id]" class="card-read-more">Continue lendo</a>
   </div>
 </article>

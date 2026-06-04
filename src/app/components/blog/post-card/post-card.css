@@ -1,12 +1,13 @@
 .card {
   display: flex;
   width: 100%;
-  max-width: 320px;
+  max-width: 330px;
   flex-direction: column;
   background: #fafafa;
   border-radius: 4px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
   transition: box-shadow 0.2s;
+  margin-bottom: 1rem;
 }
 
 .card:hover {
@@ -122,10 +123,26 @@
   position: relative;
   margin-bottom: 1rem;
   flex: 1;
+  margin: 0;
+  white-space: normal !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+  columns: auto !important;
+  column-count: auto !important;
+  float: none !important;
+  width: auto !important;
+  max-width: none !important;
 }
 
 .card-excerpt * {
-  max-width: 100%;
+  white-space: normal !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+  columns: auto !important;
+  column-count: auto !important;
+  float: none !important;
+  width: auto !important;
+  max-width: none !important;
 }
 
 .card-excerpt::after {

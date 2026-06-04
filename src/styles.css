@@ -29,16 +29,14 @@ app-post-card .card-excerpt strong,
 app-post-card .card-excerpt em,
 app-post-card .card-excerpt h1,
 app-post-card .card-excerpt h2 {
-    all: revert;
     max-width: 100%;
-    word-wrap: break-word;
     overflow-wrap: break-word;
+    word-break: normal;
 }
 
 app-post-card .card-excerpt {
     max-width: 100%;
     overflow: hidden;
-    word-wrap: break-word;
     overflow-wrap: break-word;
-    word-break: break-word;
+    word-break: normal;
 }
