@@ -756,7 +756,6 @@
   font-family: 'Fredoka', sans-serif;
 }
 
-<<<<<<< HEAD
 /* ===== HAMBURGER & MOBILE ===== */
 .hamburger {
   display: none;
@@ -799,8 +798,6 @@
   outline: none;
 }
 
-=======
->>>>>>> main
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
   .content-grid {
@@ -820,7 +817,6 @@
     height: 140px;
   }
 }
-<<<<<<< HEAD
 
 @media (max-width: 600px) {
   .sidebar {
@@ -945,5 +941,3 @@
     background-color: #8c6add;
   }
 }
-=======
->>>>>>> main
