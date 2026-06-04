@@ -656,7 +656,6 @@
   font-family: 'Fredoka', sans-serif;
 }
 
-<<<<<<< HEAD
 /* ===== HAMBURGER & MOBILE ===== */
 .hamburger {
   display: none;
@@ -708,7 +707,9 @@
 
   .contact-container {
     width: 100%;
-=======
+ }
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
   .content-grid {
@@ -716,14 +717,12 @@
   }
 
   .contact-container {
->>>>>>> main
     padding: 2rem 1.5rem;
   }
 
   .contact-title {
     font-size: 2rem;
   }
-<<<<<<< HEAD
 
   .sidebar {
     margin-right: 0;
@@ -857,6 +856,4 @@
     display: flex;
     background-color: #8c6add;
   }
-=======
->>>>>>> main
 }

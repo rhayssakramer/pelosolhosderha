@@ -2,10 +2,7 @@
   display: block;
   position: relative;
   min-height: 100vh;
-<<<<<<< HEAD
   max-width: 100vw;
-=======
->>>>>>> main
 }
 
 /* Header */
@@ -202,10 +199,7 @@
 }
 
 .tag-menu-item:hover {
-<<<<<<< HEAD
   opacity: 0.6;
-=======
-  opacity: 0.7;
 }
 
 .tag-menu-item.active {
@@ -220,20 +214,16 @@
 .category-item.active {
   font-weight: 700;
   color: #8c6add;
->>>>>>> main
 }
 
 .tag-menu-more {
   position: relative;
 }
 
-<<<<<<< HEAD
 .tag-menu-more.desktop-hidden {
   display: none;
 }
 
-=======
->>>>>>> main
 .more-tags-dropdown {
   position: absolute;
   top: 100%;
@@ -247,11 +237,7 @@
   min-width: 150px;
   z-index: 200;
   margin-top: 0;
-<<<<<<< HEAD
   padding-top: 1rem,;
-=======
-  padding-top: 1rem;
->>>>>>> main
   display: none;
 }
 
@@ -412,11 +398,7 @@
   grid-template-columns: repeat(3, 1fr);
   gap: 0.5rem 0.8rem;
   align-items: start;
-<<<<<<< HEAD
   margin-bottom: 1050px;
-=======
-  margin-bottom: 900px;
->>>>>>> main
 }
 
 .sidebar {
@@ -556,13 +538,9 @@
   content: '';
   position: absolute;
   inset: 0;
-<<<<<<< HEAD
   background: black;
   border-radius: 50%;
   filter: brightness(0) saturate(100%) invert(45%) sepia(74%) saturate(1500%) hue-rotate(230deg) brightness(85%) contrast(90%);
-=======
-  border-radius: 50%;
->>>>>>> main
   z-index: 0;
 }
 
@@ -697,15 +675,12 @@
 }
 
 .archive-item:hover {
-<<<<<<< HEAD
-=======
   opacity: 0.7;
   color: #8c6add;
 }
 
 .archive-item.active {
   font-weight: 700;
->>>>>>> main
   color: #8c6add;
 }
 
@@ -914,7 +889,6 @@
   font-size: 0.85rem;
   font-family: 'Fredoka', sans-serif;
 }
-<<<<<<< HEAD
 
 /* Responsivo */
 @media (max-width: 1330px) {
@@ -1211,5 +1185,3 @@
     margin-top: -1px;
   }
 }
-=======
->>>>>>> main

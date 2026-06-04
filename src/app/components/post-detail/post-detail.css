@@ -256,15 +256,11 @@
 /* Post content */
 .post-content {
   min-width: 0;
-<<<<<<< HEAD
-=======
   max-width: 100%;
->>>>>>> main
   padding: 2rem 1rem;
   margin-top: -30px;
 }
 
-<<<<<<< HEAD
 .post-cover {
   width: 100%;
   max-width: 600px;
@@ -284,7 +280,8 @@
 
 .post-header {
   display: flex;
-=======
+ }
+
 .pin-image-wrapper {
   position: relative;
   display: inline-block;
@@ -342,7 +339,6 @@
 
 .post-header {
   display: flex;
->>>>>>> main
   flex-direction: column;
   align-items: center;
   text-align: center;
@@ -376,11 +372,9 @@
 }
 
 .post-body {
-<<<<<<< HEAD
   line-height: 1.9;
   color: #333;
   font-size: 1.05rem;
-=======
   line-height: 1.7;
   color: #333;
   font-size: 1.05rem;
@@ -394,15 +388,12 @@
 
 .post-body * {
   max-width: 100%;
->>>>>>> main
 }
 
 .post-body p {
   margin-bottom: 1.5rem;
 }
 
-<<<<<<< HEAD
-=======
 .post-body ol,
 .post-body ul {
   padding-left: 1.5em;
@@ -430,7 +421,6 @@
 .post-body .ql-indent-7 { padding-left: 21em; }
 .post-body .ql-indent-8 { padding-left: 24em; }
 
->>>>>>> main
 .post-body img {
   max-width: 100%;
   border-radius: 8px;
@@ -839,10 +829,7 @@
   color: white;
   background-color: #8c6add;
   text-decoration: none;
-<<<<<<< HEAD
-=======
   border: none;
->>>>>>> main
   font-weight: 500;
   transition: opacity 0.2s;
 }
@@ -1353,7 +1340,6 @@
 .youtube-subscribe-btn:hover {
   opacity: 0.9;
   transform: scale(1.03);
-<<<<<<< HEAD
 }
 
 /* Hamburger & mobile elements - hidden by default */
@@ -1555,6 +1541,4 @@
     margin-left: auto;
     margin-right: auto;
   }
-=======
->>>>>>> main
 }
