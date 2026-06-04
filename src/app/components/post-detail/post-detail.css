@@ -766,7 +766,6 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: black;
   border-radius: 50%;
   z-index: 0;
 }
@@ -1031,7 +1030,6 @@
   width: 28px;
   height: 28px;
   transition: transform 0.2s;
-  filter: brightness(0) saturate(100%) invert(45%) sepia(74%) saturate(1500%) hue-rotate(230deg) brightness(85%) contrast(90%) !important;
 }
 
 .social-icons a img:hover {
@@ -1053,9 +1051,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: black;
   border-radius: 50%;
-  filter: brightness(0) saturate(100%) invert(45%) sepia(74%) saturate(1500%) hue-rotate(230deg) brightness(85%) contrast(90%);
   z-index: 0;
 }
 

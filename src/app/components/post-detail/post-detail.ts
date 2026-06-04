@@ -7,6 +7,7 @@ import { InstagramService } from '../../services/instagram.service';
 import { YouTubeService } from '../../services/youtube.service';
 import { Post } from '../../models/post.model';
 import { SafePipe } from '../../pipes/safe.pipe';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-post-detail',
@@ -69,23 +70,23 @@ export class PostDetailComponent {
     return this.post.content.replace(/&nbsp;/g, ' ').replace(/\u00A0/g, ' ');
   }
 
+  private getApiBase(): string {
+    return environment.apiUrl ? environment.apiUrl.replace(/\/api$/, '') : '';
+  }
+
   getFullImageUrl(url: string): string {
     if (!url) return '';
     if (url.startsWith('http')) return url;
-    if (typeof window !== 'undefined') {
-      return window.location.origin + (url.startsWith('/') ? url : '/' + url);
-    }
-    return url;
+    const base = this.getApiBase() || (typeof window !== 'undefined' ? window.location.origin : '');
+    return base + (url.startsWith('/') ? url : '/' + url);
   }
 
-  pinIt(event: Event): void {
-    event.preventDefault();
-    if (typeof window === 'undefined') return;
-    const pageUrl = this.currentUrl;
+  getPinterestUrl(): string {
+    if (typeof window === 'undefined') return '';
+    const pageUrl = window.location.href;
     const mediaUrl = this.getFullImageUrl(this.post?.coverImage || '');
     const description = this.post?.title || '';
-    const pinUrl = `https://www.pinterest.com/pin/create/button/?url=${encodeURIComponent(pageUrl)}&media=${encodeURIComponent(mediaUrl)}&description=${encodeURIComponent(description)}`;
-    window.open(pinUrl, '_blank', 'width=750,height=550');
+    return `https://www.pinterest.com/pin/create/button/?url=${encodeURIComponent(pageUrl)}&media=${encodeURIComponent(mediaUrl)}&description=${encodeURIComponent(description)}`;
   }
 
   onSearch(event: Event): void {
