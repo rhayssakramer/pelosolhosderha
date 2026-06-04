@@ -1,4 +1,8 @@
+<<<<<<< HEAD
+import { Component, HostListener } from '@angular/core';
+=======
 import { Component, HostListener, ViewEncapsulation } from '@angular/core';
+>>>>>>> main
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { BlogService } from '../../services/blog.service';
@@ -23,11 +27,46 @@ export class PostDetailComponent {
   showAllArchive = false;
   searchTerm = '';
   currentUrl = '';
+<<<<<<< HEAD
+  mobileMenuOpen = false;
+=======
+>>>>>>> main
 
   encodeURI(str: string) {
     return encodeURIComponent(str);
   }
 
+<<<<<<< HEAD
+  @HostListener('window:scroll')
+  onScroll() {
+    this.isStuck = window.scrollY > 320;
+  }
+
+  constructor(
+    private route: ActivatedRoute,
+    public blog: BlogService,
+    private stats: StatsService,
+    public instagram: InstagramService,
+    public youtube: YouTubeService
+  ) {
+    if (typeof window !== 'undefined') {
+      this.currentUrl = window.location.href;
+    }
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.post = this.blog.getPostById(id);
+      if (this.post) {
+        this.stats.trackView(id);
+        const allPosts = this.blog.getPublishedPosts()
+          .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+        const idx = allPosts.findIndex(p => p.id === id);
+        if (idx > 0) this.previousPost = allPosts[idx - 1];
+        if (idx < allPosts.length - 1) this.nextPost = allPosts[idx + 1];
+      }
+    }
+  }
+
+=======
   getSanitizedContent(): string {
     if (!this.post?.content) return '';
     return this.post.content.replace(/&nbsp;/g, ' ').replace(/\u00A0/g, ' ');
@@ -94,6 +133,7 @@ export class PostDetailComponent {
     });
   }
 
+>>>>>>> main
   onSearch(event: Event): void {
     this.searchTerm = (event.target as HTMLInputElement).value.toLowerCase();
   }
@@ -121,6 +161,9 @@ export class PostDetailComponent {
     return Array.from(map.entries()).map(([label, count]) => ({ label, count }));
   }
 
+<<<<<<< HEAD
+  filterByMonth(label: string) {}
+=======
   filterByMonth(label: string) {
     this.router.navigate(['/'], { queryParams: { month: label } });
   }
@@ -128,6 +171,7 @@ export class PostDetailComponent {
   filterByTag(tagName: string) {
     this.router.navigate(['/'], { queryParams: { tag: tagName } });
   }
+>>>>>>> main
 
   getRelatedPosts(): Post[] {
     if (!this.post) return [];
