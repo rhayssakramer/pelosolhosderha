@@ -1,5 +1,11 @@
 <header class="header">
   <nav class="top-bar" [class.hidden]="isStuck">
+<<<<<<< HEAD
+    <button class="hamburger" (click)="mobileMenuOpen = !mobileMenuOpen" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+=======
+>>>>>>> main
     <div class="top-links">
       <a routerLink="/">Home</a>
       <a routerLink="/sobre">Sobre</a>
@@ -10,6 +16,89 @@
       <span class="search-icon">🔍</span>
     </div>
   </nav>
+<<<<<<< HEAD
+  <div class="mobile-menu" [class.open]="mobileMenuOpen">
+    <a routerLink="/" (click)="mobileMenuOpen = false">Home</a>
+    <a routerLink="/sobre" (click)="mobileMenuOpen = false">Sobre</a>
+    <a routerLink="/contato" (click)="mobileMenuOpen = false">Contato</a>
+    <div class="mobile-search">
+      <input type="text" placeholder="Buscar" (input)="onSearch($event)">
+    </div>
+  </div>
+
+  <div class="banner">
+    <img src="banner.png" alt="Banner">
+  </div>
+
+  <nav class="tags-menu-overlay" [class.hidden]="isStuck">
+    @for (tag of blog.tags().slice(0, 8); track tag.id) {
+      <a routerLink="/" class="tag-menu-item">{{ tag.name | uppercase }}</a>
+    }
+    <div class="tag-menu-more">
+      <button class="tag-menu-item">MAIS ▾</button>
+      <div class="more-tags-dropdown">
+        @for (tag of blog.tags().slice(3); track tag.id) {
+          <a routerLink="/" class="dropdown-item">{{ tag.name }}</a>
+        }
+      </div>
+    </div>
+  </nav>
+</header>
+
+<div class="sticky-nav" [class.is-stuck]="isStuck">
+  <nav class="sticky-top-bar">
+    <button class="hamburger sticky-hamburger" (click)="mobileMenuOpen = !mobileMenuOpen" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="top-links">
+      <a routerLink="/">Home</a>
+      <a routerLink="/sobre">Sobre</a>
+      <a routerLink="/contato">Contato</a>
+    </div>
+    <div class="top-search">
+      <input type="text" placeholder="Buscar" (input)="onSearch($event)">
+      <span class="search-icon">🔍</span>
+    </div>
+  </nav>
+  <nav class="tags-menu">
+    @for (tag of blog.tags().slice(0, 8); track tag.id) {
+      <a routerLink="/" class="tag-menu-item">{{ tag.name | uppercase }}</a>
+    }
+    <div class="tag-menu-more">
+      <button class="tag-menu-item">MAIS ▾</button>
+      <div class="more-tags-dropdown">
+        @for (tag of blog.tags().slice(3); track tag.id) {
+          <a routerLink="/" class="dropdown-item">{{ tag.name }}</a>
+        }
+      </div>
+    </div>
+  </nav>
+</div>
+
+@if (featuredPosts.length > 0) {
+<section class="featured-slider">
+  <button class="slider-arrow slider-arrow-left" (click)="sliderPrev()">&#10094;</button>
+  <div class="slider-track" [style.transform]="'translateX(-' + (sliderIndex * 100) + '%)'">
+    @for (post of featuredPosts; track post.id) {
+      <a [routerLink]="['/post', post.id]" class="slider-slide">
+        @if (post.coverImage) {
+          <img [src]="post.coverImage" [alt]="post.title">
+        } @else {
+          <div class="slider-placeholder">📖</div>
+        }
+        <div class="slider-overlay">
+          <h3>{{ post.title }}</h3>
+        </div>
+      </a>
+    }
+  </div>
+  <button class="slider-arrow slider-arrow-right" (click)="sliderNext()">&#10095;</button>
+  <div class="slider-dots">
+    @for (dot of featuredPosts.slice(0, totalSlides); track $index; let i = $index) {
+      <span class="slider-dot" [class.active]="i === sliderIndex" (click)="sliderIndex = i"></span>
+    }
+  </div>
+=======
 
   <div class="banner">
     <img src="banner.png" alt="Banner">
@@ -84,6 +173,7 @@
       <span class="slider-dot" [class.active]="i === sliderIndex" (click)="sliderIndex = i"></span>
     }
   </div>
+>>>>>>> main
 </section>
 }
 
@@ -119,10 +209,17 @@
             <img src="pinterest.svg" alt="Pinterest">
           </a>
           <a href="https://youtube.com/@pelosolhosderha" target="_blank" aria-label="YouTube">
+<<<<<<< HEAD
+            <img src="/youtube.png" alt="YouTube">
+          </a>
+          <a href="https://www.skoob.com.br/pt/user/67bd149970c4abc337a4bde0/bookshelf" target="_blank" aria-label="Skoob" class="social-skoob">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26 32"><path fill="white" d="M22.2 18.9v-1.6a7 7 0 0 0 .6-10.8c.7-.4 1.3-1.4 1.3-2.2V0L14 5.1c-.8.4-1.4 1.4-1.4 2.3 0-.9-.6-1.9-1.3-2.3L1.4 0v4.3c0 .8.5 1.8 1.2 2.2a7 7 0 0 0 .6 10.8V19L0 17.2v4.6c0 1.4.9 2.9 2 3.5l1.3.6c.2 1.3 1 4.3 5.2 4.3 2.2 0 3.5.8 4.2 1.8.8-1 2-1.8 4.2-1.8 4.2 0 5-3 5.2-4.3l1.2-.6a4.1 4.1 0 0 0 2.1-3.5v-4.6L22.2 19Zm-8.5-7.2c0-2.7 2.1-4.8 4.7-4.8s4.7 2.1 4.7 4.8c0 2.6-2.1 4.8-4.7 4.8a4.8 4.8 0 0 1-4.7-4.8Zm-1 3.4c.7 0 1.3.6 1.3 1.3 0 .7-1.3 2.6-1.3 2.6s-1.3-2-1.3-2.6c0-.7.6-1.3 1.3-1.3ZM2.3 11.7C2.3 9 4.4 6.9 7 6.9s4.7 2.1 4.7 4.8c0 2.6-2 4.8-4.7 4.8a4.8 4.8 0 0 1-4.7-4.8Zm21.8 10.1c0 .9-.6 1.9-1.4 2.2l-10 5.2-10-5.2a2.7 2.7 0 0 1-1.4-2.2v-2.3l10 5.1c.8.4 1.4 1.4 1.4 2.2 0-.8.6-1.8 1.4-2.2l10-5.1v2.3ZM7 15.5a2 2 0 0 0 1.8-2c0-1-.8-2-1.9-2a2 2 0 0 0-1.9 2c0 1.1.9 2 2 2Zm11.3 0a2 2 0 0 0 1.9-2c0-1-.8-2-1.9-2a2 2 0 0 0-1.9 2c0 1.1.9 2 1.9 2Z"/></svg>
+=======
             <img src="youtube.svg" alt="YouTube">
           </a>
           <a href="https://www.skoob.com.br/pt/user/67bd149970c4abc337a4bde0/bookshelf" target="_blank" aria-label="Skoob" class="social-skoob">
             <img src="skoob.svg" alt="Skoob">
+>>>>>>> main
           </a>
         </div>
       </div>
@@ -165,7 +262,11 @@
         <ul class="archive-list">
           @for (month of showAllArchive ? getArchiveMonths() : getArchiveMonths().slice(0, 5); track month.label) {
             <li>
+<<<<<<< HEAD
+              <a (click)="filterByMonth(month.label)" class="archive-item">
+=======
               <a (click)="filterByMonth(month.label)" class="archive-item" [class.active]="selectedMonth === month.label">
+>>>>>>> main
                 {{ month.label }} <span class="archive-count">({{ month.count }})</span>
               </a>
             </li>

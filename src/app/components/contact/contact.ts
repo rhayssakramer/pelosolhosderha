@@ -19,6 +19,10 @@ export class ContactComponent {
   isStuck = false;
   searchTerm = '';
   showAllArchive = false;
+<<<<<<< HEAD
+  mobileMenuOpen = false;
+=======
+>>>>>>> main
 
   name = '';
   email = '';
