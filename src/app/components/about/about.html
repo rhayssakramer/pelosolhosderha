@@ -1,11 +1,8 @@
 <header class="header">
   <nav class="top-bar" [class.hidden]="isStuck">
-<<<<<<< HEAD
     <button class="hamburger" (click)="mobileMenuOpen = !mobileMenuOpen" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
-=======
->>>>>>> main
     <div class="top-links">
       <a routerLink="/">Home</a>
       <a routerLink="/sobre">Sobre</a>
@@ -16,7 +13,6 @@
       <span class="search-icon">🔍</span>
     </div>
   </nav>
-<<<<<<< HEAD
   <div class="mobile-menu" [class.open]="mobileMenuOpen">
     <a routerLink="/" (click)="mobileMenuOpen = false">Home</a>
     <a routerLink="/sobre" (click)="mobileMenuOpen = false">Sobre</a>
@@ -25,9 +21,6 @@
       <input type="text" placeholder="Buscar" (input)="onSearch($event)">
     </div>
   </div>
-=======
->>>>>>> main
-
   <div class="banner">
     <img src="banner.png" alt="Banner">
   </div>
@@ -36,7 +29,6 @@
     @for (tag of blog.tags().slice(0, 8); track tag.id) {
       <a routerLink="/" class="tag-menu-item">{{ tag.name | uppercase }}</a>
     }
-<<<<<<< HEAD
     <div class="tag-menu-more">
       <button class="tag-menu-item">MAIS ▾</button>
       <div class="more-tags-dropdown">
@@ -45,29 +37,14 @@
         }
       </div>
     </div>
-=======
-    @if (blog.tags().length > 8) {
-      <div class="tag-menu-more">
-        <button class="tag-menu-item">MAIS ▾</button>
-        <div class="more-tags-dropdown">
-          @for (tag of blog.tags().slice(8); track tag.id) {
-            <a routerLink="/" class="dropdown-item">{{ tag.name }}</a>
-          }
-        </div>
-      </div>
-    }
->>>>>>> main
   </nav>
 </header>
 
 <div class="sticky-nav" [class.is-stuck]="isStuck">
   <nav class="sticky-top-bar">
-<<<<<<< HEAD
     <button class="hamburger sticky-hamburger" (click)="mobileMenuOpen = !mobileMenuOpen" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
-=======
->>>>>>> main
     <div class="top-links">
       <a routerLink="/">Home</a>
       <a routerLink="/sobre">Sobre</a>
@@ -82,7 +59,6 @@
     @for (tag of blog.tags().slice(0, 8); track tag.id) {
       <a routerLink="/" class="tag-menu-item">{{ tag.name | uppercase }}</a>
     }
-<<<<<<< HEAD
     <div class="tag-menu-more">
       <button class="tag-menu-item">MAIS ▾</button>
       <div class="more-tags-dropdown">
@@ -91,7 +67,6 @@
         }
       </div>
     </div>
-=======
     @if (blog.tags().length > 8) {
       <div class="tag-menu-more">
         <button class="tag-menu-item">MAIS ▾</button>
@@ -102,7 +77,6 @@
         </div>
       </div>
     }
->>>>>>> main
   </nav>
 </div>
 
