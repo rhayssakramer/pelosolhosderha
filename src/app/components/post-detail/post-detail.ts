@@ -81,17 +81,11 @@ export class PostDetailComponent {
   pinIt(event: Event): void {
     event.preventDefault();
     if (typeof window === 'undefined') return;
-    const w: any = window;
-    if (w.PinUtils) {
-      w.PinUtils.pinOne({
-        url: this.currentUrl,
-        media: this.getFullImageUrl(this.post?.coverImage || ''),
-        description: this.post?.title || ''
-      });
-    } else {
-      const pinUrl = `https://www.pinterest.com/pin-builder/?url=${encodeURIComponent(this.currentUrl)}&description=${encodeURIComponent(this.post?.title || '')}`;
-      window.open(pinUrl, '_blank', 'width=750,height=550');
-    }
+    const pageUrl = this.currentUrl;
+    const mediaUrl = this.getFullImageUrl(this.post?.coverImage || '');
+    const description = this.post?.title || '';
+    const pinUrl = `https://www.pinterest.com/pin/create/button/?url=${encodeURIComponent(pageUrl)}&media=${encodeURIComponent(mediaUrl)}&description=${encodeURIComponent(description)}`;
+    window.open(pinUrl, '_blank', 'width=750,height=550');
   }
 
   onSearch(event: Event): void {
