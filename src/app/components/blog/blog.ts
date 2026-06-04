@@ -16,18 +16,29 @@ import { PostCardComponent } from './post-card/post-card';
 })
 export class BlogComponent {
   searchTerm = '';
+<<<<<<< HEAD
+=======
   selectedTag = '';
   selectedMonth = '';
+>>>>>>> main
   showMoreTags = false;
   isStuck = false;
   sliderIndex = 0;
   showAllArchive = false;
+<<<<<<< HEAD
+  mobileMenuOpen = false;
+  mobileSearchOpen = false;
+=======
+>>>>>>> main
 
   @HostListener('window:scroll')
   onScroll() {
     this.isStuck = window.scrollY > 320;
   }
 
+<<<<<<< HEAD
+  constructor(public blog: BlogService, private stats: StatsService, public instagram: InstagramService, public youtube: YouTubeService) {}
+=======
   constructor(public blog: BlogService, private stats: StatsService, public instagram: InstagramService, public youtube: YouTubeService, private route: ActivatedRoute) {
     this.route.queryParamMap.subscribe(params => {
       const tag = params.get('tag');
@@ -41,6 +52,7 @@ export class BlogComponent {
       }
     });
   }
+>>>>>>> main
 
   get featuredPosts(): Post[] {
     return this.blog.getPublishedPosts().slice(0, 9);
@@ -113,8 +125,12 @@ export class BlogComponent {
   }
 
   filterByMonth(label: string) {
+<<<<<<< HEAD
+    this.searchTerm = label.split(' de ')[0];
+=======
     this.selectedMonth = this.selectedMonth === label ? '' : label;
     this.selectedTag = '';
     this.searchTerm = '';
+>>>>>>> main
   }
 }
