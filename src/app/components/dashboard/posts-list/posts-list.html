@@ -5,7 +5,7 @@
   </div>
 
   <div class="posts-table">
-    @for (post of blog.posts(); track post.id) {
+    @for (post of sortedPosts(); track post.id) {
       <div class="post-row">
         <div class="post-info">
           <h3>{{ post.title }}</h3>
