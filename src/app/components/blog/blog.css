@@ -392,6 +392,7 @@
 .blog-layout {
   display: grid;
   grid-template-columns: 1fr 300px;
+  align-items: start;
   gap: 1rem;
 }
 
@@ -401,7 +402,7 @@
   grid-template-columns: repeat(3, 1fr);
   gap: 0.5rem 0.8rem;
   align-items: start;
-  margin-bottom: 1050px;
+  margin-bottom: 2rem;
 }
 
 .sidebar {
