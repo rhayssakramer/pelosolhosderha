@@ -218,6 +218,9 @@
 
 .tag-menu-more {
   position: relative;
+  display: flex;
+  align-items: center;
+  margin-top: -1px;
 }
 
 .tag-menu-more.desktop-hidden {

@@ -203,6 +203,7 @@
 
 .tag-menu-more {
   position: relative;
+  margin-top: -5px;
 }
 
 .more-tags-dropdown {
@@ -795,6 +796,13 @@
   outline: none;
 }
 
+@media (max-width: 900px){
+  .tag-menu-more{
+    margin-top: -1px;
+    margin-bottom: 5px;
+  }
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
   .content-grid {
@@ -816,8 +824,9 @@
 }
 
 @media (max-width: 600px) {
+  
   .sidebar {
-    max-width: 65%;
+    max-width: 75%;
     align-self: center;
     margin-left: auto;
     margin-right: auto;
@@ -936,5 +945,15 @@
   .sticky-nav.is-stuck .tags-menu {
     display: flex;
     background-color: #8c6add;
+  }
+}
+
+@media (max-width: 400px) {
+  .sidebar {
+    max-width: 95%;
+  }
+
+  .tag-menu-more{
+    margin-top: -0.5px;
   }
 }
