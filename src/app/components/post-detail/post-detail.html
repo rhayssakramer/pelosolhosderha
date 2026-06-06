@@ -105,7 +105,7 @@
                   <a (click)="filterByTag(tag)" class="tag-link">{{ tag }}</a>
                 }
                 <div class="tags-share">
-                  <a [href]="'https://www.instagram.com/share?url=' + encodeURI(currentUrl)" target="_blank" class="tags-share-btn" title="Compartilhar no Instagram">
+                  <a (click)="shareOnInstagramStories()" class="tags-share-btn" title="Compartilhar nos Stories do Instagram">
                     <img src="instagram.svg" alt="Instagram"> Compartilhe
                   </a>
                   <a [href]="getPinterestUrl()" target="_blank" rel="noopener noreferrer" class="tags-share-btn" title="Compartilhar no Pinterest">
