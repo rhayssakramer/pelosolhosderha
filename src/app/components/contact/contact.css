@@ -847,7 +847,7 @@
   }
 
   .sidebar {
-    max-width: 65%;
+    max-width: 75%;
     align-self: center;
     margin-left: auto;
     margin-right: auto;
@@ -962,5 +962,15 @@
   .sticky-nav.is-stuck .tags-menu {
     display: flex;
     background-color: #8c6add;
+  }
+}
+
+@media (max-width: 400px) {
+  .sidebar {
+    max-width: 95%;
+  }
+
+  .tag-menu-more{
+    margin-top: -1px;
   }
 }

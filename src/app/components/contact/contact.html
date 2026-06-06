@@ -40,17 +40,6 @@
         }
       </div>
     </div>
-
-    @if (blog.tags().length > 8) {
-      <div class="tag-menu-more">
-        <button class="tag-menu-item">MAIS ▾</button>
-        <div class="more-tags-dropdown">
-          @for (tag of blog.tags().slice(8); track tag.id) {
-            <a routerLink="/" class="dropdown-item">{{ tag.name }}</a>
-          }
-        </div>
-      </div>
-    }
   </nav>
 </header>
 
@@ -83,17 +72,6 @@
         }
       </div>
     </div>
-
-    @if (blog.tags().length > 8) {
-      <div class="tag-menu-more">
-        <button class="tag-menu-item">MAIS ▾</button>
-        <div class="more-tags-dropdown">
-          @for (tag of blog.tags().slice(8); track tag.id) {
-            <a routerLink="/" class="dropdown-item">{{ tag.name }}</a>
-          }
-        </div>
-      </div>
-    }
   </nav>
 </div>
 
