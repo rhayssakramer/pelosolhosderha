@@ -22,8 +22,8 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Static files (uploads)
-app.use('/uploads', express.static(path.resolve(config.uploadDir)));
+// Static files (uploads) - allow public access (needed for Pinterest, Instagram sharing)
+app.use('/uploads', cors(), express.static(path.resolve(config.uploadDir)));
 
 // Routes
 app.use('/api/auth', authRoutes);
