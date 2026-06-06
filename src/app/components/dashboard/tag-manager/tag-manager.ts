@@ -11,6 +11,8 @@ import { BlogService } from '../../../services/blog.service';
 })
 export class TagManagerComponent {
   newTagName = '';
+  dragIndex: number | null = null;
+  dropIndex: number | null = null;
 
   constructor(public blog: BlogService) {}
 
@@ -27,19 +29,40 @@ export class TagManagerComponent {
     }
   }
 
-  moveUp(index: number): void {
-    if (index <= 0) return;
-    const tags = [...this.blog.tags()];
-    [tags[index - 1], tags[index]] = [tags[index], tags[index - 1]];
-    this.blog.tags.set(tags);
-    this.blog.reorderTags(tags.map(t => t.id));
+  onDragStart(index: number): void {
+    this.dragIndex = index;
   }
 
-  moveDown(index: number): void {
+  onDragOver(event: DragEvent, index: number): void {
+    event.preventDefault();
+    this.dropIndex = index;
+  }
+
+  onDragLeave(): void {
+    this.dropIndex = null;
+  }
+
+  onDrop(event: DragEvent, index: number): void {
+    event.preventDefault();
+    if (this.dragIndex === null || this.dragIndex === index) {
+      this.resetDrag();
+      return;
+    }
+
     const tags = [...this.blog.tags()];
-    if (index >= tags.length - 1) return;
-    [tags[index], tags[index + 1]] = [tags[index + 1], tags[index]];
+    const [moved] = tags.splice(this.dragIndex, 1);
+    tags.splice(index, 0, moved);
     this.blog.tags.set(tags);
     this.blog.reorderTags(tags.map(t => t.id));
+    this.resetDrag();
+  }
+
+  onDragEnd(): void {
+    this.resetDrag();
+  }
+
+  private resetDrag(): void {
+    this.dragIndex = null;
+    this.dropIndex = null;
   }
 }
