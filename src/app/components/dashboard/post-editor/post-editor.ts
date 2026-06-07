@@ -5,6 +5,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BlogService } from '../../../services/blog.service';
 import { Post } from '../../../models/post.model';
 import { QuillModule } from 'ngx-quill';
+import Quill from 'quill';
+import QuillResizeImage from 'quill-resize-image';
+
+Quill.register('modules/resize', QuillResizeImage);
 
 @Component({
   selector: 'app-post-editor',
@@ -77,6 +81,9 @@ export class PostEditorComponent {
       handlers: {
         'emoji': function() {}
       }
+    },
+    resize: {
+      locale: {}
     }
   };
 
