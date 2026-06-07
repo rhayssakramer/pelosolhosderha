@@ -88,7 +88,7 @@ export class PostDetailComponent {
     const pageUrl = baseSiteUrl + path;
     const mediaUrl = this.getFullImageUrl(this.post?.coverImage || '');
     const description = this.post?.title || '';
-    return `https://www.pinterest.com/pin/create/button/?url=${encodeURIComponent(pageUrl)}&media=${encodeURIComponent(mediaUrl)}&description=${encodeURIComponent(description)}`;
+    return `https://www.pinterest.com/pin-builder/?url=${encodeURIComponent(pageUrl)}&media=${encodeURIComponent(mediaUrl)}&description=${encodeURIComponent(description)}`;
   }
 
   async shareOnInstagramStories(): Promise<void> {
@@ -96,38 +96,18 @@ export class PostDetailComponent {
     const siteUrl = (environment.siteUrl || window.location.origin) + window.location.pathname;
     const title = this.post?.title || 'Pelos Olhos de Rha';
 
-    // Use Web Share API if available (mobile) — shows native share sheet with Instagram Stories option
     if (navigator.share) {
       try {
-        const imageUrl = this.getFullImageUrl(this.post?.coverImage || '');
-
-        // Try to share with image file if possible
-        if (imageUrl && navigator.canShare) {
-          try {
-            const response = await fetch(imageUrl);
-            const blob = await response.blob();
-            const file = new File([blob], 'post-cover.jpg', { type: blob.type });
-            const shareData = { title, text: title, url: siteUrl, files: [file] };
-
-            if (navigator.canShare(shareData)) {
-              await navigator.share(shareData);
-              return;
-            }
-          } catch {}
-        }
-
-        // Fallback: share without image
         await navigator.share({ title, text: title, url: siteUrl });
       } catch (err: any) {
-        // User cancelled the share — do nothing
         if (err?.name !== 'AbortError') {
           window.open('https://www.instagram.com/pelosolhosderha', '_blank');
         }
       }
     } else {
-      // Desktop fallback: copy link
+      // Desktop: copy link
       navigator.clipboard.writeText(siteUrl).then(() => {
-        alert('Link copiado! Abra o Instagram no celular para compartilhar nos Stories.');
+        alert('Link copiado! Abra o Instagram no celular para compartilhar.');
       }).catch(() => {
         window.open('https://www.instagram.com/pelosolhosderha', '_blank');
       });
