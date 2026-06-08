@@ -138,25 +138,25 @@
             </div>
 
             <div class="post-navigation">
-              @if (previousPost) {
-                <a [routerLink]="['/post', previousPost.id]" class="nav-item nav-prev">
-                  @if (previousPost.coverImage) {
-                    <img [src]="previousPost.coverImage" [alt]="previousPost.title" class="nav-thumb">
-                  }
-                  <div class="nav-info">
-                    <span class="nav-label">POST ANTERIOR</span>
-                    <span class="nav-title">{{ previousPost.title }}</span>
-                  </div>
-                </a>
-              }
               @if (nextPost) {
-                <a [routerLink]="['/post', nextPost.id]" class="nav-item nav-next">
+                <a [routerLink]="['/post', nextPost.id]" class="nav-item nav-prev">
+                  @if (nextPost.coverImage) {
+                    <img [src]="nextPost.coverImage" [alt]="nextPost.title" class="nav-thumb">
+                  }
                   <div class="nav-info">
                     <span class="nav-label">PRÓXIMO POST</span>
                     <span class="nav-title">{{ nextPost.title }}</span>
                   </div>
-                  @if (nextPost.coverImage) {
-                    <img [src]="nextPost.coverImage" [alt]="nextPost.title" class="nav-thumb">
+                </a>
+              }
+              @if (previousPost) {
+                <a [routerLink]="['/post', previousPost.id]" class="nav-item nav-next">
+                  <div class="nav-info">
+                    <span class="nav-label">POST ANTERIOR</span>
+                    <span class="nav-title">{{ previousPost.title }}</span>
+                  </div>
+                  @if (previousPost.coverImage) {
+                    <img [src]="previousPost.coverImage" [alt]="previousPost.title" class="nav-thumb">
                   }
                 </a>
               }
