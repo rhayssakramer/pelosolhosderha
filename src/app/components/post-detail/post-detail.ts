@@ -1,5 +1,6 @@
 import { Component, HostListener, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { BlogService } from '../../services/blog.service';
 import { StatsService } from '../../services/stats.service';
@@ -41,7 +42,9 @@ export class PostDetailComponent {
     public blog: BlogService,
     private stats: StatsService,
     public instagram: InstagramService,
-    public youtube: YouTubeService
+    public youtube: YouTubeService,
+    private meta: Meta,
+    private titleService: Title
   ) {
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
@@ -52,6 +55,7 @@ export class PostDetailComponent {
         this.post = this.blog.getPostById(id);
         if (this.post) {
           this.stats.trackView(id);
+          this.setMetaTags(this.post);
           const allPosts = this.blog.getPublishedPosts()
             .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
           const idx = allPosts.findIndex(p => p.id === id);
@@ -63,6 +67,26 @@ export class PostDetailComponent {
         window.scrollTo(0, 0);
       }
     });
+  }
+
+  private setMetaTags(post: Post): void {
+    const siteUrl = environment.siteUrl || (typeof window !== 'undefined' ? window.location.origin : '');
+    const pageUrl = `${siteUrl}/post/${post.id}`;
+    const imageUrl = this.getFullImageUrl(post.coverImage || '');
+    const description = post.excerpt || post.title;
+
+    this.titleService.setTitle(`${post.title} - Pelos Olhos de Rha`);
+    this.meta.updateTag({ property: 'og:title', content: post.title });
+    this.meta.updateTag({ property: 'og:description', content: description });
+    this.meta.updateTag({ property: 'og:image', content: imageUrl });
+    this.meta.updateTag({ property: 'og:url', content: pageUrl });
+    this.meta.updateTag({ property: 'og:type', content: 'article' });
+    this.meta.updateTag({ name: 'twitter:card', content: 'summary_large_image' });
+    this.meta.updateTag({ name: 'twitter:title', content: post.title });
+    this.meta.updateTag({ name: 'twitter:description', content: description });
+    this.meta.updateTag({ name: 'twitter:image', content: imageUrl });
+    this.meta.updateTag({ property: 'pin:media', content: imageUrl });
+    this.meta.updateTag({ name: 'description', content: description });
   }
 
   getSanitizedContent(): string {
@@ -91,7 +115,20 @@ export class PostDetailComponent {
     const excerpt = this.post?.excerpt || '';
     const description = excerpt ? `${title} - ${excerpt}` : title;
     const trimmedDescription = description.length > 500 ? description.substring(0, 497) + '...' : description;
-    const pinterestUrl = `https://www.pinterest.com/pin/create/bookmarklet/?url=${encodeURIComponent(pageUrl)}&media=${encodeURIComponent(mediaUrl)}&description=${encodeURIComponent(trimmedDescription)}&is_video=false`;
+
+    // Try Pinterest SDK (pinit.js) first
+    const PinUtils = (window as any).PinUtils;
+    if (PinUtils && PinUtils.pinOne) {
+      PinUtils.pinOne({
+        url: pageUrl,
+        media: mediaUrl,
+        description: trimmedDescription
+      });
+      return;
+    }
+
+    // Fallback: open Pinterest pin creation via intent URL (no media param to avoid I/O errors)
+    const pinterestUrl = `https://www.pinterest.com/pin/create/button/?url=${encodeURIComponent(pageUrl)}&description=${encodeURIComponent(trimmedDescription)}`;
     window.open(pinterestUrl, 'pinterest-share', 'width=750,height=600,top=100,left=100,scrollbars=yes,toolbar=no,location=no');
   }
 
