@@ -3,6 +3,15 @@
   "buildCommand": "npx ng build --configuration production",
   "outputDirectory": "dist/pelosolhosderha/browser",
   "installCommand": "npm install --legacy-peer-deps",
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "all" },
+        { "key": "Access-Control-Allow-Origin", "value": "*" }
+      ]
+    }
+  ],
   "rewrites": [
     { "source": "/((?!.*\\.(?:js|css|json|ico|png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot|map)$).*)", "destination": "/index.html" }
   ]

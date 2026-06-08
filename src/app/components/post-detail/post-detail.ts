@@ -116,7 +116,7 @@ export class PostDetailComponent {
     const description = excerpt ? `${title} - ${excerpt}` : title;
     const trimmedDescription = description.length > 500 ? description.substring(0, 497) + '...' : description;
 
-    // Try Pinterest SDK (pinit.js) first - works as in-page overlay
+    // Use Pinterest SDK overlay (PinUtils.pinOne) - works client-side without Pinterest crawling
     const PinUtils = (window as any).PinUtils;
     if (PinUtils && PinUtils.pinOne) {
       PinUtils.pinOne({
@@ -127,65 +127,34 @@ export class PostDetailComponent {
       return;
     }
 
-    // SDK not loaded - dynamically load and retry
-    this.loadPinterestSDK().then(() => {
-      const PU = (window as any).PinUtils;
-      if (PU && PU.pinOne) {
-        PU.pinOne({
-          url: pageUrl,
-          media: mediaUrl,
-          description: trimmedDescription
-        });
-      } else {
-        // Final fallback: navigator.share on mobile or copy link
-        this.pinterestFallback(pageUrl, mediaUrl, trimmedDescription);
-      }
+    // SDK not ready yet - wait for it to load (it's async)
+    this.waitForPinUtils(3000).then(PU => {
+      PU.pinOne({
+        url: pageUrl,
+        media: mediaUrl,
+        description: trimmedDescription
+      });
     }).catch(() => {
-      this.pinterestFallback(pageUrl, mediaUrl, trimmedDescription);
+      // SDK failed to load - open Pinterest pin-builder directly in same tab
+      // (new tab/popup gets blocked by Pinterest)
+      window.location.href = `https://www.pinterest.com/pin-builder/?url=${encodeURIComponent(pageUrl)}&media=${encodeURIComponent(mediaUrl)}&description=${encodeURIComponent(trimmedDescription)}`;
     });
   }
 
-  private loadPinterestSDK(): Promise<void> {
+  private waitForPinUtils(timeout: number): Promise<any> {
     return new Promise((resolve, reject) => {
-      // Check if already loaded
-      if ((window as any).PinUtils) {
-        resolve();
-        return;
-      }
-      // Remove existing script if any
-      const existing = document.querySelector('script[src*="pinit.js"]');
-      if (existing) existing.remove();
-
-      const script = document.createElement('script');
-      script.src = 'https://assets.pinterest.com/js/pinit.js';
-      script.setAttribute('data-pin-build', 'parsePinBtns');
-      script.async = true;
-      script.onload = () => {
-        // PinUtils may take a moment to initialize
-        setTimeout(() => resolve(), 500);
+      const start = Date.now();
+      const check = () => {
+        const PU = (window as any).PinUtils;
+        if (PU && PU.pinOne) {
+          resolve(PU);
+        } else if (Date.now() - start > timeout) {
+          reject();
+        } else {
+          setTimeout(check, 200);
+        }
       };
-      script.onerror = () => reject();
-      document.head.appendChild(script);
-    });
-  }
-
-  private pinterestFallback(pageUrl: string, mediaUrl: string, description: string): void {
-    // On mobile: use Web Share API
-    if (navigator.share) {
-      navigator.share({
-        title: this.post?.title || 'Pelos Olhos de Rha',
-        text: `📌 ${description}`,
-        url: pageUrl
-      }).catch(() => {});
-      return;
-    }
-    // On desktop: copy the link and show instructions
-    const pinUrl = `https://www.pinterest.com/pin-builder/?url=${encodeURIComponent(pageUrl)}&media=${encodeURIComponent(mediaUrl)}&description=${encodeURIComponent(description)}`;
-    navigator.clipboard.writeText(pinUrl).then(() => {
-      alert('Link para criar pin copiado! Cole no navegador para criar o pin no Pinterest.');
-    }).catch(() => {
-      // Last resort: try opening in same window
-      window.location.href = `https://www.pinterest.com/pin-builder/?url=${encodeURIComponent(pageUrl)}&media=${encodeURIComponent(mediaUrl)}&description=${encodeURIComponent(description)}`;
+      check();
     });
   }
 
