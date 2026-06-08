@@ -3,6 +3,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Post, Tag, BlogSettings } from '../models/post.model';
 import { environment } from '../../environments/environment';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +16,7 @@ export class BlogService {
   private readonly useApi = environment.production;
   private isBrowser: boolean;
   private http = inject(HttpClient);
+  private auth = inject(AuthService);
 
   posts = signal<Post[]>([]);
   tags = signal<Tag[]>([]);
@@ -90,7 +92,11 @@ export class BlogService {
 
   private loadPostsFromApi(): void {
     if (!this.isBrowser) return;
-    this.http.get<any>(`${this.apiUrl}/posts`).subscribe({
+    // Use admin endpoint if authenticated to get all posts (including drafts)
+    const endpoint = this.auth.isLoggedIn()
+      ? `${this.apiUrl}/posts/admin/all`
+      : `${this.apiUrl}/posts`;
+    this.http.get<any>(endpoint).subscribe({
       next: (response) => {
         const posts = Array.isArray(response) ? response : response.posts || [];
         this.posts.set(posts);
@@ -98,6 +104,12 @@ export class BlogService {
       },
       error: (err) => console.error('Erro ao carregar posts da API:', err)
     });
+  }
+
+  reloadPosts(): void {
+    if (this.useApi) {
+      this.loadPostsFromApi();
+    }
   }
 
   // Posts
@@ -126,8 +138,6 @@ export class BlogService {
     this.savePosts();
 
     if (this.useApi) {
-      const token = this.isBrowser ? localStorage.getItem('blog_auth_token') : null;
-      const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
       this.http.post<any>(`${this.apiUrl}/posts`, {
         title: post.title,
         content: post.content,
@@ -135,7 +145,7 @@ export class BlogService {
         coverImage: post.coverImage,
         published: post.published,
         tags: post.tags
-      }, { headers }).subscribe({
+      }).subscribe({
         next: (saved) => {
           // Update local post with server ID
           this.posts.update(posts => posts.map(p =>
@@ -156,8 +166,6 @@ export class BlogService {
     this.savePosts();
 
     if (this.useApi) {
-      const token = this.isBrowser ? localStorage.getItem('blog_auth_token') : null;
-      const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
       this.http.put<any>(`${this.apiUrl}/posts/${id}`, {
         title: updates.title,
         content: updates.content,
@@ -165,7 +173,7 @@ export class BlogService {
         coverImage: updates.coverImage,
         published: updates.published,
         tags: updates.tags
-      }, { headers }).subscribe({
+      }).subscribe({
         error: (err) => console.error('Erro ao atualizar post na API:', err)
       });
     }
@@ -176,9 +184,7 @@ export class BlogService {
     this.savePosts();
 
     if (this.useApi) {
-      const token = this.isBrowser ? localStorage.getItem('blog_auth_token') : null;
-      const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
-      this.http.delete(`${this.apiUrl}/posts/${id}`, { headers }).subscribe({
+      this.http.delete(`${this.apiUrl}/posts/${id}`).subscribe({
         error: (err) => console.error('Erro ao deletar post na API:', err)
       });
     }
@@ -192,9 +198,7 @@ export class BlogService {
       this.saveTags();
       return;
     }
-    const token = this.isBrowser ? localStorage.getItem('blog_auth_token') : null;
-    const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
-    this.http.post<Tag>(`${this.apiUrl}/tags`, { name, color }, { headers }).subscribe({
+    this.http.post<Tag>(`${this.apiUrl}/tags`, { name, color }).subscribe({
       next: (tag) => {
         this.tags.update(tags => [...tags, { id: tag.id, name: tag.name, color: tag.color }]);
         this.saveTags();
@@ -209,9 +213,7 @@ export class BlogService {
       this.saveTags();
       return;
     }
-    const token = this.isBrowser ? localStorage.getItem('blog_auth_token') : null;
-    const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
-    this.http.delete(`${this.apiUrl}/tags/${id}`, { headers }).subscribe({
+    this.http.delete(`${this.apiUrl}/tags/${id}`).subscribe({
       next: () => {
         this.tags.update(tags => tags.filter(t => t.id !== id));
         this.saveTags();
@@ -228,9 +230,7 @@ export class BlogService {
 
     if (!this.useApi) return;
 
-    const token = this.isBrowser ? localStorage.getItem('blog_auth_token') : null;
-    const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
-    this.http.put(`${this.apiUrl}/tags/reorder`, { orderedIds }, { headers }).subscribe({
+    this.http.put(`${this.apiUrl}/tags/reorder`, { orderedIds }).subscribe({
       error: (err) => {
         console.error('Erro ao reordenar tags:', err);
         this.loadTagsFromApi();

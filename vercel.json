@@ -4,6 +4,6 @@
   "outputDirectory": "dist/pelosolhosderha/browser",
   "installCommand": "npm install --legacy-peer-deps",
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/((?!.*\\.(?:js|css|json|ico|png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot|map)$).*)", "destination": "/index.html" }
   ]
 }
