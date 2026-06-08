@@ -429,6 +429,28 @@
   height: auto;
 }
 
+.post-body img[style*="float: left"] {
+  margin: 0.5rem 1.5rem 1rem 0;
+  border-radius: 8px;
+}
+
+.post-body img[style*="float: right"] {
+  margin: 0.5rem 0 1rem 1.5rem;
+  border-radius: 8px;
+}
+
+.post-body img[style*="margin: auto"] {
+  display: block;
+  margin: 1rem auto;
+  border-radius: 8px;
+}
+
+.post-body::after {
+  content: '';
+  display: table;
+  clear: both;
+}
+
 .post-body img[style*="width"] {
   max-width: 100%;
   height: auto !important;

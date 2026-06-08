@@ -123,6 +123,27 @@
   max-width: 100%;
 }
 
+:host ::ng-deep .ql-editor img[style*="float: left"] {
+  margin: 0 1.5rem 1rem 0;
+  border-radius: 8px;
+}
+
+:host ::ng-deep .ql-editor img[style*="float: right"] {
+  margin: 0 0 1rem 1.5rem;
+  border-radius: 8px;
+}
+
+:host ::ng-deep .ql-editor img[style*="margin: auto"] {
+  display: block;
+  border-radius: 8px;
+}
+
+:host ::ng-deep .ql-editor::after {
+  content: '';
+  display: table;
+  clear: both;
+}
+
 :host ::ng-deep .ql-editor img:hover {
   outline: 2px solid #8c6add;
   outline-offset: 2px;

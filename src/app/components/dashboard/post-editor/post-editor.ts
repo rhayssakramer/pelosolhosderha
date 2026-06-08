@@ -22,11 +22,12 @@ class ResizableImage extends BaseImage {
     if (node.hasAttribute('width')) formats.width = node.getAttribute('width');
     if (node.hasAttribute('height')) formats.height = node.getAttribute('height');
     if (node.hasAttribute('style')) formats.style = node.getAttribute('style');
+    if (node.hasAttribute('class')) formats.class = node.getAttribute('class');
     return formats;
   }
 
   format(name: string, value: any) {
-    if (name === 'width' || name === 'height' || name === 'style') {
+    if (name === 'width' || name === 'height' || name === 'style' || name === 'class') {
       if (value) {
         (this as any).domNode.setAttribute(name, value);
       } else {
@@ -117,7 +118,8 @@ export class PostEditorComponent {
       }
     },
     resize: {
-      locale: {}
+      locale: {},
+      modules: ['Resize', 'DisplaySize', 'Toolbar']
     }
   };
 
