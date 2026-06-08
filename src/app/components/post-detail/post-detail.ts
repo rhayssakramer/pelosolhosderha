@@ -81,14 +81,18 @@ export class PostDetailComponent {
     return base + (url.startsWith('/') ? url : '/' + url);
   }
 
-  getPinterestUrl(): string {
-    if (typeof window === 'undefined') return '';
+  shareOnPinterest(): void {
+    if (typeof window === 'undefined') return;
     const baseSiteUrl = environment.siteUrl || window.location.origin;
     const path = window.location.pathname;
     const pageUrl = baseSiteUrl + path;
     const mediaUrl = this.getFullImageUrl(this.post?.coverImage || '');
-    const description = this.post?.title || '';
-    return `https://www.pinterest.com/pin-builder/?url=${encodeURIComponent(pageUrl)}&media=${encodeURIComponent(mediaUrl)}&description=${encodeURIComponent(description)}`;
+    const title = this.post?.title || '';
+    const excerpt = this.post?.excerpt || '';
+    const description = excerpt ? `${title} - ${excerpt}` : title;
+    const trimmedDescription = description.length > 500 ? description.substring(0, 497) + '...' : description;
+    const pinterestUrl = `https://www.pinterest.com/pin/create/bookmarklet/?url=${encodeURIComponent(pageUrl)}&media=${encodeURIComponent(mediaUrl)}&description=${encodeURIComponent(trimmedDescription)}&is_video=false`;
+    window.open(pinterestUrl, 'pinterest-share', 'width=750,height=600,top=100,left=100,scrollbars=yes,toolbar=no,location=no');
   }
 
   async shareOnInstagramStories(): Promise<void> {
