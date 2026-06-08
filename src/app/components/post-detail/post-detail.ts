@@ -72,7 +72,7 @@ export class PostDetailComponent {
   private setMetaTags(post: Post): void {
     const siteUrl = environment.siteUrl || (typeof window !== 'undefined' ? window.location.origin : '');
     const pageUrl = `${siteUrl}/post/${post.id}`;
-    const imageUrl = this.getFullImageUrl(post.coverImage || '');
+    const imageUrl = this.getProxiedImageUrl(post.coverImage || '');
     const description = post.excerpt || post.title;
 
     this.titleService.setTitle(`${post.title} - Pelos Olhos de Rha`);
@@ -110,13 +110,15 @@ export class PostDetailComponent {
     const baseSiteUrl = environment.siteUrl || window.location.origin;
     const path = window.location.pathname;
     const pageUrl = baseSiteUrl + path;
-    const mediaUrl = this.getFullImageUrl(this.post?.coverImage || '');
     const title = this.post?.title || '';
     const excerpt = this.post?.excerpt || '';
     const description = excerpt ? `${title} - ${excerpt}` : title;
     const trimmedDescription = description.length > 500 ? description.substring(0, 497) + '...' : description;
 
-    // Use Pinterest SDK overlay (PinUtils.pinOne) - works client-side without Pinterest crawling
+    // Build a proxied image URL that goes through Vercel (Pinterest can't access Azure directly)
+    const mediaUrl = this.getProxiedImageUrl(this.post?.coverImage || '');
+
+    // Use Pinterest SDK overlay (PinUtils.pinOne)
     const PinUtils = (window as any).PinUtils;
     if (PinUtils && PinUtils.pinOne) {
       PinUtils.pinOne({
@@ -135,10 +137,35 @@ export class PostDetailComponent {
         description: trimmedDescription
       });
     }).catch(() => {
-      // SDK failed to load - open Pinterest pin-builder directly in same tab
-      // (new tab/popup gets blocked by Pinterest)
       window.location.href = `https://www.pinterest.com/pin-builder/?url=${encodeURIComponent(pageUrl)}&media=${encodeURIComponent(mediaUrl)}&description=${encodeURIComponent(trimmedDescription)}`;
     });
+  }
+
+  /**
+   * Returns an image URL proxied through Vercel (same domain as the site)
+   * so Pinterest's crawler can access it without hitting Azure directly.
+   */
+  private getProxiedImageUrl(url: string): string {
+    if (!url) return '';
+    const siteUrl = environment.siteUrl || (typeof window !== 'undefined' ? window.location.origin : '');
+    // If it's already a full Azure URL, rewrite it to go through Vercel proxy
+    if (url.includes('azurecontainerapps.io')) {
+      const uploadsPath = url.split('/uploads/')[1];
+      if (uploadsPath) {
+        return `${siteUrl}/uploads/${uploadsPath}`;
+      }
+    }
+    // If it's a relative path like /uploads/abc.jpg
+    if (url.startsWith('/uploads/')) {
+      return `${siteUrl}${url}`;
+    }
+    if (url.startsWith('uploads/')) {
+      return `${siteUrl}/${url}`;
+    }
+    // Already a full URL to somewhere else
+    if (url.startsWith('http')) return url;
+    // Default: prefix with site URL
+    return `${siteUrl}${url.startsWith('/') ? url : '/' + url}`;
   }
 
   private waitForPinUtils(timeout: number): Promise<any> {

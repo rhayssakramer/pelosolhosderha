@@ -13,6 +13,7 @@
     }
   ],
   "rewrites": [
-    { "source": "/((?!.*\\.(?:js|css|json|ico|png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot|map)$).*)", "destination": "/index.html" }
+    { "source": "/uploads/:path*", "destination": "https://pelosolhosderha-api.bluesea-ecfbf889.brazilsouth.azurecontainerapps.io/uploads/:path*" },
+    { "source": "/((?!.*\\.(?:js|css|json|ico|png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot|map)$)(?!uploads/).*)", "destination": "/index.html" }
   ]
 }
