@@ -388,6 +388,7 @@
 
 .post-body * {
   max-width: 100%;
+  box-sizing: border-box;
 }
 
 .post-body p {
@@ -425,6 +426,12 @@
   max-width: 100%;
   border-radius: 8px;
   margin: 1rem 0;
+  height: auto;
+}
+
+.post-body img[style*="width"] {
+  max-width: 100%;
+  height: auto !important;
 }
 
 .not-found {

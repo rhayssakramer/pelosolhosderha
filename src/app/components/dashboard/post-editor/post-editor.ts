@@ -8,6 +8,40 @@ import { QuillModule } from 'ngx-quill';
 import Quill from 'quill';
 import QuillResizeImage from 'quill-resize-image';
 
+// Extend Image blot to preserve width/height/style attributes
+const BaseImage = Quill.import('formats/image') as any;
+
+class ResizableImage extends BaseImage {
+  static create(value: string) {
+    const node = super.create(value);
+    return node;
+  }
+
+  static formats(node: HTMLElement) {
+    const formats: any = {};
+    if (node.hasAttribute('width')) formats.width = node.getAttribute('width');
+    if (node.hasAttribute('height')) formats.height = node.getAttribute('height');
+    if (node.hasAttribute('style')) formats.style = node.getAttribute('style');
+    return formats;
+  }
+
+  format(name: string, value: any) {
+    if (name === 'width' || name === 'height' || name === 'style') {
+      if (value) {
+        (this as any).domNode.setAttribute(name, value);
+      } else {
+        (this as any).domNode.removeAttribute(name);
+      }
+    } else {
+      super.format(name, value);
+    }
+  }
+}
+
+ResizableImage['blotName'] = 'image';
+ResizableImage['tagName'] = 'IMG';
+
+Quill.register(ResizableImage, true);
 Quill.register('modules/resize', QuillResizeImage);
 
 @Component({
