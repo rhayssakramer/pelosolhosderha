@@ -1,6 +1,7 @@
 import { Injectable, signal, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+import { Observable, map } from 'rxjs';
 import { Post, Tag, BlogSettings } from '../models/post.model';
 import { environment } from '../../environments/environment';
 import { AuthService } from './auth.service';
@@ -53,7 +54,13 @@ export class BlogService {
   }
 
   private savePosts(): void {
-    if (this.isBrowser) localStorage.setItem(this.POSTS_KEY, JSON.stringify(this.posts()));
+    if (!this.isBrowser) return;
+    try {
+      localStorage.setItem(this.POSTS_KEY, JSON.stringify(this.posts()));
+    } catch (e) {
+      console.warn('Cache local excedeu o limite, limpando cache de posts:', e);
+      try { localStorage.removeItem(this.POSTS_KEY); } catch {}
+    }
   }
 
   private saveTags(): void {
@@ -110,6 +117,16 @@ export class BlogService {
     if (this.useApi) {
       this.loadPostsFromApi();
     }
+  }
+
+  // Upload
+  uploadImage(file: File): Observable<string> {
+    const formData = new FormData();
+    formData.append('image', file);
+    const baseUrl = this.apiUrl.replace(/\/api\/?$/, '');
+    return this.http.post<{ url: string }>(`${this.apiUrl}/upload`, formData).pipe(
+      map(res => `${baseUrl}${res.url}`)
+    );
   }
 
   // Posts

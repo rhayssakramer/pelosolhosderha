@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BlogService } from '../../../services/blog.service';
 import { Post } from '../../../models/post.model';
+import { environment } from '../../../../environments/environment';
 import { QuillModule } from 'ngx-quill';
 import Quill from 'quill';
 import QuillResizeImage from 'quill-resize-image';
@@ -129,8 +130,31 @@ export class PostEditorComponent {
 
   onEditorCreated(editor: any): void {
     this.quillEditor = editor;
-    // Setup emoji button in toolbar
     const toolbar = editor.getModule('toolbar');
+
+    // Custom image handler: upload to server instead of base64
+    if (environment.production) {
+      toolbar.addHandler('image', () => {
+        const input = document.createElement('input');
+        input.setAttribute('type', 'file');
+        input.setAttribute('accept', 'image/*');
+        input.click();
+        input.onchange = () => {
+          const file = input.files?.[0];
+          if (!file) return;
+          this.blog.uploadImage(file).subscribe({
+            next: (url) => {
+              const range = editor.getSelection(true);
+              editor.insertEmbed(range.index, 'image', url);
+              editor.setSelection(range.index + 1);
+            },
+            error: (err) => console.error('Erro ao fazer upload da imagem:', err)
+          });
+        };
+      });
+    }
+
+    // Setup emoji button in toolbar
     toolbar.addHandler('emoji', () => {
       this.showEmojiPicker = !this.showEmojiPicker;
       this.cdr.detectChanges();
@@ -189,8 +213,30 @@ export class PostEditorComponent {
 
   onCoverFileChange(event: Event): void {
     const input = event.target as HTMLInputElement;
-    if (input.files && input.files[0]) {
-      const file = input.files[0];
+    if (!input.files || !input.files[0]) return;
+    const file = input.files[0];
+
+    if (environment.production) {
+      // Show local preview while uploading
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.coverPreview = e.target?.result as string;
+      };
+      reader.readAsDataURL(file);
+
+      // Upload to server and use URL
+      this.blog.uploadImage(file).subscribe({
+        next: (url) => {
+          this.coverImage = url;
+          this.coverPreview = url;
+        },
+        error: (err) => {
+          console.error('Erro ao fazer upload da capa:', err);
+          // Fallback to base64 if upload fails
+          this.coverImage = this.coverPreview;
+        }
+      });
+    } else {
       const reader = new FileReader();
       reader.onload = (e) => {
         const result = e.target?.result as string;
