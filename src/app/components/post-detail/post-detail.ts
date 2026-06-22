@@ -100,7 +100,9 @@ export class PostDetailComponent {
 
   getFullImageUrl(url: string): string {
     if (!url) return '';
+    // Already a full URL (Azure Blob Storage, external, etc.)
     if (url.startsWith('http')) return url;
+    // Relative URL: resolve through Vercel proxy or API base
     const base = this.getApiBase() || environment.siteUrl || (typeof window !== 'undefined' ? window.location.origin : '');
     return base + (url.startsWith('/') ? url : '/' + url);
   }
@@ -142,13 +144,18 @@ export class PostDetailComponent {
   }
 
   /**
-   * Returns an image URL proxied through Vercel (same domain as the site)
-   * so Pinterest's crawler can access it without hitting Azure directly.
+   * Returns an image URL for sharing on social media (Pinterest, etc.).
+   * Azure Blob Storage URLs are already publicly accessible.
+   * For relative paths or old Azure Container App URLs, proxy through Vercel.
    */
   private getProxiedImageUrl(url: string): string {
     if (!url) return '';
     const siteUrl = environment.siteUrl || (typeof window !== 'undefined' ? window.location.origin : '');
-    // If it's already a full Azure URL, rewrite it to go through Vercel proxy
+    // Azure Blob Storage URLs are directly accessible
+    if (url.includes('.blob.core.windows.net')) {
+      return url;
+    }
+    // If it's already a full Azure Container App URL, rewrite it to go through Vercel proxy
     if (url.includes('azurecontainerapps.io')) {
       const uploadsPath = url.split('/uploads/')[1];
       if (uploadsPath) {

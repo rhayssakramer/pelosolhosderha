@@ -123,9 +123,15 @@ export class BlogService {
   uploadImage(file: File): Observable<string> {
     const formData = new FormData();
     formData.append('image', file);
-    const baseUrl = this.apiUrl.replace(/\/api\/?$/, '');
     return this.http.post<{ url: string }>(`${this.apiUrl}/upload`, formData).pipe(
-      map(res => `${baseUrl}${res.url}`)
+      map(res => {
+        const url = res.url;
+        // If it's already a full URL (Azure Blob Storage), return as-is
+        if (url.startsWith('http')) return url;
+        // For relative URLs (local dev), prefix with API base
+        const baseUrl = this.apiUrl.replace(/\/api\/?$/, '');
+        return `${baseUrl}${url}`;
+      })
     );
   }
 

@@ -16,6 +16,8 @@ export const config = {
   jwtSecret: process.env.JWT_SECRET || 'fallback-secret',
   uploadDir: process.env.UPLOAD_DIR || './uploads',
   frontendUrl: process.env.FRONTEND_URL || 'http://localhost:4200',
+  azureStorageConnectionString: process.env.AZURE_STORAGE_CONNECTION_STRING || '',
+  azureStorageContainer: process.env.AZURE_STORAGE_CONTAINER || 'uploads',
   isProduction: env === 'production',
   isDevelopment: env === 'development',
   isHomolog: env === 'homolog',
