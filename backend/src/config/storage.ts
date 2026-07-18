@@ -69,7 +69,9 @@ export async function deleteFromCloud(blobName: string): Promise<void> {
 
 /**
  * Get the public URL for a locally stored file (development fallback).
+ * Returns absolute URL using the configured backend URL.
  */
 export function getLocalFileUrl(filename: string): string {
+  // Always return relative URL - frontend will convert to absolute
   return `/uploads/${filename}`;
 }

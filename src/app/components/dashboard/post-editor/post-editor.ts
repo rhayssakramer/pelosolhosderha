@@ -132,27 +132,28 @@ export class PostEditorComponent {
     this.quillEditor = editor;
     const toolbar = editor.getModule('toolbar');
 
-    // Custom image handler: upload to server instead of base64
-    if (environment.production) {
-      toolbar.addHandler('image', () => {
-        const input = document.createElement('input');
-        input.setAttribute('type', 'file');
-        input.setAttribute('accept', 'image/*');
-        input.click();
-        input.onchange = () => {
-          const file = input.files?.[0];
-          if (!file) return;
-          this.blog.uploadImage(file).subscribe({
-            next: (url) => {
-              const range = editor.getSelection(true);
-              editor.insertEmbed(range.index, 'image', url);
-              editor.setSelection(range.index + 1);
-            },
-            error: (err) => console.error('Erro ao fazer upload da imagem:', err)
-          });
-        };
-      });
-    }
+    // Custom image handler: ALWAYS upload to server to ensure persistence across browsers
+    toolbar.addHandler('image', () => {
+      const input = document.createElement('input');
+      input.setAttribute('type', 'file');
+      input.setAttribute('accept', 'image/*');
+      input.click();
+      input.onchange = () => {
+        const file = input.files?.[0];
+        if (!file) return;
+        this.blog.uploadImage(file).subscribe({
+          next: (url) => {
+            const range = editor.getSelection(true);
+            editor.insertEmbed(range.index, 'image', url);
+            editor.setSelection(range.index + 1);
+          },
+          error: (err) => {
+            console.error('Erro ao fazer upload da imagem:', err);
+            alert('⚠️ Falha ao fazer upload da imagem. Tente novamente.');
+          }
+        });
+      };
+    });
 
     // Setup emoji button in toolbar
     toolbar.addHandler('emoji', () => {
@@ -216,35 +217,26 @@ export class PostEditorComponent {
     if (!input.files || !input.files[0]) return;
     const file = input.files[0];
 
-    if (environment.production) {
-      // Show local preview while uploading
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        this.coverPreview = e.target?.result as string;
-      };
-      reader.readAsDataURL(file);
+    // Always show local preview while uploading
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      this.coverPreview = e.target?.result as string;
+    };
+    reader.readAsDataURL(file);
 
-      // Upload to server and use URL
-      this.blog.uploadImage(file).subscribe({
-        next: (url) => {
-          this.coverImage = url;
-          this.coverPreview = url;
-        },
-        error: (err) => {
-          console.error('Erro ao fazer upload da capa:', err);
-          // Fallback to base64 if upload fails
-          this.coverImage = this.coverPreview;
-        }
-      });
-    } else {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const result = e.target?.result as string;
-        this.coverImage = result;
-        this.coverPreview = result;
-      };
-      reader.readAsDataURL(file);
-    }
+    // ALWAYS upload to ensure persistent URL across browsers
+    this.blog.uploadImage(file).subscribe({
+      next: (url) => {
+        this.coverImage = url;
+        this.coverPreview = url; // Update preview with server URL
+      },
+      error: (err) => {
+        console.error('Erro ao fazer upload da capa:', err);
+        // If upload fails, fall back to preview but warn user
+        this.coverImage = this.coverPreview;
+        alert('⚠️ Falha ao fazer upload da imagem. Tente novamente ou verifique sua conexão.');
+      }
+    });
   }
 
   removeCover(): void {

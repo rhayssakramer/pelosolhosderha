@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
-import { prisma } from '../config/database';
-import { authMiddleware, AuthRequest } from '../middleware/auth.middleware';
+import { prisma } from '../config/database.js';
+import { authMiddleware, AuthRequest } from '../middleware/auth.middleware.js';
+import { normalizeImageUrlsInHtml, normalizeImageUrl } from '../utils/urlNormalizer.js';
 
 export const postRoutes = Router();
 
@@ -32,6 +33,8 @@ postRoutes.get('/', async (req: Request, res: Response) => {
 
     const formattedPosts = posts.map((post) => ({
       ...post,
+      content: normalizeImageUrlsInHtml(post.content),
+      coverImage: normalizeImageUrl(post.coverImage),
       tags: post.tags.map((pt) => pt.tag.name),
       commentCount: post._count.comments,
     }));
@@ -62,6 +65,8 @@ postRoutes.get('/:id', async (req: Request, res: Response) => {
 
     res.json({
       ...post,
+      content: normalizeImageUrlsInHtml(post.content),
+      coverImage: normalizeImageUrl(post.coverImage),
       tags: post.tags.map((pt) => pt.tag.name),
       commentCount: post.comments.length,
     });
@@ -83,6 +88,8 @@ postRoutes.get('/admin/all', authMiddleware, async (req: AuthRequest, res: Respo
 
     const formattedPosts = posts.map((post) => ({
       ...post,
+      content: normalizeImageUrlsInHtml(post.content),
+      coverImage: normalizeImageUrl(post.coverImage),
       tags: post.tags.map((pt) => pt.tag.name),
       commentCount: post._count.comments,
     }));
