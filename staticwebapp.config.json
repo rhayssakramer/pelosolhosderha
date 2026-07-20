@@ -1,0 +1,54 @@
+{
+  "routes": [
+    {
+      "route": "/uploads/*",
+      "rewrite": "https://pelosolhosderha-api.bluesea-ecfbf889.brazilsouth.azurecontainerapps.io/uploads/*"
+    },
+    {
+      "route": "/api/*",
+      "rewrite": "https://pelosolhosderha-api.bluesea-ecfbf889.brazilsouth.azurecontainerapps.io/api/*"
+    },
+    {
+      "route": "/*.json",
+      "serve": "/*.json"
+    },
+    {
+      "route": "/*.css",
+      "serve": "/*.css"
+    },
+    {
+      "route": "/*.js",
+      "serve": "/*.js"
+    },
+    {
+      "route": "/*.ico",
+      "serve": "/*.ico"
+    },
+    {
+      "route": "/*.woff",
+      "serve": "/*.woff"
+    },
+    {
+      "route": "/*.woff2",
+      "serve": "/*.woff2"
+    },
+    {
+      "route": "/*",
+      "serve": "/index.html",
+      "statusCode": 200
+    }
+  ],
+  "navigationFallback": {
+    "rewrite": "/index.html",
+    "exclude": [
+      "*.{css,scss,js,map,png,jpg,jpeg,gif,ico,svg,woff,woff2,eot,ttf}",
+      "/*/{js,css,images,fonts}/*"
+    ]
+  },
+  "mimeTypes": {
+    ".json": "text/json"
+  },
+  "auth": {
+    "rolesSource": "/auth/me"
+  }
+}
