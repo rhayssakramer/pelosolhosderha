@@ -43,7 +43,7 @@ export class AuthService {
         this.isLoggedIn.set(true);
         return { success: true };
       }
-      return { success: false, error: 'Credenciais inválidas (dev: admin@admin.com / admin)' };
+      return { success: false, error: 'E-mail ou senha inválidos.' };
     }
 
     try {
