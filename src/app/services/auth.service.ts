@@ -34,18 +34,6 @@ export class AuthService {
   }
 
   async login(email: string, password: string): Promise<{ success: boolean; error?: string }> {
-    // Dev mode: login local sem API
-    if (!environment.production) {
-      if (email === 'admin@admin.com' && password === 'admin') {
-        if (this.isBrowser) {
-          localStorage.setItem(this.STORAGE_KEY, 'dev-token');
-        }
-        this.isLoggedIn.set(true);
-        return { success: true };
-      }
-      return { success: false, error: 'E-mail ou senha inválidos.' };
-    }
-
     try {
       const response = await firstValueFrom(
         this.http.post<{ token: string; user: { id: string; name: string; email: string; role: string } }>(
