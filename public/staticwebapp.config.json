@@ -1,22 +1,15 @@
 {
+  "navigationFallback": {
+    "rewrite": "/index.html"
+  },
   "routes": [
-    {
-      "route": "/uploads/*",
-      "rewrite": "https://pelosolhosderha-api.bluesea-ecfbf889.brazilsouth.azurecontainerapps.io/uploads/*"
-    },
     {
       "route": "/api/*",
       "rewrite": "https://pelosolhosderha-api.bluesea-ecfbf889.brazilsouth.azurecontainerapps.io/api/*"
+    },
+    {
+      "route": "/uploads/*",
+      "rewrite": "https://pelosolhosderha-api.bluesea-ecfbf889.brazilsouth.azurecontainerapps.io/uploads/*"
     }
-  ],
-  "navigationFallback": {
-    "rewrite": "/index.html",
-    "exclude": [
-      "*.{css,scss,js,map,png,jpg,jpeg,gif,ico,svg,woff,woff2,eot,ttf}",
-      "/*/{js,css,images,fonts}/*"
-    ]
-  },
-  "mimeTypes": {
-    ".json": "text/json"
-  }
+  ]
 }

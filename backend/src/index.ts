@@ -14,7 +14,13 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: [config.frontendUrl, 'https://pelosolhosderha.vercel.app'],
+  origin: [
+    config.frontendUrl, 
+    'https://pelosolhosderha.vercel.app',
+    'https://pelosolhosderha.com.br',
+    'https://zealous-field-0fe04e90f.7.azurestaticapps.net',
+    'https://zealous-field-0fe04e90f-preview.eastus2.7.azurestaticapps.net'
+  ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
