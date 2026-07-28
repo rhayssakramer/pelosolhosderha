@@ -11,7 +11,7 @@ tagRoutes.get('/', async (_req: Request, res: Response) => {
       include: { _count: { select: { posts: true } } },
       orderBy: { order: 'asc' },
     });
-    res.json(tags.map((t) => ({ ...t, postCount: t._count.posts })));
+    res.json(tags.map((t: any) => ({ ...t, postCount: t._count.posts })));
   } catch (error) {
     res.status(500).json({ error: 'Erro ao buscar tags' });
   }
@@ -39,7 +39,7 @@ tagRoutes.put('/reorder', authMiddleware, async (req: AuthRequest, res: Response
     }
     // Get existing tags to validate IDs
     const existingTags = await prisma.tag.findMany({ select: { id: true } });
-    const existingIds = new Set(existingTags.map(t => t.id));
+    const existingIds = new Set(existingTags.map((t: any) => t.id));
     const validIds = orderedIds.filter(id => existingIds.has(id));
 
     for (let i = 0; i < validIds.length; i++) {

@@ -31,11 +31,11 @@ postRoutes.get('/', async (req: Request, res: Response) => {
       prisma.post.count({ where }),
     ]);
 
-    const formattedPosts = posts.map((post) => ({
+    const formattedPosts = posts.map((post: any) => ({
       ...post,
       content: normalizeImageUrlsInHtml(post.content),
       coverImage: normalizeImageUrl(post.coverImage),
-      tags: post.tags.map((pt) => pt.tag.name),
+      tags: post.tags.map((pt: any) => pt.tag.name),
       commentCount: post._count.comments,
     }));
 
@@ -67,7 +67,7 @@ postRoutes.get('/:id', async (req: Request, res: Response) => {
       ...post,
       content: normalizeImageUrlsInHtml(post.content),
       coverImage: normalizeImageUrl(post.coverImage),
-      tags: post.tags.map((pt) => pt.tag.name),
+      tags: post.tags.map((pt: any) => pt.tag.name),
       commentCount: post.comments.length,
     });
   } catch (error) {
@@ -86,11 +86,11 @@ postRoutes.get('/admin/all', authMiddleware, async (req: AuthRequest, res: Respo
       },
     });
 
-    const formattedPosts = posts.map((post) => ({
+    const formattedPosts = posts.map((post: any) => ({
       ...post,
       content: normalizeImageUrlsInHtml(post.content),
       coverImage: normalizeImageUrl(post.coverImage),
-      tags: post.tags.map((pt) => pt.tag.name),
+      tags: post.tags.map((pt: any) => pt.tag.name),
       commentCount: post._count.comments,
     }));
 
