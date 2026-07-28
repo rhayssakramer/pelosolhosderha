@@ -9,7 +9,7 @@ commentRoutes.post('/:postId', async (req: Request, res: Response) => {
   try {
     const { name, text, avatar } = req.body;
 
-    const post = await prisma.post.findUnique({ where: { id: req.params.postId } });
+    const post = await prisma.post.findUnique({ where: { id: req.params.postId as string } });
     if (!post) {
       res.status(404).json({ error: 'Post não encontrado' });
       return;
@@ -20,7 +20,7 @@ commentRoutes.post('/:postId', async (req: Request, res: Response) => {
         name,
         text,
         avatar,
-        postId: req.params.postId,
+        postId: req.params.postId as string,
       },
     });
 
@@ -34,7 +34,7 @@ commentRoutes.post('/:postId', async (req: Request, res: Response) => {
 commentRoutes.get('/:postId', async (req: Request, res: Response) => {
   try {
     const comments = await prisma.comment.findMany({
-      where: { postId: req.params.postId },
+      where: { postId: req.params.postId as string },
       orderBy: { createdAt: 'desc' },
     });
 
@@ -47,7 +47,7 @@ commentRoutes.get('/:postId', async (req: Request, res: Response) => {
 // Delete comment (admin)
 commentRoutes.delete('/:id', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
-    await prisma.comment.delete({ where: { id: req.params.id } });
+    await prisma.comment.delete({ where: { id: req.params.id as string } });
     res.json({ message: 'Comentário deletado' });
   } catch (error) {
     res.status(500).json({ error: 'Erro ao deletar comentário' });

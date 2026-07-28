@@ -49,7 +49,7 @@ postRoutes.get('/', async (req: Request, res: Response) => {
 postRoutes.get('/:id', async (req: Request, res: Response) => {
   try {
     const post = await prisma.post.findUnique({
-      where: { id: req.params.id },
+      where: { id: req.params.id as string },
       include: {
         tags: { include: { tag: true } },
         photos: { orderBy: { order: 'asc' } },
@@ -150,15 +150,15 @@ postRoutes.put('/:id', authMiddleware, async (req: AuthRequest, res: Response) =
     const { title, content, excerpt, coverImage, published, tags, photos } = req.body;
 
     // Remove existing tags
-    await prisma.postTag.deleteMany({ where: { postId: req.params.id } });
+    await prisma.postTag.deleteMany({ where: { postId: req.params.id as string } });
 
     // Remove existing photos if new ones provided
     if (photos) {
-      await prisma.photo.deleteMany({ where: { postId: req.params.id } });
+      await prisma.photo.deleteMany({ where: { postId: req.params.id as string } });
     }
 
     const post = await prisma.post.update({
-      where: { id: req.params.id },
+      where: { id: req.params.id as string },
       data: {
         title,
         content,
@@ -177,7 +177,7 @@ postRoutes.put('/:id', authMiddleware, async (req: AuthRequest, res: Response) =
         },
         ...(photos && {
           photos: {
-            create: photos.map((photo: { url: string; caption?: string }, index: number) => ({
+            create: (photos as { url: string; caption?: string }[]).map((photo, index: number) => ({
               url: photo.url,
               caption: photo.caption,
               order: index,
@@ -201,7 +201,7 @@ postRoutes.put('/:id', authMiddleware, async (req: AuthRequest, res: Response) =
 // Delete post
 postRoutes.delete('/:id', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
-    await prisma.post.delete({ where: { id: req.params.id } });
+    await prisma.post.delete({ where: { id: req.params.id as string } });
     res.json({ message: 'Post deletado com sucesso' });
   } catch (error) {
     res.status(500).json({ error: 'Erro ao deletar post' });

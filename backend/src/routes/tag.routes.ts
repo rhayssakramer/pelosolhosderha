@@ -56,7 +56,7 @@ tagRoutes.put('/reorder', authMiddleware, async (req: AuthRequest, res: Response
 tagRoutes.put('/:id', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const { name, color } = req.body;
-    const tag = await prisma.tag.update({ where: { id: req.params.id }, data: { name, color } });
+    const tag = await prisma.tag.update({ where: { id: req.params.id as string }, data: { name, color } });
     res.json(tag);
   } catch (error) {
     res.status(500).json({ error: 'Erro ao atualizar tag' });
@@ -66,7 +66,7 @@ tagRoutes.put('/:id', authMiddleware, async (req: AuthRequest, res: Response) =>
 // Delete tag (admin)
 tagRoutes.delete('/:id', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
-    await prisma.tag.delete({ where: { id: req.params.id } });
+    await prisma.tag.delete({ where: { id: req.params.id as string } });
     res.json({ message: 'Tag deletada' });
   } catch (error) {
     res.status(500).json({ error: 'Erro ao deletar tag' });
