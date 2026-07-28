@@ -3,33 +3,36 @@ import cors from 'cors';
 import path from 'path';
 import { config } from './config/env';
 import { prisma } from './config/database';
-import { authRoutes } from './routes/auth.routes';
-import { postRoutes } from './routes/post.routes';
-import { commentRoutes } from './routes/comment.routes';
-import { tagRoutes } from './routes/tag.routes';
-import { uploadRoutes } from './routes/upload.routes';
-import { statsRoutes } from './routes/stats.routes';
+import { authRoutes } from './routes/auth.routes.js';
+import { postRoutes } from './routes/post.routes.js';
+import { commentRoutes } from './routes/comment.routes.js';
+import { tagRoutes } from './routes/tag.routes.js';
+import { uploadRoutes } from './routes/upload.routes.js';
+import { statsRoutes } from './routes/stats.routes.js';
 
 const app = express();
 
-// Middleware
+const allowedOrigins = [
+  'https://www.pelosolhosderha.com.br'
+];
+
 app.use(cors({
-  origin: [
-    config.frontendUrl, 
-    'https://pelosolhosderha.vercel.app',
-    'https://pelosolhosderha.com.br',
-    'https://zealous-field-0fe04e90f.7.azurestaticapps.net',
-    'https://zealous-field-0fe04e90f-preview.eastus2.7.azurestaticapps.net'
-  ],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
 }));
+
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 // Static files (uploads) - allow public access (needed for Pinterest, Instagram sharing)
-app.use('/uploads', cors(), express.static(path.resolve(config.uploadDir)));
+app.use('/uploads', express.static(path.resolve(config.uploadDir)));
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -55,12 +58,12 @@ app.get('/api/instagram/feed', async (req, res) => {
     );
 
     if (!response.ok) {
-      const err = await response.json();
+      const err = await response.json() as { error?: { message?: string } };
       res.status(response.status).json({ posts: [], error: err.error?.message || 'Erro na API' });
       return;
     }
 
-    const data = await response.json();
+    const data = await response.json() as { data: any[] };
     const posts = (data.data || []).map((item: any) => ({
       id: item.id,
       imageUrl: item.media_type === 'VIDEO' ? item.thumbnail_url : item.media_url,
