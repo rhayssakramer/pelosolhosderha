@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
-import { prisma } from '../config/database';
-import { authMiddleware, AuthRequest } from '../middleware/auth.middleware';
+import { prisma } from '../config/database.js';
+import { authMiddleware, AuthRequest } from '../middleware/auth.middleware.js';
 
 export const tagRoutes = Router();
 

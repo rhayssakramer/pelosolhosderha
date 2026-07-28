@@ -1,7 +1,7 @@
 import { BlobServiceClient, ContainerClient } from '@azure/storage-blob';
 import path from 'path';
 import fs from 'fs';
-import { config } from './env';
+import { config } from './env.js';
 
 const AZURE_STORAGE_CONNECTION_STRING = process.env.AZURE_STORAGE_CONNECTION_STRING || '';
 const AZURE_STORAGE_CONTAINER = process.env.AZURE_STORAGE_CONTAINER || 'uploads';

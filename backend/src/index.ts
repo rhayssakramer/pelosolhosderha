@@ -1,8 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
-import { config } from './config/env';
-import { prisma } from './config/database';
+import { config } from './config/env.js';
+import { prisma } from './config/database.js';
 import { authRoutes } from './routes/auth.routes.js';
 import { postRoutes } from './routes/post.routes.js';
 import { commentRoutes } from './routes/comment.routes.js';

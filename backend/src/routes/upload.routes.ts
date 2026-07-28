@@ -2,9 +2,9 @@ import { Router, Response } from 'express';
 import multer from 'multer';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
-import { config } from '../config/env';
-import { isCloudStorageEnabled, uploadToCloud, getLocalFileUrl } from '../config/storage';
-import { authMiddleware, AuthRequest } from '../middleware/auth.middleware';
+import { config } from '../config/env.js';
+import { isCloudStorageEnabled, uploadToCloud, getLocalFileUrl } from '../config/storage.js';
+import { authMiddleware, AuthRequest } from '../middleware/auth.middleware.js';
 import fs from 'fs';
 
 export const uploadRoutes = Router();
