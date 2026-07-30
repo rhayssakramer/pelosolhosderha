@@ -10,7 +10,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
 
   // Only add token for requests to our API
-  if (environment.production && req.url.startsWith(environment.apiUrl)) {
+  if (req.url.startsWith(environment.apiUrl)) {
     const token = auth.getToken();
     if (token) {
       req = req.clone({
