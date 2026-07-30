@@ -29,24 +29,35 @@ export class AuthService {
   }
 
   getToken(): string | null {
-    if (!isPlatformBrowser(this.platformId)) return null;
-    return localStorage.getItem(this.STORAGE_KEY);
+    if (!isPlatformBrowser(this.platformId)) {
+      console.log('[AuthService] Not in browser, getToken() returning null');
+      return null;
+    }
+    const token = localStorage.getItem(this.STORAGE_KEY);
+    console.log('[AuthService] getToken():', token ? `Token found (${token.substring(0, 20)}...)` : 'No token in localStorage');
+    return token;
   }
 
   async login(email: string, password: string): Promise<{ success: boolean; error?: string }> {
     try {
+      console.log('[AuthService] Attempting login for:', email);
       const response = await firstValueFrom(
         this.http.post<{ token: string; user: { id: string; name: string; email: string; role: string } }>(
           `${this.API_URL}/login`,
           { email, password }
         )
       );
+      console.log('[AuthService] Login successful, saving token');
       if (isPlatformBrowser(this.platformId)) {
         localStorage.setItem(this.STORAGE_KEY, response.token);
+        console.log('[AuthService] Token saved to localStorage');
+      } else {
+        console.log('[AuthService] WARNING: Not in browser, token not saved!');
       }
       this.isLoggedIn.set(true);
       return { success: true };
     } catch (err: any) {
+      console.error('[AuthService] Login failed:', err?.error?.error);
       const message = err?.error?.error || 'Erro ao fazer login';
       return { success: false, error: message };
     }

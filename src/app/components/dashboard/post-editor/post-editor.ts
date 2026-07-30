@@ -62,7 +62,6 @@ export class PostEditorComponent {
   published = false;
   isEditing = false;
   editingId = '';
-  private isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
   showEmojiPicker = false;
 
