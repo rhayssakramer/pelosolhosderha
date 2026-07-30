@@ -211,7 +211,6 @@ az webapp config appsettings set \
     NODE_ENV=production \
     DATABASE_URL="postgresql://user:pass@host/db?sslmode=require" \
     JWT_SECRET="chave-secreta-minimo-32-caracteres" \
-    FRONTEND_URL="https://pelosolhosderha.vercel.app" \
     INSTAGRAM_TOKEN="seu-token-instagram"
 
 # Homolog
@@ -221,8 +220,7 @@ az webapp config appsettings set \
   --settings \
     NODE_ENV=homolog \
     DATABASE_URL="postgresql://user:pass@host/db-homolog?sslmode=require" \
-    JWT_SECRET="chave-secreta-homolog-32-caracteres" \
-    FRONTEND_URL="https://pelosolhosderha-preview.vercel.app"
+    JWT_SECRET="chave-secreta-homolog-32-caracteres"
 ```
 
 ### Tabela de Variáveis
@@ -232,10 +230,14 @@ az webapp config appsettings set \
 | `NODE_ENV` | Ambiente de execução | ✅ | `production` |
 | `DATABASE_URL` | Connection string PostgreSQL (Neon) | ✅ | `postgresql://...` |
 | `JWT_SECRET` | Chave para assinar tokens JWT (min. 32 chars) | ✅ | `minha-chave-super-secreta-123` |
-| `FRONTEND_URL` | URL do frontend (usado no CORS) | ✅ | `https://pelosolhosderha.vercel.app` |
 | `PORT` | Porta do servidor | ❌ | `3000` (default) |
 | `UPLOAD_DIR` | Diretório de uploads | ❌ | `./uploads` (default) |
 | `INSTAGRAM_TOKEN` | Token da API do Instagram | ❌ | `IGQ...` |
+| `AZURE_STORAGE_ACCOUNT_NAME` | Conta de armazenamento Azure | ❌ | `mystorageaccount` |
+| `AZURE_STORAGE_ACCOUNT_KEY` | Chave de acesso Azure Storage | ❌ | `DefaultEndpointsProtocol=...` |
+| `AZURE_STORAGE_CONTAINER_NAME` | Container para uploads | ❌ | `uploads` |
+
+> **Nota sobre CORS:** O CORS é configurado no código da aplicação em `src/index.ts` com a lista de `allowedOrigins`. Para adicionar novos ambientes, edite esse arquivo e recompile/redeploy.
 
 ### GitHub Secrets (para CI/CD)
 

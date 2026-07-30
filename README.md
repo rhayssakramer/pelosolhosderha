@@ -27,9 +27,12 @@ Pelos Olhos de Rha é um blog pessoal e portfólio criativo que combina escrita,
 - [Instalação e Configuração](#-instalação-e-configuração)
 - [Executando o Projeto](#-executando-o-projeto)
 - [API Endpoints](#-api-endpoints)
+- [Autenticação](#-autenticação)
+- [Upload de Imagens](#-upload-de-imagens)
 - [Variáveis de Ambiente](#-variáveis-de-ambiente)
 - [Deploy](#-deploy)
 - [Modelos de Dados](#-modelos-de-dados)
+- [Últimas Mudanças](#-últimas-mudanças)
 - [Créditos](#-créditos)
 
 ---
@@ -387,9 +390,36 @@ docker run -p 3000:3000 --env-file .env pelosolhosderha-backend
 | GET | `/api/instagram/feed` | Feed do Instagram | ❌ |
 
 Endpoints marcados com ✅ requerem o header:
-```
-Authorization: Bearer <seu_jwt_token>
-```
+## 🔑 Autenticação
+
+O sistema usa **JWT (JSON Web Tokens)** com validade de **7 dias**.
+
+**Credenciais padrão (seed):**
+- Email: `admin@pelosolhosderha.com.br` ou `rhakramer@gmail.com`
+- Senha: `admin123`
+
+> ⚠️ **Troque as senhas em produção!**
+
+**Fluxo:**
+1. Login: `POST /api/auth/login` com email + senha
+2. Resposta contém token JWT
+3. Usar em requisições protegidas: `Authorization: Bearer <token>`
+4. Token expira em 7 dias (fazer login novamente)
+
+---
+
+## 📸 Upload de Imagens
+
+**Configuração:**
+- Tipos aceitos: JPEG, JPG, PNG, GIF, WebP
+- Tamanho máximo: 10 MB por arquivo
+- Autenticação: Requerida (JWT token)
+- Armazenamento em desenvolvimento: Local (`/backend/uploads`)
+- Armazenamento em produção: Azure Blob Storage
+
+**Endpoints:**
+- `POST /api/upload` — Upload de imagem única
+- `POST /api/upload/multiple` — Upload de múltiplas imagens (máx 20)
 
 ---
 
@@ -400,12 +430,16 @@ Authorization: Bearer <seu_jwt_token>
 | Variável | Descrição | Obrigatória |
 |----------|-----------|-------------|
 | `DATABASE_URL` | URL de conexão PostgreSQL (Neon) | ✅ |
-| `JWT_SECRET` | Chave secreta para assinatura JWT | ✅ |
+| `JWT_SECRET` | Chave secreta para assinatura JWT (mín. 32 caracteres) | ✅ |
 | `PORT` | Porta do servidor (default: 3000) | ❌ |
 | `NODE_ENV` | Ambiente (`development`, `homolog`, `production`) | ❌ |
-| `FRONTEND_URL` | URL do frontend para CORS | ❌ |
 | `UPLOAD_DIR` | Diretório de uploads (default: `./uploads`) | ❌ |
 | `INSTAGRAM_TOKEN` | Token de acesso da API do Instagram | ❌ |
+| `AZURE_STORAGE_ACCOUNT_NAME` | Conta de armazenamento Azure (produção) | ❌ |
+| `AZURE_STORAGE_ACCOUNT_KEY` | Chave de acesso Azure (produção) | ❌ |
+| `AZURE_STORAGE_CONTAINER_NAME` | Container Azure para uploads (produção) | ❌ |
+
+**Veja também:** [Backend — Variáveis de Ambiente](./backend/README.md#-variáveis-de-ambiente)
 
 ---
 
@@ -513,7 +547,46 @@ npm run serve:ssr:pelosolhosderha
 
 ---
 
-## 👥 Créditos
+## � Últimas Mudanças
+
+### Julho 30, 2026
+
+#### 🔧 Mudanças Recentes
+
+**Backend:**
+- ✅ Configuração de CORS atualizada com múltiplas origens permitidas
+- ✅ Adicionado suporte a Azure Blob Storage para uploads em produção
+- ✅ Seção de Troubleshooting adicionada ao README
+- ✅ Documentação de autenticação JWT expandida
+- ✅ Variáveis de ambiente para Azure Storage documentadas
+
+**Frontend:**
+- ✅ Interceptor de autenticação validado e funcionando
+- ✅ Upload de imagens com tratamento de erro 401 melhorado
+- ✅ Suporte a múltiplos domínios de frontend
+
+**Documentação:**
+- ✅ Todos os READMEs atualizados com informações de CORS
+- ✅ Guia de autenticação JWT adicionado
+- ✅ Informações de upload de imagens expandidas
+- ✅ Tabelas de variáveis de ambiente completas
+
+#### 🐛 Correções
+
+- Resolvido erro 401 no upload de imagens (CORS)
+- CORS agora permite staging e preview environments
+- Token JWT validado e documentado
+
+#### 📚 Documentação
+
+- [Backend CORS Configuration](./backend/README.md#-cors-cross-origin-resource-sharing)
+- [Backend Troubleshooting](./backend/README.md#-troubleshooting)
+- [Autenticação JWT](#-autenticação)
+- [Upload de Imagens](#-upload-de-imagens)
+
+---
+
+## �👥 Créditos
 
 <p><strong>Veja o mundo pelos olhos de Rha.</strong></p>
 

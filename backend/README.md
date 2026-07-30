@@ -29,9 +29,11 @@ API backend do blog Pelos Olhos de Rha. Responsável por gerenciar posts, tags, 
 - [Autenticação](#-autenticação)
 - [Modelos de Dados](#-modelos-de-dados)
 - [Upload de Imagens](#-upload-de-imagens)
+- [CORS](#-cors-cross-origin-resource-sharing)
 - [Variáveis de Ambiente](#-variáveis-de-ambiente)
 - [Docker](#-docker)
 - [Banco de Dados](#-banco-de-dados)
+- [Troubleshooting](#-troubleshooting)
 
 ---
 
@@ -410,6 +412,24 @@ User ─────┐
 
 ---
 
+## 🌐 CORS (Cross-Origin Resource Sharing)
+
+O backend está configurado para aceitar requisições de múltiplas origens (origins):
+
+```javascript
+const allowedOrigins = [
+  'https://www.pelosolhosderha.com.br',           // Produção
+  'https://pelosolhosderhastore.z20.web.core.windows.net', // Frontend (staging)
+  'https://pelosolhosderha-api.bluesea-ecfbf889.brazilsouth.azurecontainerapps.io', // Preview
+  'http://localhost:4200',                        // Desenvolvimento local
+  'http://localhost:3000'                         // Desenvolvimento local backend
+];
+```
+
+> **Nota:** Se você estiver integrando um novo frontend ou ambiente, adicione a origin na lista acima em `src/index.ts`.
+
+---
+
 ## 🔐 Variáveis de Ambiente
 
 Crie um arquivo `.env` na raiz do backend:
@@ -427,14 +447,16 @@ DATABASE_URL="postgresql://user:password@host/database?sslmode=require"
 # Autenticação
 JWT_SECRET="sua-chave-secreta-com-minimo-32-caracteres"
 
-# CORS
-FRONTEND_URL="http://localhost:4200"
-
 # Upload
 UPLOAD_DIR="./uploads"
 
 # Instagram (opcional)
 INSTAGRAM_TOKEN="seu-token-aqui"
+
+# Azure Blob Storage (opcional - para uploads em produção)
+AZURE_STORAGE_ACCOUNT_NAME="seu-storage-account"
+AZURE_STORAGE_ACCOUNT_KEY="sua-chave-de-acesso"
+AZURE_STORAGE_CONTAINER_NAME="uploads"
 ```
 
 ---
@@ -495,6 +517,34 @@ npx prisma studio
 ```
 
 Abre interface visual em `http://localhost:5555` para explorar e editar dados.
+
+---
+
+---
+
+## 🔧 Troubleshooting
+
+### Erro 401 (Unauthorized) no Upload
+
+**Problema:** O upload retorna 401 mesmo com token válido.
+
+**Solução:**
+1. Verifique se a origem (origin) do seu frontend está na lista de `allowedOrigins`
+2. Confirme que o token está sendo enviado no header `Authorization: Bearer <token>`
+3. Valide o token em [jwt.io](https://jwt.io)
+4. Verifique os logs do servidor: `npm run dev`
+
+### Token Expirado (401)
+
+**Problema:** Recebe 401 depois de algumas horas.
+
+**Solução:** Tokens JWT expiram em 7 dias. Cliente precisa fazer login novamente para obter novo token.
+
+### CORS Error no Console
+
+**Problema:** `Access-Control-Allow-Origin` error no navegador.
+
+**Solução:** Adicione sua URL de frontend em `src/index.ts` na lista de `allowedOrigins` e recompile.
 
 ---
 
