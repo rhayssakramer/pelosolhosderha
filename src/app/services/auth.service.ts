@@ -1,4 +1,4 @@
-import { Injectable, signal, PLATFORM_ID, inject, afterNextRender } from '@angular/core';
+import { Injectable, signal, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -13,25 +13,22 @@ export class AuthService {
   private readonly API_URL = `${environment.apiUrl}/auth`;
   private platformId = inject(PLATFORM_ID);
   private http = inject(HttpClient);
-  private tokenCache: string | null = null;
-  private tokenLoaded = false;
 
   isLoggedIn = signal(false);
 
   constructor(private router: Router) {
-    // Delay loading token until after browser renders to avoid SSR issues
-    afterNextRender(() => {
-      this.checkSession();
-    });
+    this.checkSession();
   }
 
   private checkSession(): void {
     if (!isPlatformBrowser(this.platformId)) return;
-    const token = localStorage.getItem(this.STORAGE_KEY);
-    if (token) {
-      this.tokenCache = token;
-      this.tokenLoaded = true;
-      this.isLoggedIn.set(true);
+    try {
+      const token = localStorage.getItem(this.STORAGE_KEY);
+      if (token) {
+        this.isLoggedIn.set(true);
+      }
+    } catch (e) {
+      // localStorage might not be available
     }
   }
 
@@ -39,12 +36,11 @@ export class AuthService {
     if (!isPlatformBrowser(this.platformId)) {
       return null;
     }
-    // Force load from localStorage if not cached yet
-    if (!this.tokenLoaded) {
-      this.tokenCache = localStorage.getItem(this.STORAGE_KEY);
-      this.tokenLoaded = true;
+    try {
+      return localStorage.getItem(this.STORAGE_KEY);
+    } catch (e) {
+      return null;
     }
-    return this.tokenCache;
   }
 
   async login(email: string, password: string): Promise<{ success: boolean; error?: string }> {
@@ -56,9 +52,11 @@ export class AuthService {
         )
       );
       if (isPlatformBrowser(this.platformId)) {
-        localStorage.setItem(this.STORAGE_KEY, response.token);
-        this.tokenCache = response.token;
-        this.tokenLoaded = true;
+        try {
+          localStorage.setItem(this.STORAGE_KEY, response.token);
+        } catch (e) {
+          console.warn('Could not store token in localStorage:', e);
+        }
       }
       this.isLoggedIn.set(true);
       return { success: true };
@@ -69,9 +67,13 @@ export class AuthService {
   }
 
   logout(): void {
-    if (isPlatformBrowser(this.platformId)) localStorage.removeItem(this.STORAGE_KEY);
-    this.tokenCache = null;
-    this.tokenLoaded = false;
+    if (isPlatformBrowser(this.platformId)) {
+      try {
+        localStorage.removeItem(this.STORAGE_KEY);
+      } catch (e) {
+        console.warn('Could not clear localStorage:', e);
+      }
+    }
     this.isLoggedIn.set(false);
     this.router.navigate(['/']);
   }
