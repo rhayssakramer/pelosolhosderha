@@ -20,7 +20,7 @@ export interface BlogAnalytics {
 })
 export class StatsService {
   private readonly STATS_KEY = 'blog_stats';
-  private isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
+  private platformId = inject(PLATFORM_ID);
 
   analytics = signal<BlogAnalytics>(this.getDefault());
 
@@ -33,13 +33,13 @@ export class StatsService {
   }
 
   private load(): void {
-    if (!this.isBrowser) return;
+    if (!isPlatformBrowser(this.platformId)) return;
     const data = localStorage.getItem(this.STATS_KEY);
     this.analytics.set(data ? JSON.parse(data) : this.getDefault());
   }
 
   private save(): void {
-    if (this.isBrowser) localStorage.setItem(this.STATS_KEY, JSON.stringify(this.analytics()));
+    if (isPlatformBrowser(this.platformId)) localStorage.setItem(this.STATS_KEY, JSON.stringify(this.analytics()));
   }
 
   trackView(postId: string): void {

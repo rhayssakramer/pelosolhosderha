@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
@@ -10,6 +10,12 @@ import { BlogService } from '../../services/blog.service';
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
   constructor(public auth: AuthService, public blog: BlogService) {}
+
+  ngOnInit(): void {
+    // Reload tags and posts when dashboard is opened to ensure freshness from server
+    this.blog.reloadTags();
+    this.blog.reloadPosts();
+  }
 }

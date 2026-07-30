@@ -14,13 +14,13 @@ export interface InstagramPost {
 export class InstagramService {
   private readonly CACHE_KEY = 'blog_instagram_cache';
   private readonly CACHE_DURATION = 1000 * 60 * 60; // 1 hora
-  private isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
+  private platformId = inject(PLATFORM_ID);
 
   posts = signal<InstagramPost[]>([]);
   loading = signal(false);
 
   constructor() {
-    if (this.isBrowser) {
+    if (isPlatformBrowser(this.platformId)) {
       const cached = this.loadCache();
       if (!cached) {
         this.fetchPosts();
@@ -45,7 +45,7 @@ export class InstagramService {
   }
 
   async fetchPosts(): Promise<void> {
-    if (!this.isBrowser) return;
+    if (!isPlatformBrowser(this.platformId)) return;
     this.loading.set(true);
 
     try {

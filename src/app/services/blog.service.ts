@@ -118,6 +118,12 @@ export class BlogService {
     }
   }
 
+  reloadTags(): void {
+    if (this.useApi) {
+      this.loadTagsFromApi();
+    }
+  }
+
   // Upload
   uploadImage(file: File): Observable<string> {
     const formData = new FormData();
@@ -224,6 +230,8 @@ export class BlogService {
       next: (tag) => {
         this.tags.update(tags => [...tags, { id: tag.id, name: tag.name, color: tag.color }]);
         this.saveTags();
+        // Reload tags from API to ensure consistency across all browsers/tabs
+        this.reloadTags();
       },
       error: (err) => console.error('Erro ao criar tag:', err)
     });
@@ -239,6 +247,8 @@ export class BlogService {
       next: () => {
         this.tags.update(tags => tags.filter(t => t.id !== id));
         this.saveTags();
+        // Reload tags from API to ensure consistency across all browsers/tabs
+        this.reloadTags();
       },
       error: (err) => console.error('Erro ao deletar tag:', err)
     });
@@ -253,6 +263,10 @@ export class BlogService {
     if (!this.useApi) return;
 
     this.http.put(`${this.apiUrl}/tags/reorder`, { orderedIds }).subscribe({
+      next: () => {
+        // Reload tags to ensure consistency
+        this.reloadTags();
+      },
       error: (err) => {
         console.error('Erro ao reordenar tags:', err);
         this.loadTagsFromApi();

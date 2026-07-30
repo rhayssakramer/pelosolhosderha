@@ -41,7 +41,7 @@ export class AuthService {
           { email, password }
         )
       );
-      if (this.isBrowser) {
+      if (isPlatformBrowser(this.platformId)) {
         localStorage.setItem(this.STORAGE_KEY, response.token);
       }
       this.isLoggedIn.set(true);
@@ -53,7 +53,7 @@ export class AuthService {
   }
 
   logout(): void {
-    if (this.isBrowser) localStorage.removeItem(this.STORAGE_KEY);
+    if (isPlatformBrowser(this.platformId)) localStorage.removeItem(this.STORAGE_KEY);
     this.isLoggedIn.set(false);
     this.router.navigate(['/']);
   }
