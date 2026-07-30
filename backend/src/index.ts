@@ -13,7 +13,11 @@ import { statsRoutes } from './routes/stats.routes.js';
 const app = express();
 
 const allowedOrigins = [
-  'https://www.pelosolhosderha.com.br'
+  'https://www.pelosolhosderha.com.br',
+  'https://pelosolhosderhastore.z20.web.core.windows.net',
+  'https://pelosolhosderha-api.bluesea-ecfbf889.brazilsouth.azurecontainerapps.io',
+  'http://localhost:4200',
+  'http://localhost:3000'
 ];
 
 app.use(cors({
