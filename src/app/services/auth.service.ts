@@ -17,6 +17,8 @@ export class AuthService {
   isLoggedIn = signal(false);
 
   constructor(private router: Router) {
+    console.log('[AuthService] Constructor called, platformId:', this.platformId);
+    console.log('[AuthService] isPlatformBrowser(platformId):', isPlatformBrowser(this.platformId));
     this.checkSession();
   }
 
