@@ -15,7 +15,7 @@ export class BlogService {
   private readonly SETTINGS_KEY = 'blog_settings';
   private readonly apiUrl = environment.apiUrl;
   private readonly useApi = environment.production;
-  private isBrowser: boolean;
+  private platformId = inject(PLATFORM_ID);
   private http = inject(HttpClient);
   private auth = inject(AuthService);
 
@@ -24,7 +24,6 @@ export class BlogService {
   settings = signal<BlogSettings>(this.getDefaultSettings());
 
   constructor() {
-    this.isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
     this.loadAll();
     if (this.useApi) {
       this.loadTagsFromApi();
@@ -43,7 +42,7 @@ export class BlogService {
   }
 
   private loadAll(): void {
-    if (!this.isBrowser) return;
+    if (!isPlatformBrowser(this.platformId)) return;
     const posts = localStorage.getItem(this.POSTS_KEY);
     const tags = localStorage.getItem(this.TAGS_KEY);
     const settings = localStorage.getItem(this.SETTINGS_KEY);
@@ -54,7 +53,7 @@ export class BlogService {
   }
 
   private savePosts(): void {
-    if (!this.isBrowser) return;
+    if (!isPlatformBrowser(this.platformId)) return;
     try {
       localStorage.setItem(this.POSTS_KEY, JSON.stringify(this.posts()));
     } catch (e) {
@@ -64,15 +63,15 @@ export class BlogService {
   }
 
   private saveTags(): void {
-    if (this.isBrowser) localStorage.setItem(this.TAGS_KEY, JSON.stringify(this.tags()));
+    if (isPlatformBrowser(this.platformId)) localStorage.setItem(this.TAGS_KEY, JSON.stringify(this.tags()));
   }
 
   private saveSettings(): void {
-    if (this.isBrowser) localStorage.setItem(this.SETTINGS_KEY, JSON.stringify(this.settings()));
+    if (isPlatformBrowser(this.platformId)) localStorage.setItem(this.SETTINGS_KEY, JSON.stringify(this.settings()));
   }
 
   private loadTagsFromApi(): void {
-    if (!this.isBrowser) return;
+    if (!isPlatformBrowser(this.platformId)) return;
     this.http.get<any[]>(`${this.apiUrl}/tags`).subscribe({
       next: (tags) => {
         const mapped: Tag[] = tags.map(t => ({ id: t.id, name: t.name, color: t.color }));
@@ -98,7 +97,7 @@ export class BlogService {
   }
 
   private loadPostsFromApi(): void {
-    if (!this.isBrowser) return;
+    if (!isPlatformBrowser(this.platformId)) return;
     // Use admin endpoint if authenticated to get all posts (including drafts)
     const endpoint = this.auth.isLoggedIn()
       ? `${this.apiUrl}/posts/admin/all`

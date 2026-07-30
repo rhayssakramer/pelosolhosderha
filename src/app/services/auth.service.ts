@@ -11,7 +11,7 @@ import { environment } from '../../environments/environment';
 export class AuthService {
   private readonly STORAGE_KEY = 'blog_auth_token';
   private readonly API_URL = `${environment.apiUrl}/auth`;
-  private isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
+  private platformId = inject(PLATFORM_ID);
   private http = inject(HttpClient);
 
   isLoggedIn = signal(false);
@@ -21,7 +21,7 @@ export class AuthService {
   }
 
   private checkSession(): void {
-    if (!this.isBrowser) return;
+    if (!isPlatformBrowser(this.platformId)) return;
     const token = localStorage.getItem(this.STORAGE_KEY);
     if (token) {
       this.isLoggedIn.set(true);
@@ -29,7 +29,7 @@ export class AuthService {
   }
 
   getToken(): string | null {
-    if (!this.isBrowser) return null;
+    if (!isPlatformBrowser(this.platformId)) return null;
     return localStorage.getItem(this.STORAGE_KEY);
   }
 
