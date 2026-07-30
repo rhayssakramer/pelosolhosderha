@@ -18,6 +18,7 @@ export const config = {
   frontendUrl: process.env.FRONTEND_URL || 'http://localhost:4200',
   azureStorageConnectionString: process.env.AZURE_STORAGE_CONNECTION_STRING || '',
   azureStorageContainer: process.env.AZURE_STORAGE_CONTAINER || 'uploads',
+  instagramToken: process.env.INSTAGRAM_TOKEN || '',
   isProduction: env === 'production',
   isDevelopment: env === 'development',
   isHomolog: env === 'homolog',

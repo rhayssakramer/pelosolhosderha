@@ -49,7 +49,7 @@ app.use('/api/stats', statsRoutes);
 // Instagram feed endpoint
 app.get('/api/instagram/feed', async (req, res) => {
   const limit = parseInt(req.query['limit'] as string) || 9;
-  const token = process.env.INSTAGRAM_TOKEN || '';
+  const token = config.instagramToken;
 
   if (!token) {
     res.json({ posts: [], error: 'Token não configurado' });
