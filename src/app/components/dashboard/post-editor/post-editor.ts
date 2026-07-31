@@ -154,6 +154,17 @@ export class PostEditorComponent {
       };
     });
 
+    // Custom video handler for YouTube, Vimeo, etc.
+    toolbar.addHandler('video', () => {
+      const url = prompt('Cole a URL do vídeo (YouTube, Vimeo, etc.):');
+      if (url) {
+        const range = editor.getSelection(true);
+        // Quill automatically converts YouTube/Vimeo URLs to embeds
+        editor.insertEmbed(range.index, 'video', url);
+        editor.setSelection(range.index + 1);
+      }
+    });
+
     // Setup emoji button in toolbar
     toolbar.addHandler('emoji', () => {
       this.showEmojiPicker = !this.showEmojiPicker;
