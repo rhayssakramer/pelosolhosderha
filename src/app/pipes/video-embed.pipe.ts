@@ -1,15 +1,24 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { isPlatformBrowser } from '@angular/common';
+import { inject, PLATFORM_ID } from '@angular/core';
 
 @Pipe({
   name: 'videoEmbed',
   standalone: true
 })
 export class VideoEmbedPipe implements PipeTransform {
+  private platformId = inject(PLATFORM_ID);
+
   constructor(private sanitizer: DomSanitizer) {}
 
   transform(content: string): SafeHtml {
     if (!content) return content as SafeHtml;
+
+    // Only process on browser side
+    if (!isPlatformBrowser(this.platformId)) {
+      return this.sanitizer.bypassSecurityTrustHtml(content);
+    }
 
     let html = content;
 
