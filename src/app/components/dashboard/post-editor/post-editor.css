@@ -249,3 +249,39 @@
 .emoji-item:hover {
   background: #f0e6ff;
 }
+
+/* Video embeds in editor - hide error message */
+::ng-deep .ql-editor iframe {
+  max-width: 100%;
+  width: 560px;
+  height: 315px;
+  margin: 1rem auto;
+  display: block;
+  border: 2px dashed #8c6add;
+  border-radius: 8px;
+  background: #f5f5f5;
+}
+
+::ng-deep .ql-editor .ql-video {
+  max-width: 100%;
+  width: 560px;
+  height: 315px;
+  margin: 1rem auto;
+  display: block;
+  border: 2px dashed #8c6add;
+  border-radius: 8px;
+  background: #f5f5f5;
+  position: relative;
+}
+
+::ng-deep .ql-editor .ql-video::before {
+  content: '🎥 Vídeo inserido (será exibido no blog)';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #666;
+  font-size: 14px;
+  text-align: center;
+  pointer-events: none;
+}
