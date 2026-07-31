@@ -158,35 +158,35 @@ export class PostEditorComponent {
     toolbar.addHandler('video', () => {
       const url = prompt('Cole a URL do vídeo (YouTube, Shorts, Vimeo, Instagram Reels, etc.):');
       if (url) {
-        let videoUrl = url;
+        let embedUrl = '';
         
-        // Convert YouTube Shorts to regular YouTube URL
-        const shortsMatch = url.match(/youtube\.com\/shorts\/([a-zA-Z0-9_-]+)/);
-        if (shortsMatch) {
-          videoUrl = `https://www.youtube.com/watch?v=${shortsMatch[1]}`;
+        // YouTube - extract video ID and create embed URL
+        const youtubeMatch = url.match(/(?:youtube\.com\/watch\?v=|youtube\.com\/shorts\/|youtu\.be\/)([a-zA-Z0-9_-]+)/);
+        if (youtubeMatch) {
+          embedUrl = `https://www.youtube.com/embed/${youtubeMatch[1]}`;
         }
         
-        // Convert youtu.be to regular YouTube URL
-        const youtubeShortMatch = url.match(/youtu\.be\/([a-zA-Z0-9_-]+)/);
-        if (youtubeShortMatch) {
-          videoUrl = `https://www.youtube.com/watch?v=${youtubeShortMatch[1]}`;
+        // Vimeo
+        const vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
+        if (vimeoMatch) {
+          embedUrl = `https://player.vimeo.com/video/${vimeoMatch[1]}`;
         }
         
-        // Convert Instagram Reels to embed URL
-        const instagramReelMatch = url.match(/instagram\.com\/reel\/([a-zA-Z0-9_-]+)/);
-        if (instagramReelMatch) {
-          videoUrl = `https://www.instagram.com/reel/${instagramReelMatch[1]}/embed/`;
+        // Instagram Reels or Posts
+        const instagramMatch = url.match(/instagram\.com\/(?:reel|p)\/([a-zA-Z0-9_-]+)/);
+        if (instagramMatch) {
+          embedUrl = `https://www.instagram.com/reel/${instagramMatch[1]}/embed/`;
         }
         
-        // Convert Instagram posts to embed URL
-        const instagramPostMatch = url.match(/instagram\.com\/p\/([a-zA-Z0-9_-]+)/);
-        if (instagramPostMatch) {
-          videoUrl = `https://www.instagram.com/p/${instagramPostMatch[1]}/embed/`;
+        if (embedUrl) {
+          const range = editor.getSelection(true);
+          // Insert iframe HTML directly
+          const iframeHtml = `<iframe src="${embedUrl}" width="560" height="315" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+          editor.clipboard.dangerouslyPasteHTML(range.index, iframeHtml);
+          editor.setSelection(range.index + 1);
+        } else {
+          alert('URL de vídeo não reconhecida. Use YouTube, Vimeo ou Instagram.');
         }
-        
-        const range = editor.getSelection(true);
-        editor.insertEmbed(range.index, 'video', videoUrl);
-        editor.setSelection(range.index + 1);
       }
     });
 
