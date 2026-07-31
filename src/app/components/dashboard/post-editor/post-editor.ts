@@ -154,13 +154,38 @@ export class PostEditorComponent {
       };
     });
 
-    // Custom video handler for YouTube, Vimeo, etc.
+    // Custom video handler for YouTube, Vimeo, Instagram, etc.
     toolbar.addHandler('video', () => {
-      const url = prompt('Cole a URL do vídeo (YouTube, Vimeo, etc.):');
+      const url = prompt('Cole a URL do vídeo (YouTube, Shorts, Vimeo, Instagram Reels, etc.):');
       if (url) {
+        let videoUrl = url;
+        
+        // Convert YouTube Shorts to regular YouTube URL
+        const shortsMatch = url.match(/youtube\.com\/shorts\/([a-zA-Z0-9_-]+)/);
+        if (shortsMatch) {
+          videoUrl = `https://www.youtube.com/watch?v=${shortsMatch[1]}`;
+        }
+        
+        // Convert youtu.be to regular YouTube URL
+        const youtubeShortMatch = url.match(/youtu\.be\/([a-zA-Z0-9_-]+)/);
+        if (youtubeShortMatch) {
+          videoUrl = `https://www.youtube.com/watch?v=${youtubeShortMatch[1]}`;
+        }
+        
+        // Convert Instagram Reels to embed URL
+        const instagramReelMatch = url.match(/instagram\.com\/reel\/([a-zA-Z0-9_-]+)/);
+        if (instagramReelMatch) {
+          videoUrl = `https://www.instagram.com/reel/${instagramReelMatch[1]}/embed/`;
+        }
+        
+        // Convert Instagram posts to embed URL
+        const instagramPostMatch = url.match(/instagram\.com\/p\/([a-zA-Z0-9_-]+)/);
+        if (instagramPostMatch) {
+          videoUrl = `https://www.instagram.com/p/${instagramPostMatch[1]}/embed/`;
+        }
+        
         const range = editor.getSelection(true);
-        // Quill automatically converts YouTube/Vimeo URLs to embeds
-        editor.insertEmbed(range.index, 'video', url);
+        editor.insertEmbed(range.index, 'video', videoUrl);
         editor.setSelection(range.index + 1);
       }
     });
