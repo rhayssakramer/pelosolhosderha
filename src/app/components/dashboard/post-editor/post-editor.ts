@@ -158,32 +158,36 @@ export class PostEditorComponent {
     toolbar.addHandler('video', () => {
       const url = prompt('Cole a URL do vídeo (YouTube, Shorts, Vimeo, Instagram Reels, etc.):');
       if (url) {
-        let videoUrl = '';
+        let videoId = '';
+        let videoType = '';
         
         // YouTube - extract video ID
         const youtubeMatch = url.match(/(?:youtube\.com\/watch\?v=|youtube\.com\/shorts\/|youtu\.be\/)([a-zA-Z0-9_-]+)/);
         if (youtubeMatch) {
-          videoUrl = `https://www.youtube.com/watch?v=${youtubeMatch[1]}`;
+          videoId = youtubeMatch[1];
+          videoType = 'youtube';
         }
         
         // Vimeo
         const vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
         if (vimeoMatch) {
-          videoUrl = `https://vimeo.com/${vimeoMatch[1]}`;
+          videoId = vimeoMatch[1];
+          videoType = 'vimeo';
         }
         
-        // Instagram Reels or Posts
+        // Instagram
         const instagramMatch = url.match(/instagram\.com\/(?:reel|p)\/([a-zA-Z0-9_-]+)/);
         if (instagramMatch) {
-          videoUrl = `https://www.instagram.com/reel/${instagramMatch[1]}/`;
+          videoId = instagramMatch[1];
+          videoType = 'instagram';
         }
         
-        if (videoUrl) {
+        if (videoId && videoType) {
           const range = editor.getSelection(true);
-          // Insert as a link with special class for later conversion
-          editor.insertText(range.index, videoUrl);
-          // Format as link
-          editor.formatText(range.index, videoUrl.length, 'link', videoUrl);
+          // Insert a special marker that the pipe can detect
+          const marker = `[VIDEO:${videoType}:${videoId}]`;
+          editor.insertText(range.index, marker);
+          editor.setSelection(range.index + marker.length);
         } else {
           alert('URL de vídeo não reconhecida. Use YouTube, Vimeo ou Instagram.');
         }
