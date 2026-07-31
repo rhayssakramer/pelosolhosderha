@@ -184,10 +184,12 @@ export class PostEditorComponent {
         
         if (videoId && videoType) {
           const range = editor.getSelection(true);
-          // Insert a special marker that the pipe can detect
+          // Insert marker as text - Quill will preserve it as plain text in the HTML
           const marker = `[VIDEO:${videoType}:${videoId}]`;
-          editor.insertText(range.index, marker);
-          editor.setSelection(range.index + marker.length);
+          // Use insertText to add as plain text content
+          editor.insertText(range.index, marker + '\n');
+          editor.setSelection(range.index + marker.length + 1);
+          console.log('✅ Marcador de vídeo inserido:', marker);
         } else {
           alert('URL de vídeo não reconhecida. Use YouTube, Vimeo ou Instagram.');
         }
@@ -286,10 +288,15 @@ export class PostEditorComponent {
   save(): void {
     if (!this.title.trim()) return;
 
+    // Get the HTML content from Quill editor
+    const contentToSave = this.quillEditor ? this.quillEditor.root.innerHTML : this.content;
+    
+    console.log('📝 Salvando post com conteúdo:', contentToSave);
+
     if (this.isEditing) {
       this.blog.updatePost(this.editingId, {
         title: this.title,
-        content: this.content,
+        content: contentToSave,
         excerpt: this.excerpt,
         coverImage: this.coverImage || undefined,
         tags: this.selectedTags(),
@@ -298,7 +305,7 @@ export class PostEditorComponent {
     } else {
       this.blog.createPost({
         title: this.title,
-        content: this.content,
+        content: contentToSave,
         excerpt: this.excerpt,
         coverImage: this.coverImage || undefined,
         tags: this.selectedTags(),
