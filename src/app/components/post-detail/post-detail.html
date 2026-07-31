@@ -94,7 +94,7 @@
               </div>
             }
           </div>
-          <div class="post-body" [innerHTML]="getSanitizedContent() | safe:'html'"></div>
+          <div class="post-body" [innerHTML]="getSanitizedContent() | videoEmbed"></div>
 
           <!-- Post Footer -->
           <div class="post-footer">

@@ -158,32 +158,32 @@ export class PostEditorComponent {
     toolbar.addHandler('video', () => {
       const url = prompt('Cole a URL do vídeo (YouTube, Shorts, Vimeo, Instagram Reels, etc.):');
       if (url) {
-        let embedUrl = '';
+        let videoUrl = '';
         
-        // YouTube - extract video ID and create embed URL
+        // YouTube - extract video ID
         const youtubeMatch = url.match(/(?:youtube\.com\/watch\?v=|youtube\.com\/shorts\/|youtu\.be\/)([a-zA-Z0-9_-]+)/);
         if (youtubeMatch) {
-          embedUrl = `https://www.youtube.com/embed/${youtubeMatch[1]}`;
+          videoUrl = `https://www.youtube.com/watch?v=${youtubeMatch[1]}`;
         }
         
         // Vimeo
         const vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
         if (vimeoMatch) {
-          embedUrl = `https://player.vimeo.com/video/${vimeoMatch[1]}`;
+          videoUrl = `https://vimeo.com/${vimeoMatch[1]}`;
         }
         
         // Instagram Reels or Posts
         const instagramMatch = url.match(/instagram\.com\/(?:reel|p)\/([a-zA-Z0-9_-]+)/);
         if (instagramMatch) {
-          embedUrl = `https://www.instagram.com/reel/${instagramMatch[1]}/embed/`;
+          videoUrl = `https://www.instagram.com/reel/${instagramMatch[1]}/`;
         }
         
-        if (embedUrl) {
+        if (videoUrl) {
           const range = editor.getSelection(true);
-          // Insert as iframe HTML that will be preserved
-          const iframeHtml = `<iframe class="ql-video" src="${embedUrl}" width="560" height="315" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
-          editor.clipboard.dangerouslyPasteHTML(range.index, iframeHtml);
-          editor.setSelection(range.index + 1);
+          // Insert as a link with special class for later conversion
+          editor.insertText(range.index, videoUrl);
+          // Format as link
+          editor.formatText(range.index, videoUrl.length, 'link', videoUrl);
         } else {
           alert('URL de vídeo não reconhecida. Use YouTube, Vimeo ou Instagram.');
         }

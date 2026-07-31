@@ -446,7 +446,7 @@
 }
 
 /* Video embeds */
-.post-body iframe {
+.post-body .video-embed {
   max-width: 100%;
   width: 560px;
   height: 315px;
@@ -456,14 +456,12 @@
   border-radius: 8px;
 }
 
-.post-body .ql-video {
-  max-width: 100%;
-  width: 560px;
-  height: 315px;
-  margin: 1.5rem auto;
-  display: block;
-  border: none;
-  border-radius: 8px;
+@media (max-width: 768px) {
+  .post-body .video-embed {
+    width: 100%;
+    height: auto;
+    min-height: 315px;
+  }
 }
 
 .post-body::after {
