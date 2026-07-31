@@ -7,13 +7,12 @@ import { StatsService } from '../../services/stats.service';
 import { InstagramService } from '../../services/instagram.service';
 import { YouTubeService } from '../../services/youtube.service';
 import { Post } from '../../models/post.model';
-import { SafePipe } from '../../pipes/safe.pipe';
 import { VideoEmbedPipe } from '../../pipes/video-embed.pipe';
 import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-post-detail',
-  imports: [CommonModule, RouterLink, SafePipe, VideoEmbedPipe],
+  imports: [CommonModule, RouterLink, VideoEmbedPipe],
   templateUrl: './post-detail.html',
   styleUrl: './post-detail.css',
   encapsulation: ViewEncapsulation.None
