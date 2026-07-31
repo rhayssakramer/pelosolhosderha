@@ -180,8 +180,9 @@ export class PostEditorComponent {
         
         if (embedUrl) {
           const range = editor.getSelection(true);
-          // Use Quill's native video embed
-          editor.insertEmbed(range.index, 'video', embedUrl);
+          // Insert as iframe HTML that will be preserved
+          const iframeHtml = `<iframe class="ql-video" src="${embedUrl}" width="560" height="315" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+          editor.clipboard.dangerouslyPasteHTML(range.index, iframeHtml);
           editor.setSelection(range.index + 1);
         } else {
           alert('URL de vídeo não reconhecida. Use YouTube, Vimeo ou Instagram.');
