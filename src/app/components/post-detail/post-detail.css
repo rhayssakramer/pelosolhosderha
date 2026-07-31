@@ -445,6 +445,27 @@
   border-radius: 8px;
 }
 
+/* Video embeds */
+.post-body iframe {
+  max-width: 100%;
+  width: 560px;
+  height: 315px;
+  margin: 1.5rem auto;
+  display: block;
+  border: none;
+  border-radius: 8px;
+}
+
+.post-body .ql-video {
+  max-width: 100%;
+  width: 560px;
+  height: 315px;
+  margin: 1.5rem auto;
+  display: block;
+  border: none;
+  border-radius: 8px;
+}
+
 .post-body::after {
   content: '';
   display: table;
