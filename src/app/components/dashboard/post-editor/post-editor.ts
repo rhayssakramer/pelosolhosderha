@@ -166,6 +166,9 @@ export class PostEditorComponent {
         if (youtubeMatch) {
           videoId = youtubeMatch[1];
           videoType = 'youtube';
+          console.log('🎬 YouTube detectado - URL:', url);
+          console.log('📍 ID extraído:', videoId);
+          console.log('🔍 Tamanho do ID:', videoId.length);
         }
         
         // Vimeo
@@ -173,6 +176,8 @@ export class PostEditorComponent {
         if (vimeoMatch) {
           videoId = vimeoMatch[1];
           videoType = 'vimeo';
+          console.log('🎬 Vimeo detectado - URL:', url);
+          console.log('📍 ID extraído:', videoId);
         }
         
         // Instagram
@@ -180,6 +185,8 @@ export class PostEditorComponent {
         if (instagramMatch) {
           videoId = instagramMatch[1];
           videoType = 'instagram';
+          console.log('🎬 Instagram detectado - URL:', url);
+          console.log('📍 ID extraído:', videoId);
         }
         
         if (videoId && videoType) {
@@ -191,6 +198,7 @@ export class PostEditorComponent {
           editor.setSelection(range.index + marker.length);
           console.log('✅ Marcador de vídeo inserido:', marker);
         } else {
+          console.error('❌ URL não reconhecida:', url);
           alert('URL de vídeo não reconhecida. Use YouTube, Vimeo ou Instagram.');
         }
       }
