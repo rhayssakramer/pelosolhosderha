@@ -187,8 +187,8 @@ export class PostEditorComponent {
           // Insert marker as text - Quill will preserve it as plain text in the HTML
           const marker = `[VIDEO:${videoType}:${videoId}]`;
           // Use insertText to add as plain text content
-          editor.insertText(range.index, marker + '\n');
-          editor.setSelection(range.index + marker.length + 1);
+          editor.insertText(range.index, marker);
+          editor.setSelection(range.index + marker.length);
           console.log('✅ Marcador de vídeo inserido:', marker);
         } else {
           alert('URL de vídeo não reconhecida. Use YouTube, Vimeo ou Instagram.');

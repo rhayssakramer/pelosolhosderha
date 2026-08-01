@@ -23,22 +23,24 @@ export class VideoEmbedPipe implements PipeTransform {
     let html = content;
 
     // Replace video markers with iframes
-    // [VIDEO:youtube:VIDEO_ID] -> YouTube iframe
+    // Remove optional whitespace around markers to avoid extra spacing
+    
+    // [VIDEO:youtube:VIDEO_ID] -> YouTube iframe (11 char ID)
     html = html.replace(
-      /\[VIDEO:youtube:([a-zA-Z0-9_-]+)\]/g,
-      '<iframe class="video-embed" src="https://www.youtube.com/embed/$1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+      /\s*\[VIDEO:youtube:([a-zA-Z0-9_-]{11})\]\s*/g,
+      '<div class="video-wrapper"><iframe class="video-embed" src="https://www.youtube.com/embed/$1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>'
     );
 
     // [VIDEO:vimeo:VIDEO_ID] -> Vimeo iframe
     html = html.replace(
-      /\[VIDEO:vimeo:(\d+)\]/g,
-      '<iframe class="video-embed" src="https://player.vimeo.com/video/$1" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>'
+      /\s*\[VIDEO:vimeo:(\d+)\]\s*/g,
+      '<div class="video-wrapper"><iframe class="video-embed" src="https://player.vimeo.com/video/$1" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe></div>'
     );
 
     // [VIDEO:instagram:REEL_ID] -> Instagram iframe
     html = html.replace(
-      /\[VIDEO:instagram:([a-zA-Z0-9_-]+)\]/g,
-      '<iframe class="video-embed" src="https://www.instagram.com/reel/$1/embed/" frameborder="0"></iframe>'
+      /\s*\[VIDEO:instagram:([a-zA-Z0-9_-]+)\]\s*/g,
+      '<div class="video-wrapper"><iframe class="video-embed" src="https://www.instagram.com/reel/$1/embed/" frameborder="0"></iframe></div>'
     );
 
     return this.sanitizer.bypassSecurityTrustHtml(html);
