@@ -64,6 +64,10 @@ export class VideoEmbedPipe implements PipeTransform {
       }
     );
 
+    // Remove <p> tags around video-wrapper divs (invalid HTML: div inside p)
+    html = html.replace(/<p>\s*<div class="video-wrapper">/g, '<div class="video-wrapper">');
+    html = html.replace(/<\/div>\s*<\/p>/g, '</div>');
+    
     console.log('📤 [VideoEmbedPipe] Conteúdo transformado:', html);
     return this.sanitizer.bypassSecurityTrustHtml(html);
   }
