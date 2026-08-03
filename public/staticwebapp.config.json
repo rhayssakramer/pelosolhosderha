@@ -12,17 +12,7 @@
       "rewrite": "https://pelosolhosderha-api.bluesea-ecfbf889.brazilsouth.azurecontainerapps.io/uploads/*"
     }
   ],
-  "responseOverrides": {
-    "400": "index.html"
-  },
-  "globalHeaders": [
-    {
-      "headers": [
-        {
-          "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.youtube.com *.google.com cdn.jsdelivr.net; frame-src 'self' *.youtube.com *.youtube-nocookie.com; style-src 'self' 'unsafe-inline'; connect-src 'self' *.youtube.com; img-src 'self' data: https:; font-src 'self' data:"
-        }
-      ]
-    }
-  ]
+  "globalHeaders": {
+    "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.youtube.com *.google.com cdn.jsdelivr.net; frame-src 'self' *.youtube.com *.youtube-nocookie.com; style-src 'self' 'unsafe-inline'; connect-src 'self' *.youtube.com; img-src 'self' data: https:; font-src 'self' data:"
+  }
 }
