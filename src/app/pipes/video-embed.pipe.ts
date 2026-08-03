@@ -42,7 +42,7 @@ export class VideoEmbedPipe implements PipeTransform {
       /\s*\[VIDEO:youtube:([a-zA-Z0-9_-]+)\]\s*/g,
       (match, videoId) => {
         console.log('✅ Convertendo marcador YouTube - ID:', videoId, 'Tamanho:', videoId.length);
-        return `<div class="video-wrapper"><iframe class="video-embed" src="https://www.youtube-nocookie.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen referrerpolicy="no-referrer"></iframe></div>`;
+        return `<div class="video-wrapper"><iframe class="video-embed" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen referrerpolicy="origin"></iframe></div>`;
       }
     );
 
