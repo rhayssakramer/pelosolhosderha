@@ -135,7 +135,7 @@ export class PostEditorComponent {
     toolbar.addHandler('image', () => {
       const input = document.createElement('input');
       input.setAttribute('type', 'file');
-      input.setAttribute('accept', 'image/*');
+      input.setAttribute('accept', 'image/jpeg,image/jpg,image/png,image/gif,image/webp,.gif,.jpg,.jpeg,.png,.webp');
       input.click();
       input.onchange = () => {
         const file = input.files?.[0];
