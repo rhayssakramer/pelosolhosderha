@@ -389,7 +389,8 @@
 }
 
 .post-body p {
-  margin-bottom: 0.8rem;
+  margin-bottom: 0.4rem;
+  margin-top: 0;
 }
 
 .post-body ol,
@@ -419,12 +420,25 @@
 .post-body .ql-indent-7 { padding-left: 21em; }
 .post-body .ql-indent-8 { padding-left: 24em; }
 
+.post-body p:has(> img:not([style*="float"])) {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.8rem;
+  align-items: center;
+}
+
+.post-body p:has(> img:not([style*="float"])) > img {
+  margin: 0;
+  flex: 0 1 auto;
+}
+
 .post-body img {
   max-width: 100%;
   width: auto;
   height: auto;
   border-radius: 8px;
-  margin: 0.8rem auto;
+  margin: 0.4rem auto;
   display: block;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease-in-out;
