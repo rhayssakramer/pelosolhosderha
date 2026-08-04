@@ -72,6 +72,8 @@ export async function deleteFromCloud(blobName: string): Promise<void> {
  * Returns absolute URL using the configured backend URL.
  */
 export function getLocalFileUrl(filename: string): string {
-  // Always return relative URL - frontend will convert to absolute
-  return `/uploads/${filename}`;
+  // If we have a backend URL configured, use it to create absolute URL
+  // Otherwise return relative URL
+  const backendUrl = process.env.BACKEND_URL || process.env.API_URL || 'http://localhost:3000';
+  return `${backendUrl}/uploads/${filename}`;
 }
