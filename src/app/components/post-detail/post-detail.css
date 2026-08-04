@@ -434,20 +434,27 @@
   transform: scale(1.02);
 }
 
-.post-body img[style*="float: left"] {
+/* Preserve float positions from editor */
+.post-body img[style*="float: left"],
+.post-body img.ql-float-left {
   margin: 0.5rem 1rem 0.8rem 0;
   border-radius: 8px;
   float: left;
   display: inline;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  max-width: 50%;
+  width: auto;
 }
 
-.post-body img[style*="float: right"] {
+.post-body img[style*="float: right"],
+.post-body img.ql-float-right {
   margin: 0.5rem 0 0.8rem 1rem;
   border-radius: 8px;
   float: right;
   display: inline;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  max-width: 50%;
+  width: auto;
 }
 
 .post-body img[style*="margin: auto"] {
