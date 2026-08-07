@@ -7,8 +7,8 @@ export const pinRoutes = Router();
 /**
  * Get the cover image for a post
  * This endpoint serves the image through the site domain, so Pinterest 
- * doesn't treat it as a direct image link
- * GET /api/pin/:postId/cover -> Redirects to the actual cover image URL
+ * can fetch it properly without following redirects
+ * GET /api/pin/:postId/cover -> Returns the actual cover image
  */
 pinRoutes.get('/:postId/cover', async (req: Request, res: Response) => {
   try {
@@ -27,9 +27,32 @@ pinRoutes.get('/:postId/cover', async (req: Request, res: Response) => {
       return;
     }
 
-    // Redirect to the actual cover image
-    console.log(`[PIN COVER] Redirecting to cover image: ${post.coverImage}`);
-    res.redirect(302, post.coverImage);
+    // Fetch the image from the original URL and proxy it back to the client
+    try {
+      const imageResponse = await fetch(post.coverImage);
+      if (!imageResponse.ok) {
+        console.log(`[PIN COVER] Failed to fetch image from ${post.coverImage}: ${imageResponse.status}`);
+        res.status(404).json({ error: 'Image not found' });
+        return;
+      }
+
+      // Copy headers from the original response
+      const contentType = imageResponse.headers.get('content-type');
+      const contentLength = imageResponse.headers.get('content-length');
+      
+      if (contentType) res.set('Content-Type', contentType);
+      if (contentLength) res.set('Content-Length', contentLength);
+      
+      res.set('Cache-Control', 'public, max-age=31536000'); // Cache for 1 year
+      
+      console.log(`[PIN COVER] Serving cover image for post ${postId}`);
+      
+      // Stream the image back
+      imageResponse.body?.pipe(res);
+    } catch (fetchError) {
+      console.error(`[PIN COVER] Error fetching image from ${post.coverImage}:`, fetchError);
+      res.status(500).json({ error: 'Error fetching image' });
+    }
   } catch (error) {
     console.error('[PIN COVER] Error:', error);
     res.status(500).json({ error: 'Error retrieving image' });
