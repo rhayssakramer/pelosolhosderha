@@ -167,6 +167,7 @@ export class BlogService {
 
     if (this.useApi) {
       this.http.post<any>(`${this.apiUrl}/posts`, {
+        id: newPost.id, // Send the generated ID to backend
         title: post.title,
         content: post.content,
         excerpt: post.excerpt,
@@ -175,9 +176,9 @@ export class BlogService {
         tags: post.tags
       }).subscribe({
         next: (saved) => {
-          // Update local post with server ID
+          // Server will return with same ID we sent, but update timestamps
           this.posts.update(posts => posts.map(p =>
-            p.id === newPost.id ? { ...p, id: saved.id } : p
+            p.id === newPost.id ? { ...p, createdAt: saved.createdAt, updatedAt: saved.updatedAt } : p
           ));
           this.savePosts();
         },
