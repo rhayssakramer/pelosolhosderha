@@ -36,19 +36,17 @@ pinRoutes.get('/:postId/cover', async (req: Request, res: Response) => {
         return;
       }
 
-      // Copy headers from the original response
+      // Get image data as buffer
+      const imageBuffer = await imageResponse.arrayBuffer();
       const contentType = imageResponse.headers.get('content-type');
-      const contentLength = imageResponse.headers.get('content-length');
       
       if (contentType) res.set('Content-Type', contentType);
-      if (contentLength) res.set('Content-Length', contentLength);
-      
       res.set('Cache-Control', 'public, max-age=31536000'); // Cache for 1 year
       
-      console.log(`[PIN COVER] Serving cover image for post ${postId}`);
+      console.log(`[PIN COVER] Serving cover image for post ${postId} (${imageBuffer.byteLength} bytes)`);
       
-      // Stream the image back
-      imageResponse.body?.pipe(res);
+      // Send the image buffer
+      res.send(Buffer.from(imageBuffer));
     } catch (fetchError) {
       console.error(`[PIN COVER] Error fetching image from ${post.coverImage}:`, fetchError);
       res.status(500).json({ error: 'Error fetching image' });
