@@ -48,8 +48,11 @@ postRoutes.get('/', async (req: Request, res: Response) => {
 // Get single post (public)
 postRoutes.get('/:id', async (req: Request, res: Response) => {
   try {
+    const postId = req.params.id as string;
+    console.log(`[POST GET] Buscando post com ID: ${postId}`);
+    
     const post = await prisma.post.findUnique({
-      where: { id: req.params.id as string },
+      where: { id: postId },
       include: {
         tags: { include: { tag: true } },
         photos: { orderBy: { order: 'asc' } },
@@ -59,10 +62,18 @@ postRoutes.get('/:id', async (req: Request, res: Response) => {
     });
 
     if (!post) {
+      console.log(`[POST GET] Post ${postId} não encontrado no banco de dados`);
       res.status(404).json({ error: 'Post não encontrado' });
       return;
     }
 
+    if (!post.published) {
+      console.log(`[POST GET] Post ${postId} encontrado mas não publicado`);
+      res.status(404).json({ error: 'Post não encontrado' });
+      return;
+    }
+
+    console.log(`[POST GET] Post ${postId} encontrado e publicado`);
     res.json({
       ...post,
       content: normalizeImageUrlsInHtml(post.content),
@@ -71,6 +82,7 @@ postRoutes.get('/:id', async (req: Request, res: Response) => {
       commentCount: post.comments.length,
     });
   } catch (error) {
+    console.error(`[POST GET] Erro ao buscar post:`, error);
     res.status(500).json({ error: 'Erro ao buscar post' });
   }
 });
@@ -105,6 +117,9 @@ postRoutes.post('/', authMiddleware, async (req: AuthRequest, res: Response) => 
   try {
     const { id, title, content, excerpt, coverImage, published, tags, photos } = req.body;
 
+    console.log(`[POST CREATE] Criando post${id ? ` com ID fornecido: ${id}` : ' com ID gerado pelo banco'}`);
+    console.log(`[POST CREATE] Título: ${title}, Publicado: ${published}`);
+
     const post = await prisma.post.create({
       data: {
         ...(id && { id }), // Use provided ID from frontend if available
@@ -138,9 +153,10 @@ postRoutes.post('/', authMiddleware, async (req: AuthRequest, res: Response) => 
       },
     });
 
+    console.log(`[POST CREATE] Post criado com sucesso. ID: ${post.id}`);
     res.status(201).json(post);
   } catch (error) {
-    console.error(error);
+    console.error(`[POST CREATE] Erro ao criar post:`, error);
     res.status(500).json({ error: 'Erro ao criar post' });
   }
 });
