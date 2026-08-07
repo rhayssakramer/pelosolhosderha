@@ -151,6 +151,28 @@ export class BlogService {
     return this.posts().find(p => p.id === id);
   }
 
+  /**
+   * Fetch a single post directly from the API by ID.
+   * Useful when navigating directly to a post URL (e.g., from Pinterest)
+   * where the post might not be in the locally cached (paginated) list.
+   */
+  getPostByIdFromApi(id: string): Observable<Post | undefined> {
+    return this.http.get<any>(`${this.apiUrl}/posts/${id}`).pipe(
+      map(post => {
+        if (!post) return undefined;
+        // Add/update the post in the local cache
+        this.posts.update(posts => {
+          const exists = posts.find(p => p.id === post.id);
+          if (exists) {
+            return posts.map(p => p.id === post.id ? post : p);
+          }
+          return [...posts, post];
+        });
+        return post as Post;
+      })
+    );
+  }
+
   getPostsByTag(tagName: string): Post[] {
     return this.getPublishedPosts().filter(p => p.tags.includes(tagName));
   }

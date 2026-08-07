@@ -54,19 +54,36 @@ export class PostDetailComponent {
       if (id) {
         this.post = this.blog.getPostById(id);
         if (this.post) {
-          this.stats.trackView(id);
-          this.setMetaTags(this.post);
-          const allPosts = this.blog.getPublishedPosts()
-            .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-          const idx = allPosts.findIndex(p => p.id === id);
-          this.previousPost = idx > 0 ? allPosts[idx - 1] : undefined;
-          this.nextPost = idx < allPosts.length - 1 ? allPosts[idx + 1] : undefined;
+          this.loadPostRelations(id);
+        } else {
+          // Post not in local cache (e.g., accessed directly via Pinterest link).
+          // Fetch it directly from the API.
+          this.blog.getPostByIdFromApi(id).subscribe({
+            next: (post) => {
+              if (post) {
+                this.post = post;
+                this.loadPostRelations(id);
+              }
+            },
+            error: (err) => console.error('Erro ao buscar post da API:', err)
+          });
         }
       }
       if (typeof window !== 'undefined') {
         window.scrollTo(0, 0);
       }
     });
+  }
+
+  private loadPostRelations(id: string): void {
+    if (!this.post) return;
+    this.stats.trackView(id);
+    this.setMetaTags(this.post);
+    const allPosts = this.blog.getPublishedPosts()
+      .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+    const idx = allPosts.findIndex(p => p.id === id);
+    this.previousPost = idx > 0 ? allPosts[idx - 1] : undefined;
+    this.nextPost = idx < allPosts.length - 1 ? allPosts[idx + 1] : undefined;
   }
 
   private setMetaTags(post: Post): void {
