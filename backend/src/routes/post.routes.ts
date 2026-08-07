@@ -103,10 +103,11 @@ postRoutes.get('/admin/all', authMiddleware, async (req: AuthRequest, res: Respo
 // Create post
 postRoutes.post('/', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
-    const { title, content, excerpt, coverImage, published, tags, photos } = req.body;
+    const { id, title, content, excerpt, coverImage, published, tags, photos } = req.body;
 
     const post = await prisma.post.create({
       data: {
+        ...(id && { id }), // Use provided ID from frontend if available
         title,
         content,
         excerpt,
