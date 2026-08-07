@@ -117,9 +117,9 @@ export class PostDetailComponent {
     
     const pageUrl = `${baseSiteUrl}/post/${postId}`;
     
-    // Use relative URL for the cover image so it works through any domain
-    // (personalizado domain or Azure domain)
-    const coverImageUrl = `/api/pin/${postId}/cover`;
+    // Use absolute URL for the cover image endpoint
+    // Pinterest requires absolute URLs, not relative paths
+    const coverImageUrl = `${baseSiteUrl}/api/pin/${postId}/cover`;
     
     const title = this.post?.title || '';
     const excerpt = this.post?.excerpt || '';
@@ -127,8 +127,6 @@ export class PostDetailComponent {
     const trimmedDescription = description.length > 500 ? description.substring(0, 497) + '...' : description;
 
     // Use Pinterest SDK overlay (PinUtils.pinOne)
-    // pageUrl = the post URL (what Pinterest should link to)
-    // coverImageUrl = the image URL (will be resolved relative to current domain)
     const PinUtils = (window as any).PinUtils;
     if (PinUtils && PinUtils.pinOne) {
       PinUtils.pinOne({
