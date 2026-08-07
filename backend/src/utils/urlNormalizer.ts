@@ -38,14 +38,19 @@ export function normalizeImageUrlsInHtml(html: string | null | undefined): strin
 export function normalizeImageUrl(url: string | null | undefined): string {
   if (!url) return '';
 
-  // Already absolute
+  // Already absolute (http or https) - don't modify
   if (url.startsWith('http://') || url.startsWith('https://')) {
     return url;
   }
 
-  // Relative URL - make it absolute
+  // Relative URL - make it absolute using BACKEND_BASE_URL (which is the site frontend)
   if (url.startsWith('/')) {
     return `${BACKEND_BASE_URL}${url}`;
+  }
+
+  // If it doesn't start with / or http, it might be a relative path without leading slash
+  if (!url.startsWith('/')) {
+    return `${BACKEND_BASE_URL}/${url}`;
   }
 
   // Fallback
