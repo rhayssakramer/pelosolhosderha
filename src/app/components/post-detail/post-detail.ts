@@ -116,21 +116,24 @@ export class PostDetailComponent {
     const postId = this.post?.id;
     
     const pageUrl = `${baseSiteUrl}/post/${postId}`;
+    
+    // Use relative URL for the cover image so it works through any domain
+    // (personalizado domain or Azure domain)
+    const coverImageUrl = `/api/pin/${postId}/cover`;
+    
     const title = this.post?.title || '';
     const excerpt = this.post?.excerpt || '';
     const description = excerpt ? `${title} - ${excerpt}` : title;
     const trimmedDescription = description.length > 500 ? description.substring(0, 497) + '...' : description;
 
-    // Use the actual image URL for display
-    const displayImageUrl = this.getProxiedImageUrl(this.post?.coverImage || '');
-
     // Use Pinterest SDK overlay (PinUtils.pinOne)
-    // Pinterest will use pageUrl as the link destination and displayImageUrl as the PIN image
+    // pageUrl = the post URL (what Pinterest should link to)
+    // coverImageUrl = the image URL (will be resolved relative to current domain)
     const PinUtils = (window as any).PinUtils;
     if (PinUtils && PinUtils.pinOne) {
       PinUtils.pinOne({
         url: pageUrl,
-        media: displayImageUrl,
+        media: coverImageUrl,
         description: trimmedDescription
       });
       return;
@@ -140,11 +143,11 @@ export class PostDetailComponent {
     this.waitForPinUtils(3000).then(PU => {
       PU.pinOne({
         url: pageUrl,
-        media: displayImageUrl,
+        media: coverImageUrl,
         description: trimmedDescription
       });
     }).catch(() => {
-      window.location.href = `https://www.pinterest.com/pin-builder/?url=${encodeURIComponent(pageUrl)}&media=${encodeURIComponent(displayImageUrl)}&description=${encodeURIComponent(trimmedDescription)}`;
+      window.location.href = `https://www.pinterest.com/pin-builder/?url=${encodeURIComponent(pageUrl)}&media=${encodeURIComponent(coverImageUrl)}&description=${encodeURIComponent(trimmedDescription)}`;
     });
   }
 
