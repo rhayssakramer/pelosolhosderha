@@ -11,11 +11,10 @@ export const pinRoutes = Router();
  */
 pinRoutes.get('/:postId/image', async (req: Request, res: Response) => {
   try {
-    const postId = req.params.postId;
+    const postId = req.params.postId as string;
     
     console.log(`[PIN REDIRECT] Redirect request for post: ${postId}`);
     
-    // Verify the post exists and is published
     const post = await prisma.post.findUnique({
       where: { id: postId },
       select: { id: true, published: true, coverImage: true }
