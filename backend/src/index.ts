@@ -9,6 +9,7 @@ import { commentRoutes } from './routes/comment.routes.js';
 import { tagRoutes } from './routes/tag.routes.js';
 import { uploadRoutes } from './routes/upload.routes.js';
 import { statsRoutes } from './routes/stats.routes.js';
+import { pinRoutes } from './routes/pin.routes.js';
 
 const app = express();
 
@@ -45,6 +46,7 @@ app.use('/api/comments', commentRoutes);
 app.use('/api/tags', tagRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/stats', statsRoutes);
+app.use('/api/pin', pinRoutes);
 
 // Instagram feed endpoint
 app.get('/api/instagram/feed', async (req, res) => {
