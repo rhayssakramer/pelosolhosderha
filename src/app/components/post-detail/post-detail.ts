@@ -85,7 +85,10 @@ export class PostDetailComponent {
     this.meta.updateTag({ name: 'twitter:title', content: post.title });
     this.meta.updateTag({ name: 'twitter:description', content: description });
     this.meta.updateTag({ name: 'twitter:image', content: imageUrl });
+    // Pinterest-specific meta tags to ensure PIN redirects to post, not image
     this.meta.updateTag({ property: 'pin:media', content: imageUrl });
+    this.meta.updateTag({ property: 'pin:url', content: pageUrl });
+    this.meta.updateTag({ property: 'pin:description', content: description });
     this.meta.updateTag({ name: 'description', content: description });
   }
 
@@ -151,29 +154,17 @@ export class PostDetailComponent {
   private getProxiedImageUrl(url: string): string {
     if (!url) return '';
     const siteUrl = environment.siteUrl || (typeof window !== 'undefined' ? window.location.origin : '');
-    
-    // IMPORTANT: For Pinterest sharing, we need to route images through the site domain
-    // not through blob storage directly, so Pinterest recognizes this as a post share
-    
-    // If it's a blob storage URL, extract the path and route through site
+    // Azure Blob Storage URLs are directly accessible and Pinterest can fetch them
     if (url.includes('.blob.core.windows.net')) {
-      // Extract the path after the container
-      const parts = url.split('.blob.core.windows.net/');
-      if (parts.length > 1) {
-        const path = parts[1];
-        return `${siteUrl}/${path}`;
-      }
       return url;
     }
-    
-    // If it's already a full Azure Container App URL, rewrite it to go through site
+    // If it's already a full Azure Container App URL, rewrite it to go through site proxy
     if (url.includes('azurecontainerapps.io')) {
       const uploadsPath = url.split('/uploads/')[1];
       if (uploadsPath) {
         return `${siteUrl}/uploads/${uploadsPath}`;
       }
     }
-    
     // If it's a relative path like /uploads/abc.jpg
     if (url.startsWith('/uploads/')) {
       return `${siteUrl}${url}`;
@@ -181,10 +172,8 @@ export class PostDetailComponent {
     if (url.startsWith('uploads/')) {
       return `${siteUrl}/${url}`;
     }
-    
     // Already a full URL to somewhere else
     if (url.startsWith('http')) return url;
-    
     // Default: prefix with site URL
     return `${siteUrl}${url.startsWith('/') ? url : '/' + url}`;
   }
