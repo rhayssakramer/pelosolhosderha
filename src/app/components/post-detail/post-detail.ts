@@ -117,9 +117,8 @@ export class PostDetailComponent {
     
     const pageUrl = `${baseSiteUrl}/post/${postId}`;
     
-    // Use absolute URL for the cover image endpoint
-    // Pinterest requires absolute URLs, not relative paths
-    const coverImageUrl = `${baseSiteUrl}/api/pin/${postId}/cover`;
+    // Use the actual cover image directly - blob storage URLs are public and Pinterest can access them
+    const coverImageUrl = this.getProxiedImageUrl(this.post?.coverImage || '');
     
     const title = this.post?.title || '';
     const excerpt = this.post?.excerpt || '';
