@@ -130,13 +130,17 @@ export class PostDetailComponent {
   shareOnPinterest(): void {
     if (typeof window === 'undefined') return;
     const baseSiteUrl = environment.siteUrl || window.location.origin;
+    const apiUrl = environment.apiUrl || baseSiteUrl;
     const postId = this.post?.id;
-    
-    const pageUrl = `${baseSiteUrl}/post/${postId}`;
-    
-    // Use the actual cover image directly - blob storage URLs are public and Pinterest can access them
+
+    // Use the backend share page as the pin URL. This page has proper Open Graph
+    // meta tags (og:url -> post on custom domain) that Pinterest's crawler reads,
+    // and it redirects human visitors to the actual post.
+    const shareUrl = `${apiUrl}/pin/${postId}/share`;
+
+    // The image displayed in the pin (blob storage - publicly accessible)
     const coverImageUrl = this.getProxiedImageUrl(this.post?.coverImage || '');
-    
+
     const title = this.post?.title || '';
     const excerpt = this.post?.excerpt || '';
     const description = excerpt ? `${title} - ${excerpt}` : title;
@@ -146,7 +150,7 @@ export class PostDetailComponent {
     const PinUtils = (window as any).PinUtils;
     if (PinUtils && PinUtils.pinOne) {
       PinUtils.pinOne({
-        url: pageUrl,
+        url: shareUrl,
         media: coverImageUrl,
         description: trimmedDescription
       });
@@ -156,12 +160,12 @@ export class PostDetailComponent {
     // SDK not ready yet - wait for it to load (it's async)
     this.waitForPinUtils(3000).then(PU => {
       PU.pinOne({
-        url: pageUrl,
+        url: shareUrl,
         media: coverImageUrl,
         description: trimmedDescription
       });
     }).catch(() => {
-      window.location.href = `https://www.pinterest.com/pin-builder/?url=${encodeURIComponent(pageUrl)}&media=${encodeURIComponent(coverImageUrl)}&description=${encodeURIComponent(trimmedDescription)}`;
+      window.location.href = `https://www.pinterest.com/pin-builder/?url=${encodeURIComponent(shareUrl)}&media=${encodeURIComponent(coverImageUrl)}&description=${encodeURIComponent(trimmedDescription)}`;
     });
   }
 
