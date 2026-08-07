@@ -113,12 +113,7 @@ export class PostDetailComponent {
   shareOnPinterest(): void {
     if (typeof window === 'undefined') return;
     const baseSiteUrl = environment.siteUrl || window.location.origin;
-    const apiUrl = environment.apiUrl || baseSiteUrl;
     const postId = this.post?.id;
-    
-    // Use the API endpoint that redirects to the post
-    // This way, when Pinterest or users click the pin, they go to the post
-    const redirectImageUrl = `${apiUrl}/pin/${postId}/image`;
     
     const pageUrl = `${baseSiteUrl}/post/${postId}`;
     const title = this.post?.title || '';
@@ -126,10 +121,11 @@ export class PostDetailComponent {
     const description = excerpt ? `${title} - ${excerpt}` : title;
     const trimmedDescription = description.length > 500 ? description.substring(0, 497) + '...' : description;
 
-    // Use the actual image for display, but the redirect URL as the destination
+    // Use the actual image URL for display
     const displayImageUrl = this.getProxiedImageUrl(this.post?.coverImage || '');
 
     // Use Pinterest SDK overlay (PinUtils.pinOne)
+    // Pinterest will use pageUrl as the link destination and displayImageUrl as the PIN image
     const PinUtils = (window as any).PinUtils;
     if (PinUtils && PinUtils.pinOne) {
       PinUtils.pinOne({
