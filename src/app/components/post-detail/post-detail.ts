@@ -113,22 +113,28 @@ export class PostDetailComponent {
   shareOnPinterest(): void {
     if (typeof window === 'undefined') return;
     const baseSiteUrl = environment.siteUrl || window.location.origin;
-    const path = window.location.pathname;
-    const pageUrl = baseSiteUrl + path;
+    const apiUrl = environment.apiUrl || baseSiteUrl;
+    const postId = this.post?.id;
+    
+    // Use the API endpoint that redirects to the post
+    // This way, when Pinterest or users click the pin, they go to the post
+    const redirectImageUrl = `${apiUrl}/pin/${postId}/image`;
+    
+    const pageUrl = `${baseSiteUrl}/post/${postId}`;
     const title = this.post?.title || '';
     const excerpt = this.post?.excerpt || '';
     const description = excerpt ? `${title} - ${excerpt}` : title;
     const trimmedDescription = description.length > 500 ? description.substring(0, 497) + '...' : description;
 
-    // Build a proxied image URL that goes through Vercel (Pinterest can't access Azure directly)
-    const mediaUrl = this.getProxiedImageUrl(this.post?.coverImage || '');
+    // Use the actual image for display, but the redirect URL as the destination
+    const displayImageUrl = this.getProxiedImageUrl(this.post?.coverImage || '');
 
     // Use Pinterest SDK overlay (PinUtils.pinOne)
     const PinUtils = (window as any).PinUtils;
     if (PinUtils && PinUtils.pinOne) {
       PinUtils.pinOne({
         url: pageUrl,
-        media: mediaUrl,
+        media: displayImageUrl,
         description: trimmedDescription
       });
       return;
@@ -138,11 +144,11 @@ export class PostDetailComponent {
     this.waitForPinUtils(3000).then(PU => {
       PU.pinOne({
         url: pageUrl,
-        media: mediaUrl,
+        media: displayImageUrl,
         description: trimmedDescription
       });
     }).catch(() => {
-      window.location.href = `https://www.pinterest.com/pin-builder/?url=${encodeURIComponent(pageUrl)}&media=${encodeURIComponent(mediaUrl)}&description=${encodeURIComponent(trimmedDescription)}`;
+      window.location.href = `https://www.pinterest.com/pin-builder/?url=${encodeURIComponent(pageUrl)}&media=${encodeURIComponent(displayImageUrl)}&description=${encodeURIComponent(trimmedDescription)}`;
     });
   }
 
