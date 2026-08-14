@@ -130,13 +130,13 @@ export class PostDetailComponent {
   shareOnPinterest(): void {
     if (typeof window === 'undefined') return;
     const baseSiteUrl = environment.siteUrl || window.location.origin;
-    const apiUrl = environment.apiUrl || baseSiteUrl;
     const postId = this.post?.id;
 
-    // Use the backend share page as the pin URL. This page has proper Open Graph
-    // meta tags (og:url -> post on custom domain) that Pinterest's crawler reads,
-    // and it redirects human visitors to the actual post.
-    const shareUrl = `${apiUrl}/pin/${postId}/share`;
+    // Pin URL points directly to the post page, so clicking "Visit" on Pinterest
+    // takes the user straight to the post. The cover image and description are
+    // passed explicitly to Pinterest below, so we don't rely on server-side
+    // Open Graph meta tags.
+    const shareUrl = `${baseSiteUrl}/post/${postId}`;
 
     // The image displayed in the pin (blob storage - publicly accessible)
     const coverImageUrl = this.getProxiedImageUrl(this.post?.coverImage || '');
