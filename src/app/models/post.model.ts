@@ -9,6 +9,7 @@ export interface Post {
   createdAt: string;
   updatedAt: string;
   comments?: Comment[];
+  commentCount?: number;
 }
 
 export interface Comment {

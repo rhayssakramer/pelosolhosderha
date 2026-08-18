@@ -56,7 +56,10 @@ postRoutes.get('/:id', async (req: Request, res: Response) => {
       include: {
         tags: { include: { tag: true } },
         photos: { orderBy: { order: 'asc' } },
-        comments: { orderBy: { createdAt: 'desc' } },
+        comments: { 
+          where: { status: { not: 'removed' } },
+          orderBy: { createdAt: 'desc' } 
+        },
         author: { select: { name: true } },
       },
     });
