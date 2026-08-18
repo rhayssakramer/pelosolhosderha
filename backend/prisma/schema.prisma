@@ -97,6 +97,7 @@ model Tag {
   id    String @id @default(uuid())
   name  String @unique
   color String @default("#6366f1")
+  order Int    @default(0)
 
   posts PostTag[]
 }
