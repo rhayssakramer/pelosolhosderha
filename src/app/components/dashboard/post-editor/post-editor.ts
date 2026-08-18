@@ -3,6 +3,7 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BlogService } from '../../../services/blog.service';
+import { ToastService } from '../../../services/toast.service';
 import { Post } from '../../../models/post.model';
 import { environment } from '../../../../environments/environment';
 import { QuillModule } from 'ngx-quill';
@@ -145,10 +146,11 @@ export class PostEditorComponent {
             const range = editor.getSelection(true);
             editor.insertEmbed(range.index, 'image', url);
             editor.setSelection(range.index + 1);
+            this.toast.success('Imagem inserida com sucesso!');
           },
           error: (err) => {
             console.error('Erro ao fazer upload da imagem:', err);
-            alert('⚠️ Falha ao fazer upload da imagem. Tente novamente.');
+            this.toast.error('Falha ao fazer upload da imagem. Tente novamente.');
           }
         });
       };
@@ -231,6 +233,7 @@ export class PostEditorComponent {
 
   constructor(
     public blog: BlogService,
+    private toast: ToastService,
     private route: ActivatedRoute,
     public router: Router
   ) {
@@ -278,12 +281,13 @@ export class PostEditorComponent {
       next: (url) => {
         this.coverImage = url;
         this.coverPreview = url; // Update preview with server URL
+        this.toast.success('Capa de post enviada com sucesso!');
       },
       error: (err) => {
         console.error('Erro ao fazer upload da capa:', err);
         // If upload fails, fall back to preview but warn user
         this.coverImage = this.coverPreview;
-        alert('⚠️ Falha ao fazer upload da imagem. Tente novamente ou verifique sua conexão.');
+        this.toast.error('Falha ao fazer upload da imagem. Tente novamente ou verifique sua conexão.');
       }
     });
   }
@@ -294,7 +298,10 @@ export class PostEditorComponent {
   }
 
   save(): void {
-    if (!this.title.trim()) return;
+    if (!this.title.trim()) {
+      this.toast.warning('Por favor, insira um título para o post.');
+      return;
+    }
 
     // Get the HTML content from Quill editor
     const contentToSave = this.quillEditor ? this.quillEditor.root.innerHTML : this.content;
@@ -304,7 +311,7 @@ export class PostEditorComponent {
     // Validate that all images in the post are accessible
     this.validatePostImages(contentToSave).then(isValid => {
       if (!isValid) {
-        alert('⚠️ Uma ou mais imagens não estão acessíveis. Por favor, verifique e tente novamente.');
+        this.toast.error('Uma ou mais imagens não estão acessíveis. Por favor, verifique e tente novamente.');
         return;
       }
 
@@ -317,6 +324,7 @@ export class PostEditorComponent {
           tags: this.selectedTags(),
           published: this.published
         });
+        this.toast.success('Post atualizado com sucesso!');
       } else {
         this.blog.createPost({
           title: this.title,
@@ -326,6 +334,7 @@ export class PostEditorComponent {
           tags: this.selectedTags(),
           published: this.published
         });
+        this.toast.success('Post criado com sucesso!');
       }
       this.router.navigate(['/dashboard']);
     });

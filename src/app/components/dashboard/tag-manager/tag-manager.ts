@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BlogService } from '../../../services/blog.service';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
   selector: 'app-tag-manager',
@@ -13,19 +14,26 @@ export class TagManagerComponent {
   newTagName = '';
   dragIndex: number | null = null;
   dropIndex: number | null = null;
+  
+  private toast = inject(ToastService);
 
   constructor(public blog: BlogService) {}
 
   addTag(): void {
     if (this.newTagName.trim()) {
       this.blog.createTag(this.newTagName.trim(), '#8c6add');
+      this.toast.success(`Tag "${this.newTagName.trim()}" criada com sucesso!`);
       this.newTagName = '';
+    } else {
+      this.toast.warning('Por favor, insira um nome para a tag.');
     }
   }
 
   deleteTag(id: string): void {
-    if (confirm('Excluir esta tag?')) {
+    const tag = this.blog.tags().find(t => t.id === id);
+    if (confirm(`Excluir a tag "${tag?.name}"?`)) {
       this.blog.deleteTag(id);
+      this.toast.success(`Tag "${tag?.name}" removida com sucesso!`);
     }
   }
 
@@ -54,6 +62,7 @@ export class TagManagerComponent {
     tags.splice(index, 0, moved);
     this.blog.tags.set(tags);
     this.blog.reorderTags(tags.map(t => t.id));
+    this.toast.success('Ordem das tags atualizada!');
     this.resetDrag();
   }
 

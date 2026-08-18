@@ -1,9 +1,10 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../../services/auth.service';
+import { ToastService } from '../../../services/toast.service';
 
 export interface CommentForModeration {
   id: string;
@@ -53,6 +54,8 @@ export class CommentManagerComponent implements OnInit {
     { value: 'removed', label: 'Removidos' },
   ];
 
+  private toast = inject(ToastService);
+
   constructor(
     private http: HttpClient,
     private authService: AuthService
@@ -75,10 +78,12 @@ export class CommentManagerComponent implements OnInit {
           this.comments.set(data);
           this.applyFilters();
           this.loading.set(false);
+          this.toast.success('Comentários carregados com sucesso!');
         },
         error: (error) => {
           console.error('Error loading comments:', error);
           this.loading.set(false);
+          this.toast.error('Erro ao carregar comentários. Tente novamente.');
         },
       });
   }
@@ -160,10 +165,17 @@ export class CommentManagerComponent implements OnInit {
       )
       .subscribe({
         next: () => {
+          const statusLabel = {
+            'approved': 'aprovado',
+            'hidden': 'ocultado',
+            'removed': 'removido'
+          }[newStatus] || newStatus;
+          this.toast.success(`Comentário ${statusLabel} com sucesso!`);
           this.loadComments();
         },
         error: (error) => {
           console.error('Error updating comment status:', error);
+          this.toast.error('Erro ao atualizar comentário. Tente novamente.');
         },
       });
   }
@@ -181,10 +193,12 @@ export class CommentManagerComponent implements OnInit {
       })
       .subscribe({
         next: () => {
+          this.toast.success('Comentário removido com sucesso!');
           this.loadComments();
         },
         error: (error) => {
           console.error('Error deleting comment:', error);
+          this.toast.error('Erro ao remover comentário. Tente novamente.');
         },
       });
   }
@@ -206,10 +220,12 @@ export class CommentManagerComponent implements OnInit {
       })
       .subscribe({
         next: () => {
+          this.toast.success('Comentário deletado permanentemente!');
           this.loadComments();
         },
         error: (error) => {
           console.error('Error deleting comment:', error);
+          this.toast.error('Erro ao deletar comentário. Tente novamente.');
         },
       });
   }

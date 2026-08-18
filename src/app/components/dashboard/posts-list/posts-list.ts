@@ -1,7 +1,8 @@
-import { Component, computed } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { BlogService } from '../../../services/blog.service';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
   selector: 'app-posts-list',
@@ -10,6 +11,8 @@ import { BlogService } from '../../../services/blog.service';
   styleUrl: './posts-list.css'
 })
 export class PostsListComponent {
+  private toast = inject(ToastService);
+
   constructor(public blog: BlogService) {}
 
   sortedPosts = computed(() =>
@@ -19,12 +22,17 @@ export class PostsListComponent {
   );
 
   deletePost(id: string): void {
-    if (confirm('Tem certeza que deseja excluir esta postagem?')) {
+    const post = this.blog.getPostById(id);
+    if (confirm(`Tem certeza que deseja excluir "${post?.title}"?`)) {
       this.blog.deletePost(id);
+      this.toast.success('Post removido com sucesso!');
     }
   }
 
   togglePublish(id: string, published: boolean): void {
+    const post = this.blog.getPostById(id);
     this.blog.updatePost(id, { published: !published });
+    const action = published ? 'despublicado' : 'publicado';
+    this.toast.success(`Post ${action} com sucesso!`);
   }
 }
