@@ -1,5 +1,5 @@
-// Dynamic schema - uses env("DB_PROVIDER") set by src/config/env.ts
-// Development: SQLite
+// Dynamic schema - uses DATABASE_URL env var set by src/config/env.ts
+// Development: SQLite or PostgreSQL (via DATABASE_URL)
 // Production: PostgreSQL
 
 generator client {
@@ -7,7 +7,7 @@ generator client {
 }
 
 datasource db {
-  provider = env("DB_PROVIDER")
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 

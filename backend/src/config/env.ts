@@ -27,9 +27,8 @@ export const config = {
   isHomolog: env === 'homolog',
 };
 
-// Set DB_PROVIDER based on environment
-if (config.isDevelopment) {
-  process.env.DB_PROVIDER = 'sqlite';
-} else {
-  process.env.DB_PROVIDER = 'postgresql';
-}
+// Note: DB_PROVIDER is no longer set dynamically.
+// Prisma schema now uses PostgreSQL as the provider.
+// Ensure DATABASE_URL is properly set for your environment:
+// - Development: PostgreSQL or SQLite connection string
+// - Production: PostgreSQL connection string
