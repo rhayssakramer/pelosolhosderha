@@ -1,13 +1,10 @@
-// Dynamic schema - uses env("DB_PROVIDER") set by src/config/env.ts
-// Development: SQLite
-// Production: PostgreSQL
-
+// Schema for Production (PostgreSQL via Neon)
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = env("DB_PROVIDER")
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -97,6 +94,7 @@ model Tag {
   id    String @id @default(uuid())
   name  String @unique
   color String @default("#6366f1")
+  order Int    @default(0)
 
   posts PostTag[]
 }

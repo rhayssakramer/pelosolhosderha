@@ -25,10 +25,9 @@ export class BlogService {
 
   constructor() {
     this.loadAll();
-    if (this.useApi) {
-      this.loadTagsFromApi();
-      this.loadPostsFromApi();
-    }
+    // Sempre carregar da API, mesmo em desenvolvimento
+    this.loadTagsFromApi();
+    this.loadPostsFromApi();
   }
 
   private getDefaultSettings(): BlogSettings {

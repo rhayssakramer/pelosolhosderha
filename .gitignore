@@ -48,3 +48,5 @@ backend/.env*
 # Deploy artifacts
 backend/deploy.zip
 backend/dist/
+setup-dev.sh
+setup-dev.ps1
