@@ -1,5 +1,6 @@
 export const environment = {
-  production: true,
-  apiUrl: 'https://pelosolhosderha-api.bluesea-ecfbf889.brazilsouth.azurecontainerapps.io/api',
-  siteUrl: 'https://www.pelosolhosderha.com.br'
+  production: false,
+  apiUrl: 'http://localhost:3000/api',
+  siteUrl: 'http://localhost:4200',
+  googleClientId: '1022627779731-t2tonribfvbqcpt5aaj26g7ekq2j4gi4.apps.googleusercontent.com'
 };

@@ -10,6 +10,7 @@ import { tagRoutes } from './routes/tag.routes.js';
 import { uploadRoutes } from './routes/upload.routes.js';
 import { statsRoutes } from './routes/stats.routes.js';
 import { pinRoutes } from './routes/pin.routes.js';
+import { googleAuthRoutes } from './routes/google-auth.routes.js';
 
 const app = express();
 
@@ -41,12 +42,49 @@ app.use('/uploads', express.static(path.resolve(config.uploadDir)));
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/auth/google', googleAuthRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/tags', tagRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/stats', statsRoutes);
 app.use('/api/pin', pinRoutes);
+
+// Proxy para imagens de avatar do Google (evita problema de CORS)
+app.get('/api/proxy-image', async (req, res) => {
+  try {
+    const imageUrl = req.query.url as string;
+    
+    if (!imageUrl) {
+      res.status(400).json({ error: 'URL não fornecida' });
+      return;
+    }
+
+    // Validar que é uma URL confiável (apenas Google)
+    if (!imageUrl.includes('lh3.googleusercontent.com') && !imageUrl.includes('googleusercontent.com')) {
+      res.status(403).json({ error: 'URL não permitida' });
+      return;
+    }
+
+    const response = await fetch(imageUrl);
+    
+    if (!response.ok) {
+      res.status(response.status).json({ error: 'Erro ao recuperar imagem' });
+      return;
+    }
+
+    const buffer = await response.arrayBuffer();
+    const contentType = response.headers.get('content-type') || 'image/jpeg';
+    
+    res.setHeader('Content-Type', contentType);
+    res.setHeader('Cache-Control', 'public, max-age=604800'); // Cache por 7 dias
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.send(Buffer.from(buffer));
+  } catch (error) {
+    console.error('Proxy image error:', error);
+    res.status(500).json({ error: 'Erro ao fazer proxy da imagem' });
+  }
+});
 
 // Instagram feed endpoint
 app.get('/api/instagram/feed', async (req, res) => {

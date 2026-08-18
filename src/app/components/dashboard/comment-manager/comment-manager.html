@@ -1,0 +1,203 @@
+<div class="comment-manager">
+  <div class="header">
+    <h2>Moderação de Comentários</h2>
+    <button (click)="loadComments()" class="btn-refresh">Recarregar</button>
+  </div>
+
+  @if (loading()) {
+    <div class="loading">Carregando comentários...</div>
+  } @else {
+    <div class="filters">
+      <div class="filter-group">
+        <label>Status:</label>
+        <select
+          [(ngModel)]="selectedStatus"
+          (change)="onStatusChange()"
+          class="filter-select"
+        >
+          @for (option of statusOptions; track option.value) {
+            <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Post:</label>
+        <select
+          [(ngModel)]="selectedPost"
+          (change)="onPostChange()"
+          class="filter-select"
+        >
+          <option value="">Todos os posts</option>
+          @for (post of getUniquePosts(); track post.id) {
+            <option [value]="post.id">{{ post.title }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Buscar:</label>
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          (input)="onSearchChange()"
+          placeholder="Buscar por autor, texto ou post..."
+          class="filter-input"
+        />
+      </div>
+    </div>
+
+    <div class="stats">
+      <span class="stat">
+        Total: <strong>{{ filteredComments().length }}</strong>
+      </span>
+      @if (selectedStatus() === 'approved') {
+        <span class="stat approved">
+          Aprovados: <strong>{{ getApprovedCount() }}</strong>
+        </span>
+      }
+      @if (selectedStatus() === 'hidden') {
+        <span class="stat hidden">
+          Ocultos: <strong>{{ getHiddenCount() }}</strong>
+        </span>
+      }
+      @if (selectedStatus() === 'removed') {
+        <span class="stat removed">
+          Removidos: <strong>{{ getRemovedCount() }}</strong>
+        </span>
+      }
+    </div>
+
+    @if (filteredComments().length === 0) {
+      <div class="no-comments">
+        @if (comments().length === 0) {
+          <p>Nenhum comentário ainda.</p>
+        } @else {
+          <p>Nenhum comentário encontrado com os filtros aplicados.</p>
+        }
+      </div>
+    } @else {
+      <div class="comments-list">
+        @for (comment of filteredComments(); track comment.id) {
+          <div [class]="'comment-card ' + getStatusBadge(comment.status)">
+            <div class="comment-top">
+              <div class="comment-header">
+                @if (comment.avatar) {
+                  <img
+                    [src]="comment.avatar"
+                    [alt]="comment.name"
+                    class="comment-avatar"
+                  />
+                } @else {
+                  <div class="comment-avatar-placeholder">
+                    {{ comment.name.charAt(0).toUpperCase() }}
+                  </div>
+                }
+
+                <div class="comment-info">
+                  <div class="author-line">
+                    <strong class="author-name">{{ comment.name }}</strong>
+                    @if (comment.isGoogle) {
+                      <span class="google-badge">Google</span>
+                    }
+                    <span class="comment-date">{{ getTimeAgo(comment.createdAt) }}</span>
+                  </div>
+
+                  <div class="post-info">
+                    Em: <a [href]="'/post/' + comment.post.id" target="_blank">
+                      {{ comment.post.title }}
+                    </a>
+                  </div>
+
+                  @if (comment.parent) {
+                    <div class="reply-info">
+                      Resposta para: <strong>{{ comment.parent.name }}</strong>
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <div class="status-badge" [class]="getStatusBadge(comment.status)">
+                @switch (comment.status) {
+                  @case ('approved') {
+                    Aprovado
+                  }
+                  @case ('hidden') {
+                    Oculto
+                  }
+                  @case ('removed') {
+                    Removido
+                  }
+                  @default {
+                    {{ comment.status }}
+                  }
+                }
+              </div>
+            </div>
+
+            <div class="comment-text">{{ comment.text }}</div>
+
+            @if (comment.replies && comment.replies.length > 0) {
+              <div class="replies-count">
+                {{ comment.replies.length }} resposta{{ comment.replies.length > 1 ? 's' : '' }}
+              </div>
+            }
+
+            <div class="comment-actions">
+              @switch (comment.status) {
+                @case ('approved') {
+                  <button
+                    (click)="hideComment(comment.id)"
+                    class="btn-action btn-hide"
+                    title="Ocultar comentário"
+                  >
+                    Ocultar
+                  </button>
+                  <button
+                    (click)="deleteComment(comment.id)"
+                    class="btn-action btn-delete"
+                    title="Marcar como removido"
+                  >
+                    Remover
+                  </button>
+                }
+                @case ('hidden') {
+                  <button
+                    (click)="approveComment(comment.id)"
+                    class="btn-action btn-approve"
+                    title="Aprovar comentário"
+                  >
+                    ✓ Aprovar
+                  </button>
+                  <button
+                    (click)="deleteComment(comment.id)"
+                    class="btn-action btn-delete"
+                    title="Marcar como removido"
+                  >
+                    Remover
+                  </button>
+                }
+                @case ('removed') {
+                  <button
+                    (click)="approveComment(comment.id)"
+                    class="btn-action btn-approve"
+                    title="Aprovar comentário"
+                  >
+                    Aprovar
+                  </button>
+                  <button
+                    (click)="hardDeleteComment(comment.id)"
+                    class="btn-action btn-hard-delete"
+                    title="Deletar permanentemente"
+                  >
+                    Deletar Permanentemente
+                  </button>
+                }
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
+</div>

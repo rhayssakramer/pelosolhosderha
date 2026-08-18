@@ -1,0 +1,198 @@
+<div class="comments-section">
+  <!-- Seção de deixar comentário -->
+  <div class="comments-container">
+    <h2 class="comments-title">Deixe seu Comentário</h2>
+
+    @if (loading()) {
+      <div class="loading">Carregando comentários...</div>
+    }
+
+    <!-- Formulário de novo comentário -->
+    <div class="comment-form">
+      @if (!currentUser()) {
+        <div class="google-login-section">
+          <p style="margin-bottom: 20px; font-weight: 500;">Conecte com sua conta Google para comentar:</p>
+          <div id="google_signin_button" style="display: flex; justify-content: center;"></div>
+          <p style="margin-top: 15px; font-size: 12px; color: #999;">Salvar meus dados neste navegador para a próxima vez que eu comentar.</p>
+        </div>
+      } @else {
+        <div class="user-info">
+          <img
+            [src]="currentUser()!.avatar || 'assets/default-avatar.png'"
+            [alt]="currentUser()!.name"
+            class="avatar"
+          />
+          <div class="user-details">
+            <strong>{{ currentUser()!.name }}</strong>
+            <button (click)="logout()" class="logout-btn">Sair</button>
+          </div>
+        </div>
+
+        <textarea
+          [(ngModel)]="newCommentText"
+          placeholder="Deixe aqui seu comentário..."
+          class="comment-textarea"
+          [disabled]="submitLoading()"
+        ></textarea>
+
+        <div class="button-group">
+          <button
+            (click)="submitComment()"
+            [disabled]="!newCommentText() || submitLoading()"
+            class="btn-primary"
+          >
+            @if (submitLoading()) {
+              Enviando...
+            } @else {
+              Enviar Comentário
+            }
+          </button>
+        </div>
+      }
+    </div>
+
+    <!-- Contador de comentários -->
+    <h3 class="comments-count">{{ comments().length }} COMENTÁRIOS</h3>
+
+    <!-- Lista de comentários -->
+    @if (comments().length === 0) {
+      <div class="no-comments">Seja o primeiro a comentar!</div>
+    }
+
+    @for (comment of comments(); track comment.id) {
+      @if (comment.status !== 'hidden' && comment.status !== 'removed') {
+        <div class="comment-item">
+          <div class="comment-header">
+            @if (comment.avatar) {
+              <img [src]="comment.avatar" [alt]="comment.name" class="comment-avatar" />
+            } @else {
+              <div class="comment-avatar-placeholder">
+                {{ comment.name.charAt(0).toUpperCase() }}
+              </div>
+            }
+
+            <div class="comment-meta">
+              <strong class="comment-name">{{ comment.name }}</strong>
+              @if (comment.isGoogle) {
+                <span class="google-badge">Google</span>
+              }
+              <span class="comment-date">{{ getTimeAgo(comment.createdAt) }}</span>
+            </div>
+          </div>
+
+        <div class="comment-text">{{ comment.text }}</div>
+
+        <div class="comment-actions">
+          <button
+            (click)="startReply(comment.id)"
+            class="btn-reply"
+            [class.active]="replyingTo() === comment.id"
+          >
+            Responder
+          </button>
+        </div>
+
+        <!-- Formulário de resposta -->
+        @if (replyingTo() === comment.id && currentUser()) {
+          <div class="reply-form">
+            <textarea
+              [value]="getReplyText(comment.id)"
+              (change)="updateReplyText(comment.id, $any($event.target).value)"
+              (input)="updateReplyText(comment.id, $any($event.target).value)"
+              placeholder="Escreva sua resposta..."
+              class="reply-textarea"
+              [disabled]="submitLoading()"
+            ></textarea>
+            <div class="button-group">
+              <button
+                (click)="submitReply(comment.id)"
+                [disabled]="!getReplyText(comment.id) || submitLoading()"
+                class="btn-primary"
+              >
+                @if (submitLoading()) {
+                  Enviando...
+                } @else {
+                  Responder
+                }
+              </button>
+              <button (click)="startReply(comment.id)" class="btn-secondary">
+                Cancelar
+              </button>
+            </div>
+          </div>
+        }
+
+        <!-- Respostas aninhadas -->
+        @if (comment.replies && comment.replies.length > 0) {
+          <div class="replies">
+            @for (reply of comment.replies; track reply.id) {
+              @if (reply.status !== 'hidden' && reply.status !== 'removed') {
+                <div class="reply-item">
+                  <div class="comment-header">
+                    @if (reply.avatar) {
+                      <img [src]="reply.avatar" [alt]="reply.name" class="comment-avatar" />
+                    } @else {
+                      <div class="comment-avatar-placeholder">
+                        {{ reply.name.charAt(0).toUpperCase() }}
+                      </div>
+                    }
+
+                    <div class="comment-meta">
+                      <strong class="comment-name">{{ reply.name }}</strong>
+                      @if (reply.isGoogle) {
+                        <span class="google-badge">Google</span>
+                      }
+                      <span class="comment-date">{{ getTimeAgo(reply.createdAt) }}</span>
+                    </div>
+                  </div>
+
+                  <div class="comment-text">{{ reply.text }}</div>
+
+                  <div class="comment-actions">
+                    <button
+                      (click)="startReply(reply.id)"
+                      class="btn-reply"
+                      [class.active]="replyingTo() === reply.id"
+                    >
+                      Responder
+                    </button>
+                  </div>
+
+                  <!-- Formulário de resposta para resposta -->
+                  @if (replyingTo() === reply.id && currentUser()) {
+                    <div class="reply-form">
+                      <textarea
+                        [value]="getReplyText(reply.id)"
+                        (change)="updateReplyText(reply.id, $any($event.target).value)"
+                        (input)="updateReplyText(reply.id, $any($event.target).value)"
+                        placeholder="Escreva sua resposta..."
+                        class="reply-textarea"
+                        [disabled]="submitLoading()"
+                      ></textarea>
+                      <div class="button-group">
+                        <button
+                          (click)="submitReply(reply.id)"
+                          [disabled]="!getReplyText(reply.id) || submitLoading()"
+                          class="btn-primary"
+                        >
+                          @if (submitLoading()) {
+                            Enviando...
+                          } @else {
+                            Responder
+                          }
+                        </button>
+                        <button (click)="startReply(reply.id)" class="btn-secondary">
+                          Cancelar
+                        </button>
+                      </div>
+                    </div>
+                  }
+                </div>
+              }
+            }
+          </div>
+        }
+      </div>
+    }
+  }
+</div>

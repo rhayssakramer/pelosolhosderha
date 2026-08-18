@@ -1,23 +1,29 @@
-import { Component, HostListener, ViewEncapsulation } from '@angular/core';
+import { Component, HostListener, ViewEncapsulation, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { BlogService } from '../../services/blog.service';
 import { StatsService } from '../../services/stats.service';
 import { InstagramService } from '../../services/instagram.service';
 import { YouTubeService } from '../../services/youtube.service';
+import { GoogleAuthService, GoogleUser } from '../../services/google-auth.service';
 import { Post } from '../../models/post.model';
 import { VideoEmbedPipe } from '../../pipes/video-embed.pipe';
+import { CommentThreadComponent } from './comment-thread';
+import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+
+declare var google: any;
 
 @Component({
   selector: 'app-post-detail',
-  imports: [CommonModule, RouterLink, VideoEmbedPipe],
+  imports: [CommonModule, RouterLink, VideoEmbedPipe, FormsModule, CommentThreadComponent],
   templateUrl: './post-detail.html',
   styleUrl: './post-detail.css',
   encapsulation: ViewEncapsulation.None
 })
-export class PostDetailComponent {
+export class PostDetailComponent implements OnInit {
   post?: Post;
   previousPost?: Post;
   nextPost?: Post;
@@ -26,6 +32,31 @@ export class PostDetailComponent {
   searchTerm = '';
   currentUrl = '';
   mobileMenuOpen = false;
+
+  // Comentários
+  currentUser = signal<GoogleUser | null>(null);
+  submitLoading = signal(false);
+  replyingTo = signal<string | null>(null);
+  expandedReplies = signal<Set<string>>(new Set());
+  
+  // Formulários de comentários
+  commentForm = {
+    name: '',
+    email: '',
+    website: '',
+    text: '',
+    saveData: false
+  };
+
+  replyForm = {
+    name: '',
+    email: '',
+    website: '',
+    text: '',
+    saveData: false
+  };
+
+  private readonly API_URL = `${environment.apiUrl}/comments`;
 
   encodeURI(str: string) {
     return encodeURIComponent(str);
@@ -44,8 +75,11 @@ export class PostDetailComponent {
     public instagram: InstagramService,
     public youtube: YouTubeService,
     private meta: Meta,
-    private titleService: Title
+    private titleService: Title,
+    private googleAuthService: GoogleAuthService,
+    private http: HttpClient
   ) {
+    this.currentUser.set(this.googleAuthService.googleUser());
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
       if (typeof window !== 'undefined') {
@@ -79,6 +113,17 @@ export class PostDetailComponent {
     if (!this.post) return;
     this.stats.trackView(id);
     this.setMetaTags(this.post);
+    
+    // Carregar comentários do backend
+    this.http.get<any[]>(`${this.API_URL}/${id}`).subscribe({
+      next: (comments) => {
+        if (this.post) {
+          this.post.comments = comments;
+        }
+      },
+      error: (err) => console.error('Erro ao carregar comentários:', err)
+    });
+    
     const allPosts = this.blog.getPublishedPosts()
       .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
     const idx = allPosts.findIndex(p => p.id === id);
@@ -289,5 +334,431 @@ export class PostDetailComponent {
         .filter(p => p.id !== this.post!.id);
     }
     return related.slice(0, 4);
+  }
+
+  // Métodos de comentários
+  ngOnInit(): void {
+    this.initializeGoogleSignIn();
+    this.loadSavedCommentData();
+  }
+
+  private loadSavedCommentData(): void {
+    // Carregar dados salvos do localStorage
+    const name = localStorage.getItem('comment_name') || '';
+    const email = localStorage.getItem('comment_email') || '';
+    const website = localStorage.getItem('comment_website') || '';
+    const saveData = localStorage.getItem('comment_saveData') === 'true';
+    const googleAvatar = localStorage.getItem('google_avatar');
+    const isGoogleAuthenticated = localStorage.getItem('google_authenticated') === 'true';
+    
+    this.commentForm.name = name;
+    this.commentForm.email = email;
+    this.commentForm.website = website;
+    this.commentForm.saveData = saveData;
+    
+    // Também preencher formulário de resposta
+    this.replyForm.name = name;
+    this.replyForm.email = email;
+    this.replyForm.website = website;
+    this.replyForm.saveData = saveData;
+    
+    // Se foi autenticado com Google anteriormente, restaurar dados
+    if (isGoogleAuthenticated && name && email) {
+      console.log('✅ Dados do Google restaurados do localStorage');
+      this.currentUser.set({
+        name: name,
+        email: email,
+        avatar: googleAvatar || undefined,
+      } as GoogleUser);
+    }
+  }
+
+  private initializeGoogleSignIn(): void {
+    // Aguardar o SDK do Google ser carregado
+    let attempts = 0;
+    const tryRender = () => {
+      if (typeof google !== 'undefined' && google.accounts) {
+        this.renderGoogleButton();
+      } else if (attempts < 20) {
+        attempts++;
+        setTimeout(tryRender, 100);
+      }
+    };
+    tryRender();
+  }
+
+  private renderGoogleButton(): void {
+    // Renderizar no container principal
+    const googleButtonContainer = document.getElementById('google_signin_button');
+    
+    // Renderizar também nos containers de resposta
+    const replyButtonContainer = document.getElementById('google_signin_button_reply');
+
+    if (!googleButtonContainer && !replyButtonContainer) {
+      console.log('⚠️ Nenhum container encontrado para Google Sign-In');
+      return;
+    }
+
+    try {
+      // Apenas inicializar uma vez
+      if (!this.googleInitialized) {
+        google.accounts.id.initialize({
+          client_id: environment.googleClientId,
+          callback: (response: any) => this.handleGoogleLogin(response),
+        });
+        this.googleInitialized = true;
+      }
+
+      // Renderizar botão principal
+      if (googleButtonContainer) {
+        try {
+          google.accounts.id.renderButton(
+            googleButtonContainer,
+            {
+              theme: 'outline',
+              size: 'large',
+              text: 'signin_with',
+              logo_alignment: 'center',
+            }
+          );
+        } catch (e) {
+          console.log('Botão principal já foi renderizado');
+        }
+      }
+      
+      // Renderizar botão de respostas (mesmo callback)
+      if (replyButtonContainer) {
+        try {
+          google.accounts.id.renderButton(
+            replyButtonContainer,
+            {
+              theme: 'outline',
+              size: 'large',
+              text: 'signin_with',
+              logo_alignment: 'center',
+            }
+          );
+        } catch (e) {
+          console.log('Botão de respostas já foi renderizado');
+        }
+      }
+
+      // Também renderizar com Google One Tap
+      google.accounts.id.prompt((notification: any) => {
+        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+          console.log('One Tap não foi exibido ou foi pulado');
+        }
+      });
+    } catch (error) {
+      console.error('Erro ao renderizar botão Google:', error);
+    }
+  }
+  
+  private googleInitialized = false;
+
+  private handleGoogleLogin(response: any): void {
+    if (response.credential) {
+      console.log('🔐 Google Sign-In iniciado');
+      console.log('Credential:', response.credential.substring(0, 50) + '...');
+      
+      this.submitLoading.set(true);
+      
+      // Enviar ID token para o backend
+      this.http
+        .post<any>(`${environment.apiUrl}/auth/google/google`, { 
+          token: response.credential,
+          accessToken: response.accessToken || null
+        })
+        .subscribe({
+          next: (backendResponse) => {
+            console.log('✅ Backend response:', backendResponse);
+            const user = backendResponse.user;
+            
+            console.log('User data received:');
+            console.log('  Name:', user.name);
+            console.log('  Email:', user.email);
+            console.log('  Avatar:', user.avatar);
+            
+            this.currentUser.set(user);
+            
+            // Preencher ambos os formulários (comentários e respostas)
+            this.commentForm.name = user.name;
+            this.commentForm.email = user.email;
+            this.replyForm.name = user.name;
+            this.replyForm.email = user.email;
+            
+            // Salvar dados do Google no localStorage se checkbox estiver marcado
+            if (this.commentForm.saveData || this.replyForm.saveData) {
+              localStorage.setItem('comment_name', user.name);
+              localStorage.setItem('comment_email', user.email);
+              localStorage.setItem('google_authenticated', 'true');
+              localStorage.setItem('google_avatar', user.avatar || '');
+              console.log('✅ Dados do Google salvos no localStorage');
+            }
+            
+            console.log('✅ Formulários preenchidos com dados do Google');
+            
+            this.submitLoading.set(false);
+          },
+          error: (error) => {
+            console.error('❌ Backend error:', error);
+            if (error.error?.error) {
+              alert('Erro: ' + error.error.error);
+            } else {
+              alert('Erro ao conectar com Google');
+            }
+            this.submitLoading.set(false);
+          }
+        });
+    } else {
+      console.error('❌ No credential in response');
+    }
+  }
+
+  submitNewComment(): void {
+    const text = this.commentForm.text.trim();
+    const name = this.commentForm.name.trim();
+    const email = this.commentForm.email.trim();
+    
+    if (!text || !name || !email) {
+      alert('Por favor, preencha todos os campos obrigatórios');
+      return;
+    }
+
+    if (!this.post) return;
+
+    this.submitLoading.set(true);
+    
+    // Determinar se é comentário Google ou não
+    const isGoogle = this.currentUser() !== null;
+    const avatar = isGoogle ? this.currentUser()!.avatar : undefined;
+
+    this.http
+      .post<any>(`${this.API_URL}/${this.post.id}`, {
+        text,
+        name,
+        avatar,
+        parentId: null,
+        isGoogle
+      })
+      .subscribe({
+        next: (comment) => {
+          // Recarregar todos os comentários do backend para garantir sync
+          this.reloadCommentsAfterSubmit();
+          
+          // Limpar formulário
+          this.commentForm.text = '';
+          if (!this.currentUser() && this.commentForm.saveData) {
+            // Salvar dados no localStorage
+            localStorage.setItem('comment_name', this.commentForm.name);
+            localStorage.setItem('comment_email', this.commentForm.email);
+            localStorage.setItem('comment_website', this.commentForm.website);
+          } else if (!this.currentUser()) {
+            // Limpar dados se não salvar
+            this.commentForm.name = '';
+            this.commentForm.email = '';
+            this.commentForm.website = '';
+          }
+          
+          this.submitLoading.set(false);
+        },
+        error: (error) => {
+          console.error('Error submitting comment:', error);
+          this.submitLoading.set(false);
+        },
+      });
+  }
+
+  private findCommentRecursively(comments: any[] | undefined, commentId: string): any {
+    if (!comments) return null;
+    for (const comment of comments) {
+      if (comment.id === commentId) {
+        return comment;
+      }
+      const found = this.findCommentRecursively(comment.replies, commentId);
+      if (found) return found;
+    }
+    return null;
+  }
+
+  private reloadCommentsAfterSubmit(): void {
+    if (!this.post) return;
+    // Recarregar todos os comentários do backend
+    this.http.get<any[]>(`${this.API_URL}/${this.post.id}`).subscribe({
+      next: (comments) => {
+        if (this.post) {
+          this.post.comments = comments;
+          console.log('✅ Comentários recarregados automaticamente');
+        }
+      },
+      error: (err) => console.error('Erro ao recarregar comentários:', err)
+    });
+  }
+
+  submitReply(parentId: string): void {
+    console.log('📤 submitReply chamado para parentId:', parentId);
+    console.log('replyForm:', this.replyForm);
+    
+    // Usar sempre replyForm quando há resposta ativa
+    const text = this.replyForm.text.trim();
+    const name = this.replyForm.name.trim();
+    const email = this.replyForm.email.trim();
+    
+    console.log('Validando - text:', !!text, 'name:', !!name, 'email:', !!email, 'post:', !!this.post);
+    
+    if (!text || !name || !email || !this.post) {
+      alert('Por favor, preencha todos os campos obrigatórios');
+      console.error('Validação falhou - text:', text, 'name:', name, 'email:', email);
+      return;
+    }
+
+    // Salvar dados se solicitado
+    if (this.replyForm.saveData) {
+      localStorage.setItem('comment_name', name);
+      localStorage.setItem('comment_email', email);
+      localStorage.setItem('comment_website', this.replyForm.website);
+      localStorage.setItem('comment_saveData', 'true');
+    } else {
+      localStorage.removeItem('comment_name');
+      localStorage.removeItem('comment_email');
+      localStorage.removeItem('comment_website');
+      localStorage.removeItem('comment_saveData');
+    }
+
+    this.submitLoading.set(true);
+    
+    // Determinar se é resposta Google ou não
+    const isGoogle = this.currentUser() !== null;
+    const avatar = isGoogle ? this.currentUser()!.avatar : undefined;
+    
+    const payload = {
+      text,
+      name,
+      avatar,
+      parentId,
+      isGoogle
+    };
+    
+    console.log('📨 Enviando payload:', payload);
+    console.log('API URL:', `${this.API_URL}/${this.post.id}`);
+
+    this.http
+      .post<any>(`${this.API_URL}/${this.post.id}`, {
+        text,
+        name,
+        avatar,
+        parentId,
+        isGoogle
+      })
+      .subscribe({
+        next: (reply) => {
+          console.log('✅ Resposta enviada com sucesso:', reply);
+          
+          // Recarregar todos os comentários do backend para garantir sync
+          this.reloadCommentsAfterSubmit();
+
+          this.replyingTo.set(null);
+          this.replyForm = { name: '', email: '', website: '', text: '', saveData: false };
+          this.submitLoading.set(false);
+        },
+        error: (error) => {
+          console.error('❌ Erro ao enviar resposta:', error);
+          console.error('Status:', error.status);
+          console.error('Detalhes do erro:', error.error || error.message);
+          if (error.error?.error) {
+            alert('Erro ao enviar resposta: ' + error.error.error);
+          } else {
+            alert('Erro ao enviar resposta. Verifique o console (F12).');
+          }
+          this.submitLoading.set(false);
+        },
+      });
+  }
+
+  startReply(commentId: string): void {
+    this.replyingTo.set(this.replyingTo() === commentId ? null : commentId);
+    
+    if (this.replyingTo() === commentId) {
+      // Se temos usuário do Google, preencher o formulário
+      if (this.currentUser()) {
+        this.replyForm = {
+          name: this.currentUser()!.name,
+          email: this.currentUser()!.email,
+          website: localStorage.getItem('comment_website') || '',
+          text: '',
+          saveData: localStorage.getItem('comment_saveData') === 'true'
+        };
+      } else {
+        // Carregar dados salvos do localStorage
+        this.replyForm = {
+          name: localStorage.getItem('comment_name') || '',
+          email: localStorage.getItem('comment_email') || '',
+          website: localStorage.getItem('comment_website') || '',
+          text: '',
+          saveData: localStorage.getItem('comment_saveData') === 'true'
+        };
+      }
+      
+      // Re-renderizar botão Google após o formulário aparecer
+      setTimeout(() => {
+        this.renderGoogleButtonForReply();
+      }, 100);
+    }
+  }
+
+  private renderGoogleButtonForReply(): void {
+    const replyButtonContainer = document.getElementById('google_signin_button_reply');
+    
+    if (!replyButtonContainer) return;
+
+    try {
+      google.accounts.id.renderButton(
+        replyButtonContainer,
+        {
+          theme: 'outline',
+          size: 'large',
+          text: 'signin_with',
+          logo_alignment: 'center',
+        }
+      );
+    } catch (error) {
+      console.error('Erro ao renderizar botão Google para resposta:', error);
+    }
+  }
+
+  cancelReply(): void {
+    this.replyingTo.set(null);
+    this.replyForm = { name: '', email: '', website: '', text: '', saveData: false };
+  }
+
+  logoutGoogle(): void {
+    this.currentUser.set(null);
+    localStorage.removeItem('google_user');
+  }
+
+  toggleReplyExpanded(replyId: string): void {
+    const expanded = new Set(this.expandedReplies());
+    if (expanded.has(replyId)) {
+      expanded.delete(replyId);
+    } else {
+      expanded.add(replyId);
+    }
+    this.expandedReplies.set(expanded);
+  }
+
+  isReplyExpanded(replyId: string): boolean {
+    return this.expandedReplies().has(replyId);
+  }
+
+  handleSubmitReply(event: { parentId: string; formData: any }): void {
+    this.submitReply(event.parentId);
+  }
+
+  logoutUser(): void {
+    this.googleAuthService.logout();
+    this.currentUser.set(null);
+    // Limpar campos do Google do formulário
+    this.commentForm.name = localStorage.getItem('comment_name') || '';
+    this.commentForm.email = localStorage.getItem('comment_email') || '';
   }
 }

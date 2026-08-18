@@ -184,41 +184,87 @@
 
         <div class="comments-section" id="comments-section">
           <h3 class="comments-title">DEIXE SEU COMENTÁRIO</h3>
-          <form class="comment-form">
+          
+          <!-- Seção de autenticação Google (opcional) -->
+          @if (!currentUser()) {
+            <div class="google-login-optional">
+              <p style="text-align: center; color: #666; font-size: 0.9rem; margin-bottom: 1rem;">
+                Ou conecte com sua conta Google para preencher automaticamente:
+              </p>
+              <div id="google_signin_button" style="display: flex; justify-content: center; margin-bottom: 1rem;"></div>
+            </div>
+          } @else {
+            <div class="google-user-info">
+              <div style="display: flex; align-items: center; gap: 0.75rem;">
+                @if (currentUser()?.avatar) {
+                  <img 
+                    [src]="currentUser()!.avatar" 
+                    [alt]="currentUser()!.name" 
+                    style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover;">
+                } @else {
+                  <div style="width: 35px; height: 35px; border-radius: 50%; background: #8c6add; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem;">
+                    {{ currentUser()!.name.charAt(0).toUpperCase() }}
+                  </div>
+                }
+                <span style="font-size: 0.9rem; color: #666;">{{ currentUser()!.name }}</span>
+                <button type="button" (click)="logoutUser()" style="background: none; border: none; color: #8c6add; font-size: 0.75rem; cursor: pointer; padding: 0; margin-left: auto;">Desconectar</button>
+              </div>
+            </div>
+          }
+
+          <!-- Formulário de comentário -->
+          <form class="comment-form" (ngSubmit)="submitNewComment()">
             <div class="comment-fields">
-              <input type="text" placeholder="Seu nome" class="comment-input">
-              <input type="email" placeholder="Seu e-mail" class="comment-input">
-              <input type="text" placeholder="site/blog" class="comment-input">
+              <input 
+                type="text" 
+                placeholder="Seu nome" 
+                [(ngModel)]="commentForm.name"
+                name="name"
+                class="comment-input"
+                required>
+              <input 
+                type="email" 
+                placeholder="Seu e-mail" 
+                [(ngModel)]="commentForm.email"
+                name="email"
+                class="comment-input"
+                required>
+              <input 
+                type="text" 
+                placeholder="site/blog" 
+                [(ngModel)]="commentForm.website"
+                name="website"
+                class="comment-input">
             </div>
             <label class="comment-save">
-              <input type="checkbox"> Salvar meus dados neste navegador para a próxima vez que eu comentar.
+              <input type="checkbox" [(ngModel)]="commentForm.saveData" name="saveData"> Salvar meus dados neste navegador para a próxima vez que eu comentar.
             </label>
-            <textarea placeholder="Deixe aqui seu comentário..." class="comment-textarea"></textarea>
-            <button type="submit" class="comment-submit">ENVIAR COMENTÁRIO</button>
+            <textarea 
+              placeholder="Deixe aqui seu comentário..." 
+              [(ngModel)]="commentForm.text"
+              name="text"
+              class="comment-textarea"
+              required
+              [disabled]="submitLoading()">
+            </textarea>
+            <button type="submit" class="comment-submit" [disabled]="!commentForm.text || !commentForm.name || !commentForm.email || submitLoading()">
+              {{ submitLoading() ? 'ENVIANDO...' : 'ENVIAR COMENTÁRIO' }}
+            </button>
           </form>
 
+          <!-- Lista de comentários (recursiva) -->
           @if (post.comments?.length) {
             <div class="comments-list-section">
               <h3 class="comments-count">{{ post.comments!.length }} COMENTÁRIO{{ post.comments!.length > 1 ? 'S' : '' }}</h3>
-              @for (comment of post.comments; track comment.id) {
-                <div class="comment-item">
-                  <div class="comment-avatar">
-                    @if (comment.avatar) {
-                      <img [src]="comment.avatar" [alt]="comment.name">
-                    } @else {
-                      <div class="avatar-placeholder"></div>
-                    }
-                  </div>
-                  <div class="comment-body">
-                    <div class="comment-header">
-                      <span class="comment-author">{{ comment.name }}</span>
-                      <span class="comment-date">{{ comment.date }}</span>
-                    </div>
-                    <div class="comment-text">{{ comment.text }}</div>
-                    <button class="comment-reply">↩ RESPONDER</button>
-                  </div>
-                </div>
-              }
+              <app-comment-thread 
+                [comments]="post.comments!"
+                [postId]="post.id"
+                [isReply]="false"
+                [replyingTo]="replyingTo()"
+                [replyFormData]="replyForm"                [currentUser]="currentUser()"                (startReplyEvent)="startReply($event)"
+                (submitReplyEvent)="handleSubmitReply($event)"
+                (cancelReplyEvent)="cancelReply()">
+              </app-comment-thread>
             </div>
           }
         </div>
@@ -355,4 +401,3 @@
     </aside>
   </div>
 </div>
-

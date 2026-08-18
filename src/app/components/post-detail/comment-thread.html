@@ -1,0 +1,116 @@
+<!-- Componente recursivo para exibir comentários e respostas em cascata -->
+@for (comment of comments; track comment.id) {
+  <div class="comment-item" [class.is-reply]="isReply">
+    <div class="comment-avatar">
+      @if (comment.avatar) {
+        <img [src]="comment.avatar" [alt]="comment.name">
+      } @else {
+        <div class="avatar-placeholder">{{ comment.name.charAt(0).toUpperCase() }}</div>
+      }
+    </div>
+    
+    <div class="comment-body">
+      <div class="comment-header">
+        <span class="comment-author">{{ comment.name }}</span>
+        <span class="comment-date">{{ comment.date }}</span>
+      </div>
+      <div class="comment-text">{{ comment.text }}</div>
+      
+      <!-- Botões de ação -->
+      <div class="comment-actions">
+        <!-- Expandir/recolher respostas -->
+        @if (comment.replies?.length) {
+          <button type="button" class="expand-replies-btn" (click)="toggleExpanded(comment.id)">
+            {{ isExpanded(comment.id) ? '▼' : '▶' }} {{ comment.replies!.length }} 
+            {{ comment.replies!.length === 1 ? 'resposta' : 'respostas' }}
+          </button>
+        }
+        
+        <!-- Botão responder -->
+        <button type="button" class="comment-reply" (click)="startReply(comment.id)">↩ RESPONDER</button>
+      </div>
+      
+      <!-- Formulário de resposta -->
+      @if (replyingTo === comment.id) {
+        <div class="reply-form">
+          <div class="reply-header">
+            RESPONDER PARA {{ comment.name | uppercase }}
+            <button type="button" (click)="cancelReply()" class="cancel-reply-link">ou cancelar</button>
+          </div>
+          
+          @if (!currentUser) {
+            <div class="google-login-optional">
+              <small>Ou conecte com sua conta Google para preencher automaticamente:</small>
+              <div id="google_signin_button_reply_{{ comment.id }}"></div>
+            </div>
+          }
+          
+          @if (currentUser) {
+            <div class="google-user-info">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                @if (currentUser!.avatar) {
+                  <img [src]="currentUser!.avatar" [alt]="currentUser!.name" 
+                    style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover;">
+                } @else {
+                  <div style="width: 30px; height: 30px; border-radius: 50%; background: #8c6add; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem;">
+                    {{ currentUser!.name.charAt(0).toUpperCase() }}
+                  </div>
+                }
+                <span>{{ currentUser!.name }}</span>
+              </div>
+            </div>
+          }
+          
+          <input 
+            type="text" 
+            placeholder="Seu nome" 
+            [(ngModel)]="replyFormData.name"
+            class="reply-input">
+          <input 
+            type="email" 
+            placeholder="Seu e-mail" 
+            [(ngModel)]="replyFormData.email"
+            class="reply-input">
+          <input 
+            type="text" 
+            placeholder="site/blog" 
+            [(ngModel)]="replyFormData.website"
+            class="reply-input">
+          <label class="save-data-label">
+            <input type="checkbox" [(ngModel)]="replyFormData.saveData" class="save-data-checkbox">
+            <span>Salvar meus dados neste navegador para a próxima vez que eu comentar.</span>
+          </label>
+          <textarea 
+            placeholder="Deixe aqui sua resposta..." 
+            [(ngModel)]="replyFormData.text"
+            class="reply-textarea">
+          </textarea>
+          <div class="reply-buttons">
+            <button type="button" (click)="submitReply(comment.id)" class="comment-submit reply-submit" 
+              [disabled]="!replyFormData.text || !replyFormData.name || !replyFormData.email">
+              ENVIAR COMENTÁRIO
+            </button>
+            <button type="button" (click)="cancelReply()" class="comment-cancel">Cancelar</button>
+          </div>
+        </div>
+      }
+      
+      <!-- Respostas recursivas -->
+      @if (comment.replies?.length && isExpanded(comment.id)) {
+        <div class="nested-replies-section">
+          <app-comment-thread 
+            [comments]="comment.replies!"
+            [postId]="postId"
+            [isReply]="true"
+            [replyingTo]="replyingTo"
+            [replyFormData]="replyFormData"
+            [currentUser]="currentUser"
+            (startReplyEvent)="onStartReply($event)"
+            (submitReplyEvent)="onSubmitReply($event)"
+            (cancelReplyEvent)="onCancelReply()">
+          </app-comment-thread>
+        </div>
+      }
+    </div>
+  </div>
+}

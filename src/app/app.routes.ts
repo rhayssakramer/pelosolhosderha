@@ -48,6 +48,10 @@ export const routes: Routes = [
         loadComponent: () => import('./components/dashboard/stats/stats').then(m => m.DashboardStatsComponent)
       },
       {
+        path: 'comments',
+        loadComponent: () => import('./components/dashboard/comment-manager/comment-manager').then(m => m.CommentManagerComponent)
+      },
+      {
         path: 'instagram',
         loadComponent: () => import('./components/dashboard/instagram-manager/instagram-manager').then(m => m.InstagramManagerComponent)
       }

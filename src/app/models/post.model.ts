@@ -17,6 +17,7 @@ export interface Comment {
   date: string;
   text: string;
   avatar?: string;
+  replies?: Comment[];
 }
 
 export interface Tag {
