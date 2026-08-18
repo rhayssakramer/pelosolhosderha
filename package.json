@@ -8,7 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:pelosolhosderha": "node dist/pelosolhosderha/server/server.mjs",
-    "build:vercel": "ng build --configuration production"
+    "deploy": "npm run build && swa deploy ./dist/pelosolhosderha/browser --env production"
   },
   "private": true,
   "dependencies": {
