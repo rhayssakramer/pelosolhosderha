@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BlogService } from '../../../services/blog.service';
 import { ToastService } from '../../../services/toast.service';
+import { ModalService } from '../../../services/modal.service';
 
 @Component({
   selector: 'app-tag-manager',
@@ -16,6 +17,7 @@ export class TagManagerComponent {
   dropIndex: number | null = null;
   
   private toast = inject(ToastService);
+  private modal = inject(ModalService);
 
   constructor(public blog: BlogService) {}
 
@@ -31,10 +33,17 @@ export class TagManagerComponent {
 
   deleteTag(id: string): void {
     const tag = this.blog.tags().find(t => t.id === id);
-    if (confirm(`Excluir a tag "${tag?.name}"?`)) {
-      this.blog.deleteTag(id);
-      this.toast.success(`Tag "${tag?.name}" removida com sucesso!`);
-    }
+    this.modal.confirm(
+      'Confirmar Exclusão',
+      `Tem certeza que deseja excluir a tag "${tag?.name}"? Esta ação não pode ser desfeita.`,
+      'Excluir',
+      'Cancelar'
+    ).then(confirmed => {
+      if (confirmed) {
+        this.blog.deleteTag(id);
+        this.toast.success(`Tag "${tag?.name}" removida com sucesso!`);
+      }
+    });
   }
 
   onDragStart(index: number): void {

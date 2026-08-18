@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BlogService } from '../../../services/blog.service';
 import { ToastService } from '../../../services/toast.service';
+import { ModalService } from '../../../services/modal.service';
 import { Post } from '../../../models/post.model';
 import { environment } from '../../../../environments/environment';
 import { QuillModule } from 'ngx-quill';
@@ -234,6 +235,7 @@ export class PostEditorComponent {
   constructor(
     public blog: BlogService,
     private toast: ToastService,
+    private modal: ModalService,
     private route: ActivatedRoute,
     public router: Router
   ) {
@@ -287,7 +289,7 @@ export class PostEditorComponent {
         console.error('Erro ao fazer upload da capa:', err);
         // If upload fails, fall back to preview but warn user
         this.coverImage = this.coverPreview;
-        this.toast.error('Falha ao fazer upload da imagem. Tente novamente ou verifique sua conexão.');
+        this.modal.alert('Erro de Upload', 'Falha ao fazer upload da imagem. Tente novamente ou verifique sua conexão.', 'OK');
       }
     });
   }
@@ -311,7 +313,7 @@ export class PostEditorComponent {
     // Validate that all images in the post are accessible
     this.validatePostImages(contentToSave).then(isValid => {
       if (!isValid) {
-        this.toast.error('Uma ou mais imagens não estão acessíveis. Por favor, verifique e tente novamente.');
+        this.modal.alert('Erro de Validação', 'Uma ou mais imagens não estão acessíveis. Por favor, verifique e tente novamente.', 'OK');
         return;
       }
 

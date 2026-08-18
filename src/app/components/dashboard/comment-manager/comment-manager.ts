@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../../services/auth.service';
 import { ToastService } from '../../../services/toast.service';
+import { ModalService } from '../../../services/modal.service';
 
 export interface CommentForModeration {
   id: string;
@@ -55,6 +56,7 @@ export class CommentManagerComponent implements OnInit {
   ];
 
   private toast = inject(ToastService);
+  private modal = inject(ModalService);
 
   constructor(
     private http: HttpClient,
@@ -181,53 +183,59 @@ export class CommentManagerComponent implements OnInit {
   }
 
   deleteComment(commentId: string): void {
-    if (!confirm('Tem certeza que deseja remover este comentário?')) {
-      return;
-    }
+    this.modal.confirm(
+      'Confirmar Exclusão',
+      'Tem certeza que deseja remover este comentário? Ele será marcado como removido mas pode ser recuperado.',
+      'Excluir',
+      'Cancelar'
+    ).then(confirmed => {
+      if (!confirmed) return;
 
-    this.http
-      .delete(`${this.API_URL}/${commentId}`, {
-        headers: {
-          Authorization: `Bearer ${this.authService.getToken()}`,
-        },
-      })
-      .subscribe({
-        next: () => {
-          this.toast.success('Comentário removido com sucesso!');
-          this.loadComments();
-        },
-        error: (error) => {
-          console.error('Error deleting comment:', error);
-          this.toast.error('Erro ao remover comentário. Tente novamente.');
-        },
-      });
+      this.http
+        .delete(`${this.API_URL}/${commentId}`, {
+          headers: {
+            Authorization: `Bearer ${this.authService.getToken()}`,
+          },
+        })
+        .subscribe({
+          next: () => {
+            this.toast.success('Comentário removido com sucesso!');
+            this.loadComments();
+          },
+          error: (error) => {
+            console.error('Error deleting comment:', error);
+            this.toast.error('Erro ao remover comentário. Tente novamente.');
+          },
+        });
+    });
   }
 
   hardDeleteComment(commentId: string): void {
-    if (
-      !confirm(
-        'Tem certeza que deseja deletar permanentemente este comentário? Esta ação não pode ser desfeita.'
-      )
-    ) {
-      return;
-    }
+    this.modal.confirm(
+      'Deletar Permanentemente',
+      'Tem certeza que deseja deletar PERMANENTEMENTE este comentário? Esta ação não pode ser desfeita e o comentário será removido da base de dados.',
+      'Deletar',
+      'Cancelar'
+    ).then(confirmed => {
+      if (!confirmed) return;
 
-    this.http
-      .delete(`${this.API_URL}/${commentId}/hard`, {
-        headers: {
-          Authorization: `Bearer ${this.authService.getToken()}`,
-        },
-      })
-      .subscribe({
-        next: () => {
-          this.toast.success('Comentário deletado permanentemente!');
-          this.loadComments();
-        },
-        error: (error) => {
-          console.error('Error deleting comment:', error);
-          this.toast.error('Erro ao deletar comentário. Tente novamente.');
-        },
-      });
+      this.http
+        .delete(`${this.API_URL}/${commentId}/hard`, {
+          headers: {
+            Authorization: `Bearer ${this.authService.getToken()}`,
+          },
+        })
+        .subscribe({
+          next: () => {
+            this.toast.success('Comentário deletado permanentemente!');
+            this.loadComments();
+          },
+          error: (error) => {
+            console.error('Error deleting comment:', error);
+            this.toast.error('Erro ao deletar comentário. Tente novamente.');
+          },
+        });
+    });
   }
 
   hideComment(commentId: string): void {

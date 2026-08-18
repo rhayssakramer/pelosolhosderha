@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { BlogService } from '../../../services/blog.service';
 import { ToastService } from '../../../services/toast.service';
+import { ModalService } from '../../../services/modal.service';
 
 @Component({
   selector: 'app-posts-list',
@@ -12,6 +13,7 @@ import { ToastService } from '../../../services/toast.service';
 })
 export class PostsListComponent {
   private toast = inject(ToastService);
+  private modal = inject(ModalService);
 
   constructor(public blog: BlogService) {}
 
@@ -23,10 +25,17 @@ export class PostsListComponent {
 
   deletePost(id: string): void {
     const post = this.blog.getPostById(id);
-    if (confirm(`Tem certeza que deseja excluir "${post?.title}"?`)) {
-      this.blog.deletePost(id);
-      this.toast.success('Post removido com sucesso!');
-    }
+    this.modal.confirm(
+      'Confirmar Exclusão',
+      `Tem certeza que deseja excluir "${post?.title}"? Esta ação não pode ser desfeita.`,
+      'Excluir',
+      'Cancelar'
+    ).then(confirmed => {
+      if (confirmed) {
+        this.blog.deletePost(id);
+        this.toast.success('Post removido com sucesso!');
+      }
+    });
   }
 
   togglePublish(id: string, published: boolean): void {
