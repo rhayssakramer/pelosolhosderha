@@ -66,7 +66,11 @@ commentRoutes.post('/:postId', async (req: Request, res: Response) => {
     res.status(201).json(comment);
   } catch (error) {
     console.error('Comment creation error:', error);
-    res.status(500).json({ error: 'Erro ao criar comentário' });
+    const errorMessage = error instanceof Error ? error.message : JSON.stringify(error);
+    res.status(500).json({ 
+      error: 'Erro ao criar comentário',
+      details: errorMessage
+    });
   }
 });
 
@@ -99,6 +103,13 @@ commentRoutes.get('/:postId', async (req: Request, res: Response) => {
   try {
     const postId = req.params.postId as string;
 
+    // Verificar se o post existe
+    const post = await prisma.post.findUnique({ where: { id: postId } });
+    if (!post) {
+      res.status(404).json({ error: 'Post não encontrado' });
+      return;
+    }
+
     // Buscar TODOS os comentários do post (sem limite de parentId)
     const allComments = await prisma.comment.findMany({
       where: {
@@ -127,7 +138,7 @@ commentRoutes.get('/:postId', async (req: Request, res: Response) => {
     res.json(hierarchicalComments);
   } catch (error) {
     console.error('Get comments error:', error);
-    res.status(500).json({ error: 'Erro ao buscar comentários' });
+    res.status(500).json({ error: 'Erro ao buscar comentários', details: error instanceof Error ? error.message : 'Erro desconhecido' });
   }
 });
 

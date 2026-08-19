@@ -537,9 +537,10 @@ export class PostDetailComponent implements OnInit {
       .post<any>(`${this.API_URL}/${this.post.id}`, {
         text,
         name,
+        email,
+        website: this.commentForm.website.trim() || null,
         avatar,
-        parentId: null,
-        isGoogle
+        parentId: null
       })
       .subscribe({
         next: (comment) => {
@@ -646,9 +647,10 @@ export class PostDetailComponent implements OnInit {
       .post<any>(`${this.API_URL}/${this.post.id}`, {
         text,
         name,
+        email,
+        website: this.replyForm.website.trim() || null,
         avatar,
-        parentId,
-        isGoogle
+        parentId
       })
       .subscribe({
         next: (reply) => {
