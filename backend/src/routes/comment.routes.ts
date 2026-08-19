@@ -51,7 +51,7 @@ commentRoutes.post('/:postId', async (req: Request, res: Response) => {
     const comment = await prisma.comment.create({
       data: {
         name: name.trim(),
-        email: email.trim(),
+        email: email ? email.trim() : null,
         website: website?.trim() || null,
         text: text.trim(),
         avatar,
