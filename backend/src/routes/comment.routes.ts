@@ -63,47 +63,37 @@ commentRoutes.post('/:postId', async (req: Request, res: Response) => {
   }
 });
 
-// Get comments for a post (hierárquico, apenas comentários raiz)
+// Get comments for a post (hierárquico, sem limite de níveis)
 commentRoutes.get('/:postId', async (req: Request, res: Response) => {
   try {
     const postId = req.params.postId as string;
 
-    // Buscar apenas comentários raiz (sem parentId) com nesting infinito
-    const comments = await prisma.comment.findMany({
+    // Buscar TODOS os comentários do post (sem limite de parentId)
+    const allComments = await prisma.comment.findMany({
       where: {
         postId,
-        parentId: null,
         status: { not: 'removed' }, // Não mostrar comentários removidos
       },
       orderBy: { createdAt: 'desc' },
       include: {
-        replies: {
-          where: { status: { not: 'removed' } },
-          orderBy: { createdAt: 'asc' },
-          include: {
-            replies: {
-              where: { status: { not: 'removed' } },
-              orderBy: { createdAt: 'asc' },
-              include: {
-                replies: {
-                  where: { status: { not: 'removed' } },
-                  orderBy: { createdAt: 'asc' },
-                  include: {
-                    replies: {
-                      where: { status: { not: 'removed' } },
-                      orderBy: { createdAt: 'asc' },
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
         user: true,
       },
     });
 
-    res.json(comments);
+    // Organizar hierarquicamente (comentários raiz + todas as replies aninhadas)
+    const buildHierarchy = (comments: any[], parentId: string | null = null): any[] => {
+      return comments
+        .filter((c) => c.parentId === parentId)
+        .map((c) => ({
+          ...c,
+          replies: buildHierarchy(comments, c.id),
+        }))
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    };
+
+    const hierarchicalComments = buildHierarchy(allComments);
+
+    res.json(hierarchicalComments);
   } catch (error) {
     console.error('Get comments error:', error);
     res.status(500).json({ error: 'Erro ao buscar comentários' });
