@@ -33,6 +33,13 @@ app.use(cors({
   credentials: true
 }));
 
+// Adicionar headers para permitir Google Sign-In (COOP/COEP)
+app.use((req, res, next) => {
+  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+  res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
+  next();
+});
+
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));

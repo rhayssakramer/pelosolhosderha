@@ -10,18 +10,23 @@ commentRoutes.post('/:postId', async (req: Request, res: Response) => {
     const { name, email, website, text, avatar, parentId } = req.body;
     const postId = req.params.postId as string;
 
+    console.log('📝 POST /comments/:postId - Recebido:', { postId, name, email, hasText: !!text, hasAvatar: !!avatar });
+
     // Validar campos obrigatórios
     if (!name || !name.trim()) {
+      console.log('❌ Validação falhou: nome vazio');
       res.status(400).json({ error: 'Nome é obrigatório' });
       return;
     }
 
     if (!email || !email.trim()) {
+      console.log('❌ Validação falhou: email vazio');
       res.status(400).json({ error: 'Email é obrigatório' });
       return;
     }
     
     if (!text || !text.trim()) {
+      console.log('❌ Validação falhou: texto vazio');
       res.status(400).json({ error: 'Texto do comentário é obrigatório' });
       return;
     }
@@ -29,9 +34,12 @@ commentRoutes.post('/:postId', async (req: Request, res: Response) => {
     // Verificar se o post existe
     const post = await prisma.post.findUnique({ where: { id: postId } });
     if (!post) {
+      console.log('❌ Post não encontrado:', postId);
       res.status(404).json({ error: 'Post não encontrado' });
       return;
     }
+
+    console.log('✅ Post encontrado:', post.id);
 
     // Se é uma resposta, verificar se o comentário pai existe
     if (parentId) {
@@ -39,6 +47,7 @@ commentRoutes.post('/:postId', async (req: Request, res: Response) => {
         where: { id: parentId },
       });
       if (!parentComment || parentComment.postId !== postId) {
+        console.log('❌ Comentário pai não encontrado:', parentId);
         res.status(404).json({ error: 'Comentário pai não encontrado' });
         return;
       }
@@ -63,9 +72,10 @@ commentRoutes.post('/:postId', async (req: Request, res: Response) => {
       },
     });
 
+    console.log('✅ Comentário criado com sucesso:', comment.id);
     res.status(201).json(comment);
   } catch (error) {
-    console.error('Comment creation error:', error);
+    console.error('❌ Comment creation error:', error);
     const errorMessage = error instanceof Error ? error.message : JSON.stringify(error);
     res.status(500).json({ 
       error: 'Erro ao criar comentário',

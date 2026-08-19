@@ -495,12 +495,17 @@ export class PostDetailComponent implements OnInit {
     const name = this.commentForm.name.trim();
     const email = this.commentForm.email.trim();
     
+    console.log('📝 submitNewComment chamado - text:', !!text, 'name:', !!name, 'email:', !!email);
+    
     if (!text || !name || !email) {
       alert('Por favor, preencha todos os campos obrigatórios');
       return;
     }
 
-    if (!this.post) return;
+    if (!this.post) {
+      console.error('❌ Post não encontrado');
+      return;
+    }
 
     this.submitLoading.set(true);
     
@@ -508,17 +513,22 @@ export class PostDetailComponent implements OnInit {
     const isGoogle = this.currentUser() !== null;
     const avatar = isGoogle ? this.currentUser()!.avatar : undefined;
 
+    const payload = {
+      text,
+      name,
+      email,
+      website: this.commentForm.website.trim() || null,
+      avatar,
+      parentId: null
+    };
+
+    console.log('📨 Enviando comentário para:', `${this.API_URL}/${this.post.id}`, 'payload:', payload);
+
     this.http
-      .post<any>(`${this.API_URL}/${this.post.id}`, {
-        text,
-        name,
-        email,
-        website: this.commentForm.website.trim() || null,
-        avatar,
-        parentId: null
-      })
+      .post<any>(`${this.API_URL}/${this.post.id}`, payload)
       .subscribe({
         next: (comment) => {
+          console.log('✅ Comentário enviado com sucesso:', comment);
           // Recarregar todos os comentários do backend para garantir sync
           this.reloadCommentsAfterSubmit();
           
@@ -539,7 +549,22 @@ export class PostDetailComponent implements OnInit {
           this.submitLoading.set(false);
         },
         error: (error) => {
-          console.error('Error submitting comment:', error);
+          console.error('❌ Error submitting comment:', error);
+          console.error('Status:', error.status);
+          console.error('Error body:', error.error);
+          
+          // Mostrar erro específico
+          let errorMsg = 'Erro ao enviar comentário';
+          if (error.error?.error) {
+            errorMsg = error.error.error;
+            if (error.error.details) {
+              errorMsg += '\nDetalhes: ' + error.error.details;
+            }
+          } else if (error.error?.message) {
+            errorMsg = error.error.message;
+          }
+          
+          alert(errorMsg);
           this.submitLoading.set(false);
         },
       });
