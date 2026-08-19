@@ -18,12 +18,6 @@ commentRoutes.post('/:postId', async (req: Request, res: Response) => {
       res.status(400).json({ error: 'Nome é obrigatório' });
       return;
     }
-
-    if (!email || !email.trim()) {
-      console.log('❌ Validação falhou: email vazio');
-      res.status(400).json({ error: 'Email é obrigatório' });
-      return;
-    }
     
     if (!text || !text.trim()) {
       console.log('❌ Validação falhou: texto vazio');
