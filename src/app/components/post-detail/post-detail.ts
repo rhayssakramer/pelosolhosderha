@@ -390,12 +390,9 @@ export class PostDetailComponent implements OnInit {
   private renderGoogleButton(): void {
     // Renderizar no container principal
     const googleButtonContainer = document.getElementById('google_signin_button');
-    
-    // Renderizar também nos containers de resposta
-    const replyButtonContainer = document.getElementById('google_signin_button_reply');
 
-    if (!googleButtonContainer && !replyButtonContainer) {
-      console.log('⚠️ Nenhum container encontrado para Google Sign-In');
+    if (!googleButtonContainer) {
+      console.error('❌ Container google_signin_button não encontrado no DOM');
       return;
     }
 
@@ -410,38 +407,16 @@ export class PostDetailComponent implements OnInit {
       }
 
       // Renderizar botão principal
-      if (googleButtonContainer) {
-        try {
-          google.accounts.id.renderButton(
-            googleButtonContainer,
-            {
-              theme: 'outline',
-              size: 'large',
-              text: 'signin_with',
-              logo_alignment: 'center',
-            }
-          );
-        } catch (e) {
-          console.log('Botão principal já foi renderizado');
+      google.accounts.id.renderButton(
+        googleButtonContainer,
+        {
+          theme: 'outline',
+          size: 'large',
+          text: 'signin_with',
+          logo_alignment: 'center',
         }
-      }
-      
-      // Renderizar botão de respostas (mesmo callback)
-      if (replyButtonContainer) {
-        try {
-          google.accounts.id.renderButton(
-            replyButtonContainer,
-            {
-              theme: 'outline',
-              size: 'large',
-              text: 'signin_with',
-              logo_alignment: 'center',
-            }
-          );
-        } catch (e) {
-          console.log('Botão de respostas já foi renderizado');
-        }
-      }
+      );
+      console.log('✅ Botão Google Sign-In renderizado com sucesso');
 
       // Também renderizar com Google One Tap
       google.accounts.id.prompt((notification: any) => {
@@ -450,7 +425,7 @@ export class PostDetailComponent implements OnInit {
         }
       });
     } catch (error) {
-      console.error('Erro ao renderizar botão Google:', error);
+      console.error('❌ Erro ao renderizar Google Sign-In:', error);
     }
   }
   
@@ -700,31 +675,6 @@ export class PostDetailComponent implements OnInit {
           saveData: localStorage.getItem('comment_saveData') === 'true'
         };
       }
-      
-      // Re-renderizar botão Google após o formulário aparecer
-      setTimeout(() => {
-        this.renderGoogleButtonForReply();
-      }, 100);
-    }
-  }
-
-  private renderGoogleButtonForReply(): void {
-    const replyButtonContainer = document.getElementById('google_signin_button_reply');
-    
-    if (!replyButtonContainer) return;
-
-    try {
-      google.accounts.id.renderButton(
-        replyButtonContainer,
-        {
-          theme: 'outline',
-          size: 'large',
-          text: 'signin_with',
-          logo_alignment: 'center',
-        }
-      );
-    } catch (error) {
-      console.error('Erro ao renderizar botão Google para resposta:', error);
     }
   }
 
