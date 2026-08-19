@@ -1,4 +1,4 @@
-import { Component, HostListener, ViewEncapsulation, signal, OnInit } from '@angular/core';
+import { Component, HostListener, ViewEncapsulation, signal, OnInit, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Meta, Title } from '@angular/platform-browser';
@@ -23,7 +23,7 @@ declare var google: any;
   styleUrl: './post-detail.css',
   encapsulation: ViewEncapsulation.None
 })
-export class PostDetailComponent implements OnInit {
+export class PostDetailComponent implements OnInit, AfterViewInit {
   post?: Post;
   previousPost?: Post;
   nextPost?: Post;
@@ -338,8 +338,11 @@ export class PostDetailComponent implements OnInit {
 
   // Métodos de comentários
   ngOnInit(): void {
-    this.initializeGoogleSignIn();
     this.loadSavedCommentData();
+  }
+
+  ngAfterViewInit(): void {
+    this.initializeGoogleSignIn();
   }
 
   private loadSavedCommentData(): void {

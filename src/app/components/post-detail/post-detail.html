@@ -227,8 +227,7 @@
                 placeholder="Seu e-mail" 
                 [(ngModel)]="commentForm.email"
                 name="email"
-                class="comment-input"
-                required>
+                class="comment-input">
               <input 
                 type="text" 
                 placeholder="site/blog" 
@@ -247,7 +246,7 @@
               required
               [disabled]="submitLoading()">
             </textarea>
-            <button type="submit" class="comment-submit" [disabled]="!commentForm.text || !commentForm.name || !commentForm.email || submitLoading()">
+            <button type="submit" class="comment-submit" [disabled]="!commentForm.text || !commentForm.name || submitLoading()">
               {{ submitLoading() ? 'ENVIANDO...' : 'ENVIAR COMENTÁRIO' }}
             </button>
           </form>

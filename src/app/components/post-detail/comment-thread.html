@@ -87,7 +87,7 @@
           </textarea>
           <div class="reply-buttons">
             <button type="button" (click)="submitReply(comment.id)" class="comment-submit reply-submit" 
-              [disabled]="!replyFormData.text || !replyFormData.name || !replyFormData.email">
+              [disabled]="!replyFormData.text || !replyFormData.name">
               ENVIAR COMENTÁRIO
             </button>
             <button type="button" (click)="cancelReply()" class="comment-cancel">Cancelar</button>
