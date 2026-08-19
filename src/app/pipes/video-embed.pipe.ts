@@ -21,7 +21,6 @@ export class VideoEmbedPipe implements PipeTransform {
     }
 
     let html = content;
-    console.log('🔍 [VideoEmbedPipe] Conteúdo recebido:', html);
 
     // Replace video markers with iframes
     // Remove optional whitespace around markers to avoid extra spacing
@@ -68,7 +67,6 @@ export class VideoEmbedPipe implements PipeTransform {
     html = html.replace(/<p>\s*<div class="video-wrapper">/g, '<div class="video-wrapper">');
     html = html.replace(/<\/div>\s*<\/p>/g, '</div>');
     
-    console.log('📤 [VideoEmbedPipe] Conteúdo transformado:', html);
     return this.sanitizer.bypassSecurityTrustHtml(html);
   }
 }
