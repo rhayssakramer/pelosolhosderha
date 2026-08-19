@@ -7,12 +7,17 @@ export const commentRoutes = Router();
 // Add comment to post or reply to comment
 commentRoutes.post('/:postId', async (req: Request, res: Response) => {
   try {
-    const { name, text, avatar, parentId } = req.body;
+    const { name, email, website, text, avatar, parentId } = req.body;
     const postId = req.params.postId as string;
 
     // Validar campos obrigatórios
     if (!name || !name.trim()) {
       res.status(400).json({ error: 'Nome é obrigatório' });
+      return;
+    }
+
+    if (!email || !email.trim()) {
+      res.status(400).json({ error: 'Email é obrigatório' });
       return;
     }
     
@@ -43,6 +48,8 @@ commentRoutes.post('/:postId', async (req: Request, res: Response) => {
     const comment = await prisma.comment.create({
       data: {
         name: name.trim(),
+        email: email.trim(),
+        website: website?.trim() || null,
         text: text.trim(),
         avatar,
         postId,

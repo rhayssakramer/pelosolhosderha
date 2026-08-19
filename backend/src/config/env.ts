@@ -3,11 +3,10 @@ import path from 'path';
 
 const env = process.env.NODE_ENV || 'development';
 
-// Only load .env files in development
-if (env === 'development') {
-  dotenv.config({ path: path.resolve(process.cwd(), `.env.${env}`) });
-  dotenv.config({ path: path.resolve(process.cwd(), '.env') });
-}
+// Load .env files based on NODE_ENV
+// Order: .env.{NODE_ENV} -> .env (for local overrides)
+dotenv.config({ path: path.resolve(process.cwd(), `.env.${env}`) });
+dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
 export const config = {
   env,

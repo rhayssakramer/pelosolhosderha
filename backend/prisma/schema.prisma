@@ -1,7 +1,4 @@
-// Dynamic schema - uses DATABASE_URL env var set by src/config/env.ts
-// Development: SQLite or PostgreSQL (via DATABASE_URL)
-// Production: PostgreSQL
-
+// Schema for Production (PostgreSQL via Neon)
 generator client {
   provider = "prisma-client-js"
 }
@@ -72,6 +69,8 @@ model Comment {
   id        String   @id @default(uuid())
   text      String
   name      String
+  email     String?
+  website   String?
   avatar    String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

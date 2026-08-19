@@ -9,10 +9,9 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "db:generate": "prisma generate",
-    "db:setup-schema": "node prisma/setup-schema.mjs",
-    "db:migrate:dev": "npm run db:setup-schema && cross-env NODE_ENV=development prisma migrate dev",
-    "db:migrate:homolog": "npm run db:setup-schema && cross-env NODE_ENV=homolog prisma migrate deploy",
-    "db:migrate:prod": "npm run db:setup-schema && cross-env NODE_ENV=production prisma migrate deploy",
+    "db:migrate:dev": "cross-env NODE_ENV=development prisma migrate dev",
+    "db:migrate:homolog": "cross-env NODE_ENV=homolog prisma migrate deploy",
+    "db:migrate:prod": "cross-env NODE_ENV=production prisma migrate deploy",
     "db:seed": "cross-env NODE_ENV=development tsx src/seed.ts",
     "migrate:urls:dev": "cross-env NODE_ENV=development tsx src/scripts/migrate-urls-production.ts development",
     "migrate:urls:prod": "cross-env NODE_ENV=production tsx src/scripts/migrate-urls-production.ts production"
