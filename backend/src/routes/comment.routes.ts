@@ -63,6 +63,30 @@ commentRoutes.post('/:postId', async (req: Request, res: Response) => {
   }
 });
 
+// Get all comments for moderation (admin)
+commentRoutes.get('/admin/all', authMiddleware, async (req: AuthRequest, res: Response) => {
+  try {
+    const comments = await prisma.comment.findMany({
+      orderBy: { createdAt: 'desc' },
+      include: {
+        post: {
+          select: { id: true, title: true },
+        },
+        user: true,
+        parent: {
+          select: { id: true, name: true, text: true },
+        },
+        replies: true,
+      },
+    });
+
+    res.json(comments);
+  } catch (error) {
+    console.error('Get all comments error:', error);
+    res.status(500).json({ error: 'Erro ao buscar comentários' });
+  }
+});
+
 // Get comments for a post (hierárquico, sem limite de níveis)
 commentRoutes.get('/:postId', async (req: Request, res: Response) => {
   try {
@@ -96,30 +120,6 @@ commentRoutes.get('/:postId', async (req: Request, res: Response) => {
     res.json(hierarchicalComments);
   } catch (error) {
     console.error('Get comments error:', error);
-    res.status(500).json({ error: 'Erro ao buscar comentários' });
-  }
-});
-
-// Get all comments for moderation (admin)
-commentRoutes.get('/admin/all', authMiddleware, async (req: AuthRequest, res: Response) => {
-  try {
-    const comments = await prisma.comment.findMany({
-      orderBy: { createdAt: 'desc' },
-      include: {
-        post: {
-          select: { id: true, title: true },
-        },
-        user: true,
-        parent: {
-          select: { id: true, name: true, text: true },
-        },
-        replies: true,
-      },
-    });
-
-    res.json(comments);
-  } catch (error) {
-    console.error('Get all comments error:', error);
     res.status(500).json({ error: 'Erro ao buscar comentários' });
   }
 });
