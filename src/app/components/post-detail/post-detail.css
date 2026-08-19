@@ -630,6 +630,18 @@
   gap: 1rem;
 }
 
+@media (max-width: 1024px) {
+  .comment-fields {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .comment-fields {
+    grid-template-columns: 1fr;
+  }
+}
+
 .comment-input {
   padding: 0.75rem 1rem;
   border: 1px solid #ddd;
@@ -1887,10 +1899,6 @@
 
   .post-title {
     font-size: 1.3rem;
-  }
-
-  .comment-fields {
-    grid-template-columns: 1fr;
   }
 
   .sidebar {
