@@ -91,7 +91,7 @@ export class BlogService {
         }
         this.saveTags();
       },
-      error: (err) => console.error('Erro ao carregar tags da API:', err)
+      error: (err) => console.error('Erro ao carregar tags')
     });
   }
 
@@ -107,7 +107,7 @@ export class BlogService {
         this.posts.set(posts);
         this.savePosts();
       },
-      error: (err) => console.error('Erro ao carregar posts da API:', err)
+      error: (err) => console.error('Erro ao carregar posts')
     });
   }
 
@@ -203,7 +203,7 @@ export class BlogService {
           ));
           this.savePosts();
         },
-        error: (err) => console.error('Erro ao criar post na API:', err)
+        error: (err) => console.error('Erro ao criar post')
       });
     }
     return newPost;
@@ -224,7 +224,7 @@ export class BlogService {
         published: updates.published,
         tags: updates.tags
       }).subscribe({
-        error: (err) => console.error('Erro ao atualizar post na API:', err)
+        error: (err) => console.error('Erro ao atualizar post')
       });
     }
   }
@@ -235,7 +235,7 @@ export class BlogService {
 
     if (this.useApi) {
       this.http.delete(`${this.apiUrl}/posts/${id}`).subscribe({
-        error: (err) => console.error('Erro ao deletar post na API:', err)
+        error: (err) => console.error('Erro ao deletar post')
       });
     }
   }
@@ -255,7 +255,7 @@ export class BlogService {
         // Reload tags from API to ensure consistency across all browsers/tabs
         this.reloadTags();
       },
-      error: (err) => console.error('Erro ao criar tag:', err)
+      error: (err) => console.error('Erro ao criar tag')
     });
   }
 
@@ -272,7 +272,7 @@ export class BlogService {
         // Reload tags from API to ensure consistency across all browsers/tabs
         this.reloadTags();
       },
-      error: (err) => console.error('Erro ao deletar tag:', err)
+      error: (err) => console.error('Erro ao deletar tag')
     });
   }
 
@@ -290,7 +290,7 @@ export class BlogService {
         this.reloadTags();
       },
       error: (err) => {
-        console.error('Erro ao reordenar tags:', err);
+        console.error('Erro ao reordenar tags');
         this.loadTagsFromApi();
       }
     });

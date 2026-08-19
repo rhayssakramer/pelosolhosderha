@@ -9,24 +9,14 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
   const router = inject(Router);
 
-  console.log('🔵 Interceptor - Request URL:', req.url);
-  console.log('🔵 Interceptor - API URL:', environment.apiUrl);
-  console.log('🔵 Interceptor - Starts with API URL?', req.url.startsWith(environment.apiUrl));
-
   // Only add token for requests to our API
   if (req.url.startsWith(environment.apiUrl)) {
     const token = auth.getToken();
-    console.log('🔵 Interceptor - Token from getToken():', token ? 'EXISTS' : 'NULL');
     if (token) {
       req = req.clone({
         setHeaders: { Authorization: `Bearer ${token}` }
       });
-      console.log('✅ Interceptor - Authorization header added');
-    } else {
-      console.log('❌ Interceptor - No token, header not added');
     }
-  } else {
-    console.log('⚠️ Interceptor - URL does not match API URL, skipping');
   }
 
   return next(req).pipe(

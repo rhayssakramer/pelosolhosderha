@@ -33,17 +33,11 @@ export class AuthService {
   }
 
   getToken(): string | null {
-    console.log('🟢 AuthService.getToken() called');
-    console.log('🟢 Platform ID:', this.platformId);
-    console.log('🟢 isPlatformBrowser:', isPlatformBrowser(this.platformId));
-    
     if (!isPlatformBrowser(this.platformId)) {
-      console.log('❌ Not browser, returning null');
       return null;
     }
     try {
       const token = localStorage.getItem(this.STORAGE_KEY);
-      console.log('🟢 Token from localStorage:', token ? 'EXISTS (length: ' + token.length + ')' : 'NULL');
       return token;
     } catch (e) {
       return null;
