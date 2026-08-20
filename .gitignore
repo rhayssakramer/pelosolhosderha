@@ -48,5 +48,12 @@ backend/.env*
 # Deploy artifacts
 backend/deploy.zip
 backend/dist/
+
+# Prisma schema backups
+*.backup
+schema-dev.prisma
+schema.prod.prisma
 setup-dev.sh
 setup-dev.ps1
+backend/prisma/schema.dev.prisma.backup
+backend/prisma/schema.prod.prisma.backup
