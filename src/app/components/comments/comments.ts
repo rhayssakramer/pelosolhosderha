@@ -141,6 +141,7 @@ export class CommentsComponent implements OnInit {
       .post<Comment>(`${this.API_URL}/${this.postId}`, {
         text,
         name: user.name,
+        email: user.email,
         avatar: user.avatar,
         parentId: null,
       })
@@ -185,6 +186,7 @@ export class CommentsComponent implements OnInit {
       .post<Comment>(`${this.API_URL}/${this.postId}`, {
         text,
         name: user.name,
+        email: user.email,
         avatar: user.avatar,
         parentId,
       })

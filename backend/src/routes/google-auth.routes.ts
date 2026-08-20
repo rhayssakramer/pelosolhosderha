@@ -16,7 +16,7 @@ interface GoogleTokenPayload {
 }
 
 // Google OAuth login/signup
-googleAuthRoutes.post('/google', async (req: Request, res: Response) => {
+googleAuthRoutes.post('/login', async (req: Request, res: Response) => {
   try {
     const { token } = req.body;
 
@@ -140,7 +140,7 @@ googleAuthRoutes.post('/google', async (req: Request, res: Response) => {
 });
 
 // Validar token Google (para verificar se ainda é válido)
-googleAuthRoutes.post('/google/verify', async (req: Request, res: Response) => {
+googleAuthRoutes.post('/verify', async (req: Request, res: Response) => {
   try {
     const { token } = req.body;
 
@@ -159,7 +159,7 @@ googleAuthRoutes.post('/google/verify', async (req: Request, res: Response) => {
 });
 
 // Refresh token Google
-googleAuthRoutes.post('/google/refresh', async (req: Request, res: Response) => {
+googleAuthRoutes.post('/refresh', async (req: Request, res: Response) => {
   try {
     const { token } = req.body;
 

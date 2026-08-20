@@ -66,7 +66,7 @@ export class GoogleAuthService {
   loginWithGoogle(googleToken: string): Promise<GoogleUser> {
     return new Promise((resolve, reject) => {
       this.http
-        .post<any>(`${this.API_URL}/google`, { token: googleToken })
+        .post<any>(`${this.API_URL}/login`, { token: googleToken })
         .subscribe({
           next: (response) => {
             console.log('Google login response:', response);
