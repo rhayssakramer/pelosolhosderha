@@ -83,7 +83,7 @@ async function migrateUrls() {
   
   // 2. Mostrar exemplos
   console.log(`\n📝 Exemplos de mudanças:`);
-  postsWithRelativeUrls.slice(0, 2).forEach((post) => {
+  postsWithRelativeUrls.slice(0, 2).forEach((post: any) => {
     const antes = post.content.match(/src="\/uploads\/[^"]+"/)?.[0] || 'N/A';
     const depois = antes.replace('src="/uploads/', `src="${backendUrl}/uploads/`);
     console.log(`  Post: ${post.title}`);
@@ -112,7 +112,7 @@ async function migrateUrls() {
   const postsAfterMigration = await prisma.post.findMany({
     where: {
       id: {
-        in: postsWithRelativeUrls.map(p => p.id)
+        in: postsWithRelativeUrls.map((p: any) => p.id)
       }
     },
     select: {
@@ -121,11 +121,11 @@ async function migrateUrls() {
       content: true
     }
   });
-  
+
   let successCount = 0;
   let failCount = 0;
-  
-  postsAfterMigration.forEach((post) => {
+
+  postsAfterMigration.forEach((post: any) => {
     const hasNewUrls = post.content.includes(`src="${backendUrl}/uploads/`);
     const hasOldUrls = post.content.includes('src="/uploads/');
     
