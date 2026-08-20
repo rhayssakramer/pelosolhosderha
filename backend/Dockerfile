@@ -6,6 +6,7 @@ RUN npm ci --legacy-peer-deps
 COPY backend/prisma ./prisma
 COPY backend/tsconfig.json ./
 COPY backend/src ./src
+COPY backend/*.mjs ./
 RUN npm run build   # compila com tsc
 
 EXPOSE 3000
