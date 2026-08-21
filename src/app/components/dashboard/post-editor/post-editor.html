@@ -77,3 +77,28 @@
     </div>
   </form>
 </div>
+
+<!-- Modal de Vídeo -->
+@if (videoModalOpen()) {
+  <div class="video-modal-overlay" (click)="closeVideoModal()">
+    <div class="video-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Inserir Vídeo</h2>
+        <button type="button" class="modal-close" (click)="closeVideoModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <label>Cole a URL do vídeo (YouTube, Shorts, Vimeo, Instagram Reels, etc.):</label>
+        <input 
+          type="text" 
+          [(ngModel)]="videoUrl" 
+          placeholder="https://www.youtube.com/watch?v=..." 
+          class="video-input"
+          (keyup.enter)="insertVideo()">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" (click)="closeVideoModal()">Cancelar</button>
+        <button type="button" class="btn-save" (click)="insertVideo()">Inserir Vídeo</button>
+      </div>
+    </div>
+  </div>
+}

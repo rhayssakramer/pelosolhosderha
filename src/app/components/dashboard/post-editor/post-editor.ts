@@ -66,6 +66,8 @@ export class PostEditorComponent {
   editingId = '';
 
   showEmojiPicker = false;
+  videoModalOpen = signal(false);
+  videoUrl = signal('');
 
   emojis = [
     // Smileys & Emotion
@@ -159,52 +161,7 @@ export class PostEditorComponent {
 
     // Custom video handler for YouTube, Vimeo, Instagram, etc.
     toolbar.addHandler('video', () => {
-      const url = prompt('Cole a URL do vídeo (YouTube, Shorts, Vimeo, Instagram Reels, etc.):');
-      if (url) {
-        let videoId = '';
-        let videoType = '';
-        
-        // YouTube - extract video ID
-        const youtubeMatch = url.match(/(?:youtube\.com\/watch\?v=|youtube\.com\/shorts\/|youtu\.be\/)([a-zA-Z0-9_-]+)/);
-        if (youtubeMatch) {
-          videoId = youtubeMatch[1];
-          videoType = 'youtube';
-          console.log('🎬 YouTube detectado - URL:', url);
-          console.log('📍 ID extraído:', videoId);
-          console.log('🔍 Tamanho do ID:', videoId.length);
-        }
-        
-        // Vimeo
-        const vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
-        if (vimeoMatch) {
-          videoId = vimeoMatch[1];
-          videoType = 'vimeo';
-          console.log('🎬 Vimeo detectado - URL:', url);
-          console.log('📍 ID extraído:', videoId);
-        }
-        
-        // Instagram
-        const instagramMatch = url.match(/instagram\.com\/(?:reel|p)\/([a-zA-Z0-9_-]+)/);
-        if (instagramMatch) {
-          videoId = instagramMatch[1];
-          videoType = 'instagram';
-          console.log('🎬 Instagram detectado - URL:', url);
-          console.log('📍 ID extraído:', videoId);
-        }
-        
-        if (videoId && videoType) {
-          const range = editor.getSelection(true);
-          // Insert marker as text - Quill will preserve it as plain text in the HTML
-          const marker = `[VIDEO:${videoType}:${videoId}]`;
-          // Use insertText to add as plain text content
-          editor.insertText(range.index, marker);
-          editor.setSelection(range.index + marker.length);
-          console.log('✅ Marcador de vídeo inserido:', marker);
-        } else {
-          console.error('❌ URL não reconhecida:', url);
-          alert('URL de vídeo não reconhecida. Use YouTube, Vimeo ou Instagram.');
-        }
-      }
+      this.openVideoModal();
     });
 
     // Setup emoji button in toolbar
@@ -403,6 +360,64 @@ export class PostEditorComponent {
       // Log but don't fail validation on network errors
       console.warn(`⚠️ Não foi possível validar imagem ${url}:`, error);
       return true;
+    }
+  }
+
+  openVideoModal(): void {
+    this.videoUrl.set('');
+    this.videoModalOpen.set(true);
+  }
+
+  closeVideoModal(): void {
+    this.videoModalOpen.set(false);
+    this.videoUrl.set('');
+  }
+
+  insertVideo(): void {
+    const url = this.videoUrl().trim();
+    
+    if (!url) {
+      alert('Por favor, insira uma URL de vídeo');
+      return;
+    }
+
+    let videoId = '';
+    let videoType = '';
+    
+    // YouTube - extract video ID
+    const youtubeMatch = url.match(/(?:youtube\.com\/watch\?v=|youtube\.com\/shorts\/|youtu\.be\/)([a-zA-Z0-9_-]+)/);
+    if (youtubeMatch) {
+      videoId = youtubeMatch[1];
+      videoType = 'youtube';
+      console.log('🎬 YouTube detectado - URL:', url);
+      console.log('📍 ID extraído:', videoId);
+    }
+    
+    // Vimeo
+    const vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
+    if (vimeoMatch) {
+      videoId = vimeoMatch[1];
+      videoType = 'vimeo';
+      console.log('🎬 Vimeo detectado - URL:', url);
+    }
+    
+    // Instagram
+    const instagramMatch = url.match(/instagram\.com\/(?:reel|p)\/([a-zA-Z0-9_-]+)/);
+    if (instagramMatch) {
+      videoId = instagramMatch[1];
+      videoType = 'instagram';
+      console.log('🎬 Instagram detectado - URL:', url);
+    }
+    
+    if (videoId && videoType) {
+      const range = this.quillEditor.getSelection(true);
+      const marker = `[VIDEO:${videoType}:${videoId}]`;
+      this.quillEditor.insertText(range.index, marker);
+      this.quillEditor.setSelection(range.index + marker.length);
+      console.log('✅ Marcador de vídeo inserido:', marker);
+      this.closeVideoModal();
+    } else {
+      alert('URL de vídeo não reconhecida. Use YouTube, Vimeo ou Instagram.');
     }
   }
 }
