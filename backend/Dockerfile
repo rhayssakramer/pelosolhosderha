@@ -7,6 +7,7 @@ COPY backend/prisma ./prisma
 COPY backend/tsconfig.json ./
 COPY backend/src ./src
 COPY backend/*.mjs ./
+COPY create_admin_direct.mjs ./
 RUN npx prisma generate
 RUN npm run build   # compila com tsc
 
