@@ -419,7 +419,6 @@ export class PostDetailComponent implements OnInit, AfterViewInit {
           logo_alignment: 'center',
         }
       );
-      console.log('✅ Botão Google Sign-In renderizado com sucesso');
 
       // Também renderizar com Google One Tap
       google.accounts.id.prompt((notification: any) => {
