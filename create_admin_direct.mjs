@@ -1,6 +1,6 @@
 import pkg from 'pg';
 import { randomUUID } from 'crypto';
-import bcrypt from 'bcryptjs';
+import bcryptjs from 'bcryptjs';
 
 const { Client } = pkg;
 
@@ -9,10 +9,8 @@ if (!process.env.DATABASE_URL) {
   process.exit(1);
 }
 
-if (!process.env.ADMIN_PASSWORD) {
-  console.error('❌ ADMIN_PASSWORD não configurada');
-  process.exit(1);
-}
+const adminEmail = process.env.ADMIN_EMAIL || 'admin@pelosolhosderha.com.br';
+const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
 
 const client = new Client({
   connectionString: process.env.DATABASE_URL,
@@ -21,23 +19,26 @@ const client = new Client({
 
 await client.connect();
 
-// Hash da senha fornecida nas variáveis de ambiente
-const passwordHash = await bcrypt.hash(process.env.ADMIN_PASSWORD, 10);
+const passwordHash = await bcryptjs.hash(adminPassword, 10);
 
 try {
+  // Deletar admin anterior se existir
+  await client.query(
+    `DELETE FROM "User" WHERE email = $1`,
+    [adminEmail]
+  );
+
+  // Criar novo admin com senha correta
   const result = await client.query(
     `INSERT INTO "User" (id, email, password, name, role, "createdAt", "updatedAt")
      VALUES ($1, $2, $3, $4, $5, NOW(), NOW())
-     ON CONFLICT (email) DO NOTHING
      RETURNING id, email;`,
-    [randomUUID(), 'admin@pelosolhosderha.com.br', passwordHash, 'Admin Rha', 'admin']
+    [randomUUID(), adminEmail, passwordHash, 'Admin Rha', 'admin']
   );
 
   if (result.rows.length > 0) {
-    console.log('✅ Admin criado com sucesso!');
+    console.log('✅ Admin recriado com sucesso!');
     console.log('Email:', result.rows[0].email);
-  } else {
-    console.log('✅ Admin já existe!');
   }
 } catch (error) {
   console.error('❌ Erro ao criar admin');
