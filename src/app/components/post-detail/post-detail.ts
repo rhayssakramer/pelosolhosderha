@@ -443,7 +443,7 @@ export class PostDetailComponent implements OnInit, AfterViewInit {
       
       // Enviar ID token para o backend
       this.http
-        .post<any>(`${environment.apiUrl}/auth/google/google`, { 
+        .post<any>(`${environment.apiUrl}/auth/google/login`, { 
           token: response.credential,
           accessToken: response.accessToken || null
         })
