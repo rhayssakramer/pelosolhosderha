@@ -5,16 +5,18 @@
   "description": "Backend API for Pelos Olhos de Rha",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development tsx watch src/index.ts",
-    "build": "tsc",
+    "dev": "cross-env NODE_ENV=development node setup-schema.js && tsx watch src/index.ts",
+    "setup:dev": "cross-env NODE_ENV=development node setup-schema.js",
+    "setup:prod": "cross-env NODE_ENV=production node setup-schema.js",
+    "build": "npm run setup:prod && tsc",
     "start": "node dist/index.js",
     "db:generate": "prisma generate",
-    "db:migrate:dev": "cross-env NODE_ENV=development prisma migrate dev",
-    "db:migrate:homolog": "cross-env NODE_ENV=homolog prisma migrate deploy",
-    "db:migrate:prod": "cross-env NODE_ENV=production prisma migrate deploy",
-    "db:seed": "cross-env NODE_ENV=development tsx src/seed.ts",
-    "migrate:urls:dev": "cross-env NODE_ENV=development tsx src/scripts/migrate-urls-production.ts development",
-    "migrate:urls:prod": "cross-env NODE_ENV=production tsx src/scripts/migrate-urls-production.ts production"
+    "db:migrate:dev": "npm run setup:dev && cross-env NODE_ENV=development prisma migrate dev",
+    "db:migrate:homolog": "npm run setup:prod && cross-env NODE_ENV=homolog prisma migrate deploy",
+    "db:migrate:prod": "npm run setup:prod && cross-env NODE_ENV=production prisma migrate deploy",
+    "db:seed": "npm run setup:dev && cross-env NODE_ENV=development tsx src/seed.ts",
+    "migrate:urls:dev": "npm run setup:dev && cross-env NODE_ENV=development tsx src/scripts/migrate-urls-production.ts development",
+    "migrate:urls:prod": "npm run setup:prod && cross-env NODE_ENV=production tsx src/scripts/migrate-urls-production.ts production"
   },
   "dependencies": {
     "@azure/storage-blob": "^12.32.0",

@@ -76,28 +76,12 @@ commentRoutes.post('/:postId', async (req: Request, res: Response) => {
         const isReply = !!parentId;
         const commentUrl = `${config.frontendUrl}/post/${postId}#comment-${comment.id}`;
         
-        // Notificar admin
-        const adminEmailContent = getCommentNotificationEmail(
-          post.title,
-          name,
-          text,
-          commentUrl,
-          isReply
-        );
-        
-        await sendNotificationEmail(
-          config.adminEmail,
-          isReply ? `Nova resposta a comentário - ${post.title}` : `Novo comentário - ${post.title}`,
-          adminEmailContent
-        );
-
-        // Se é uma resposta, notificar também o autor do comentário original
         if (isReply && parentId) {
+          // Se é uma RESPOSTA: enviar APENAS para o autor do comentário original
           const parentComment = await prisma.comment.findUnique({
             where: { id: parentId },
           });
 
-          // Enviar email ao autor do comentário original se ele tiver email
           if (parentComment && parentComment.email) {
             const replyEmailContent = getReplyNotificationEmail(
               post.title,
@@ -113,6 +97,21 @@ commentRoutes.post('/:postId', async (req: Request, res: Response) => {
             );
             console.log(`✅ Email de resposta enviado para ${parentComment.email}`);
           }
+        } else {
+          // Se é um COMENTÁRIO NOVO: enviar para o admin
+          const adminEmailContent = getCommentNotificationEmail(
+            post.title,
+            name,
+            text,
+            commentUrl,
+            false
+          );
+          
+          await sendNotificationEmail(
+            config.adminEmail,
+            `Novo comentário - ${post.title}`,
+            adminEmailContent
+          );
         }
       } catch (emailError) {
         console.error('⚠️  Erro ao enviar email de notificação:', emailError);

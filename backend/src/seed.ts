@@ -39,8 +39,37 @@ async function main() {
     });
   }
 
+  // Create test posts
+  const testPost = await prisma.post.upsert({
+    where: { id: 'test-post-1' },
+    update: {},
+    create: {
+      id: 'test-post-1',
+      title: 'Bem-vindo ao Pelos Olhos de Rha',
+      excerpt: 'Este é um post de teste para desenvolvimento',
+      content: '<p>Este é um <strong>post de teste</strong> para você testar a funcionalidade de comentários.</p>',
+      published: true,
+      authorId: user.id,
+    },
+  });
+
+  // Create test comment
+  await prisma.comment.upsert({
+    where: { id: 'test-comment-1' },
+    update: {},
+    create: {
+      id: 'test-comment-1',
+      name: 'Visitante Teste',
+      email: 'teste@example.com',
+      text: 'Este é um comentário de teste',
+      status: 'approved',
+      postId: testPost.id,
+    },
+  });
+
   console.log('✅ Seed completed. Admin users:', user.email, user2.email);
   console.log('✅ Default tags created:', defaultTags.join(', '));
+  console.log('✅ Test post created:', testPost.title);
 }
 
 main()
