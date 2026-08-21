@@ -1,6 +1,8 @@
 import { Router, Request, Response } from 'express';
 import { prisma } from '../config/database.js';
 import { authMiddleware, AuthRequest } from '../middleware/auth.middleware.js';
+import { sendNotificationEmail, getCommentNotificationEmail, getReplyNotificationEmail } from '../config/email.js';
+import { config } from '../config/env.js';
 
 export const commentRoutes = Router();
 
@@ -67,6 +69,57 @@ commentRoutes.post('/:postId', async (req: Request, res: Response) => {
     });
 
     console.log('✅ Comentário criado com sucesso:', comment.id);
+    
+    // Enviar email de notificação (assincronamente, sem bloquear a resposta)
+    (async () => {
+      try {
+        const isReply = !!parentId;
+        const commentUrl = `${config.frontendUrl}/post/${postId}#comment-${comment.id}`;
+        
+        // Notificar admin
+        const adminEmailContent = getCommentNotificationEmail(
+          post.title,
+          name,
+          text,
+          commentUrl,
+          isReply
+        );
+        
+        await sendNotificationEmail(
+          config.adminEmail,
+          isReply ? `Nova resposta a comentário - ${post.title}` : `Novo comentário - ${post.title}`,
+          adminEmailContent
+        );
+
+        // Se é uma resposta, notificar também o autor do comentário original
+        if (isReply && parentId) {
+          const parentComment = await prisma.comment.findUnique({
+            where: { id: parentId },
+          });
+
+          // Enviar email ao autor do comentário original se ele tiver email
+          if (parentComment && parentComment.email) {
+            const replyEmailContent = getReplyNotificationEmail(
+              post.title,
+              name,
+              text,
+              commentUrl
+            );
+
+            await sendNotificationEmail(
+              parentComment.email,
+              `Nova resposta ao seu comentário - ${post.title}`,
+              replyEmailContent
+            );
+            console.log(`✅ Email de resposta enviado para ${parentComment.email}`);
+          }
+        }
+      } catch (emailError) {
+        console.error('⚠️  Erro ao enviar email de notificação:', emailError);
+        // Não falha a requisição se email falhar
+      }
+    })();
+    
     res.status(201).json(comment);
   } catch (error) {
     console.error('❌ Comment creation error:', error);
