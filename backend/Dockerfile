@@ -1,12 +1,12 @@
 FROM node:24-alpine
 
 WORKDIR /app
-COPY backend/package*.json ./
+COPY package*.json ./
 RUN npm ci --legacy-peer-deps
-COPY backend/prisma ./prisma
-COPY backend/tsconfig.json ./
-COPY backend/src ./src
-COPY backend/*.mjs ./
+COPY prisma ./prisma
+COPY tsconfig.json ./
+COPY src ./src
+COPY *.mjs ./
 RUN npx prisma generate
 RUN npm run build   # compila com tsc
 
