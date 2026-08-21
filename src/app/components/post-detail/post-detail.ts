@@ -611,9 +611,10 @@ export class PostDetailComponent implements OnInit, AfterViewInit {
     
     console.log('Validando - text:', !!text, 'name:', !!name, 'email:', !!email, 'post:', !!this.post);
     
-    if (!text || !name || !email || !this.post) {
-      alert('Por favor, preencha todos os campos obrigatórios');
-      console.error('Validação falhou - text:', text, 'name:', name, 'email:', email);
+    // Email é opcional, apenas texto e nome são obrigatórios
+    if (!text || !name || !this.post) {
+      alert('Por favor, preencha nome e texto da resposta');
+      console.error('Validação falhou - text:', text, 'name:', name);
       return;
     }
 
