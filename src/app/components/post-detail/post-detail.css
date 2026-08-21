@@ -732,7 +732,13 @@
 }
 
 .avatar-placeholder {
-  background: #e0e0e0;
+  background: #8c6add;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.2rem;
 }
 
 .comment-body {

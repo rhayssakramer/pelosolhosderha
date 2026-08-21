@@ -500,8 +500,9 @@ export class PostDetailComponent implements OnInit, AfterViewInit {
     
     console.log('📝 submitNewComment chamado - text:', !!text, 'name:', !!name, 'email:', !!email);
     
-    if (!text || !name || !email) {
-      alert('Por favor, preencha todos os campos obrigatórios');
+    // Email e website são opcionais, apenas texto e nome são obrigatórios
+    if (!text || !name) {
+      alert('Por favor, preencha nome e texto do comentário');
       return;
     }
 
