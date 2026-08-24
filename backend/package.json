@@ -13,7 +13,7 @@
     "db:generate": "prisma generate",
     "db:migrate:dev": "npm run setup:dev && cross-env NODE_ENV=development prisma migrate dev",
     "db:migrate:homolog": "npm run setup:prod && cross-env NODE_ENV=homolog prisma migrate deploy",
-    "db:migrate:prod": "npm run setup:prod && cross-env NODE_ENV=production prisma migrate deploy",
+    "db:migrate:prod": "npm run setup:prod && cross-env NODE_ENV=production node migrate-prod.js",
     "db:seed": "npm run setup:dev && cross-env NODE_ENV=development tsx src/seed.ts",
     "migrate:urls:dev": "npm run setup:dev && cross-env NODE_ENV=development tsx src/scripts/migrate-urls-production.ts development",
     "migrate:urls:prod": "npm run setup:prod && cross-env NODE_ENV=production tsx src/scripts/migrate-urls-production.ts production"
