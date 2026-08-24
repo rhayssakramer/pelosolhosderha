@@ -177,34 +177,49 @@ postRoutes.put('/:id', authMiddleware, async (req: AuthRequest, res: Response) =
       await prisma.photo.deleteMany({ where: { postId: req.params.id as string } });
     }
 
+    // Se publicando pela primeira vez, definir publishedAt
+    const updateData: any = {
+      title,
+      content,
+      excerpt,
+      coverImage,
+      published,
+      tags: {
+        create: tags?.map((tagName: string) => ({
+          tag: {
+            connectOrCreate: {
+              where: { name: tagName },
+              create: { name: tagName },
+            },
+          },
+        })) || [],
+      },
+      ...(photos && {
+        photos: {
+          create: (photos as { url: string; caption?: string }[]).map((photo, index: number) => ({
+            url: photo.url,
+            caption: photo.caption,
+            order: index,
+          })),
+        },
+      }),
+    };
+
+    // Se está sendo publicado e ainda não tem publishedAt, preencher com data/hora atual
+    if (published === true) {
+      const currentPost = await prisma.post.findUnique({
+        where: { id: req.params.id as string },
+        select: { publishedAt: true },
+      });
+      
+      if (!currentPost?.publishedAt) {
+        updateData.publishedAt = new Date();
+      }
+    }
+
     const post = await prisma.post.update({
       where: { id: req.params.id as string },
-      data: {
-        title,
-        content,
-        excerpt,
-        coverImage,
-        published,
-        tags: {
-          create: tags?.map((tagName: string) => ({
-            tag: {
-              connectOrCreate: {
-                where: { name: tagName },
-                create: { name: tagName },
-              },
-            },
-          })) || [],
-        },
-        ...(photos && {
-          photos: {
-            create: (photos as { url: string; caption?: string }[]).map((photo, index: number) => ({
-              url: photo.url,
-              caption: photo.caption,
-              order: index,
-            })),
-          },
-        }),
-      },
+      data: updateData,
       include: {
         tags: { include: { tag: true } },
         photos: true,

@@ -44,6 +44,7 @@ model Post {
   coverImage String?
   published  Boolean  @default(false)
   createdAt  DateTime @default(now())
+  publishedAt DateTime?
   updatedAt  DateTime @updatedAt
 
   authorId String
