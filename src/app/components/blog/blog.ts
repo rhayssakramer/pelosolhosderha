@@ -77,7 +77,8 @@ export class BlogComponent {
     }
     if (this.selectedMonth) {
       posts = posts.filter(p => {
-        const d = new Date(p.createdAt);
+        const dateToUse = p.publishedAt || p.createdAt;
+        const d = new Date(dateToUse);
         const month = d.toLocaleDateString('pt-BR', { month: 'long' });
         const label = `${month.charAt(0).toUpperCase() + month.slice(1)} ${d.getFullYear()}`;
         return label === this.selectedMonth;
@@ -106,7 +107,8 @@ export class BlogComponent {
     const posts = this.blog.getPublishedPosts();
     const map = new Map<string, number>();
     posts.forEach(p => {
-      const d = new Date(p.createdAt);
+      const dateToUse = p.publishedAt || p.createdAt;
+      const d = new Date(dateToUse);
       const month = d.toLocaleDateString('pt-BR', { month: 'long' });
       const label = `${month.charAt(0).toUpperCase() + month.slice(1)} ${d.getFullYear()}`;
       map.set(label, (map.get(label) || 0) + 1);

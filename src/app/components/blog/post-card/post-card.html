@@ -9,7 +9,7 @@
       @if (post.tags.length) {
         <span class="card-tag">{{ post.tags[0] | uppercase }}</span>
       }
-      <span class="card-date">{{ post.createdAt | date:"MMMM dd, yyyy" | uppercase }}</span>
+      <span class="card-date">{{ (post.publishedAt || post.createdAt) | date:"MMMM dd, yyyy" | uppercase }}</span>
     </div>
     <h2 class="card-title">
       <a [routerLink]="['/post', post.id]">{{ post.title }}</a>

@@ -7,6 +7,7 @@ export interface Post {
   coverImage?: string;
   published: boolean;
   createdAt: string;
+  publishedAt?: string;
   updatedAt: string;
   comments?: Comment[];
   commentCount?: number;

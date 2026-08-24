@@ -13,7 +13,7 @@
             <span class="status" [class.published]="post.published">
               {{ post.published ? 'Publicado' : 'Rascunho' }}
             </span>
-            <span>{{ post.createdAt | date:'dd/MM/yyyy' }}</span>
+            <span>{{ (post.publishedAt || post.createdAt) | date:'dd/MM/yyyy' }}</span>
             @for (tag of post.tags; track tag) {
               <span class="tag">{{ tag }}</span>
             }
