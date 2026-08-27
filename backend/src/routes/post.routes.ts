@@ -131,6 +131,7 @@ postRoutes.post('/', authMiddleware, async (req: AuthRequest, res: Response) => 
         excerpt,
         coverImage,
         published: published || false,
+        publishedAt: (published || false) ? new Date() : null,
         authorId: req.userId!,
         tags: {
           create: tags?.map((tagName: string) => ({
