@@ -79,7 +79,7 @@
 
     .filter-input {
       flex: 1;
-      min-width: 780px;
+      min-width: 750px;
     }
   }
 }
