@@ -3,7 +3,7 @@
     <h2>Gerenciador de Newsletter</h2>
     <div class="header-actions">
       <button class="btn btn-export" (click)="exportToCSV()" [disabled]="filteredNewsletters.length === 0">
-        📥 Exportar CSV
+        Exportar CSV
       </button>
     </div>
   </div>
@@ -102,7 +102,7 @@
                       (click)="updateStatus(newsletter, 'unsubscribed')"
                       title="Desinscrever"
                     >
-                      ✕ Desinscrever
+                      Desinscrever
                     </button>
                   }
                   <button 
@@ -110,7 +110,7 @@
                     (click)="deleteNewsletter(newsletter)"
                     title="Deletar"
                   >
-                    🗑️ Remover
+                    Remover
                   </button>
                 </td>
               </tr>
