@@ -20,12 +20,13 @@
 
   .btn-refresh {
     padding: 8px 16px;
-    background: #6366f1;
+    background: #8c6add;
     color: white;
     border: none;
     border-radius: 6px;
     cursor: pointer;
-    font-weight: 500;
+    font-weight: 600;
+    font-size: 0.85rem;
     transition: all 0.2s;
 
     &:hover {
