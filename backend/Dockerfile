@@ -6,7 +6,6 @@ RUN npm ci --legacy-peer-deps
 COPY prisma ./prisma
 COPY tsconfig.json ./
 COPY src ./src
-COPY *.mjs ./
 COPY setup-schema.js ./
 RUN npx prisma generate
 RUN npm run build

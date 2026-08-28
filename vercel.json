@@ -2,7 +2,6 @@
   "buildCommand": "npm run build",
   "installCommand": "npm install",
   "framework": "@angular/cli",
-  "nodeVersion": "20.x",
   "env": {
     "NODE_ENV": {
       "default": "development"
