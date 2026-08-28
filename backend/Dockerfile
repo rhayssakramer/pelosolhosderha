@@ -9,9 +9,12 @@ COPY src ./src
 COPY *.mjs ./
 COPY setup-schema.js ./
 RUN npx prisma generate
-RUN npm run build   # compila com tsc
+RUN npm run build
+
+# ✅ Adicione essas linhas para rodar migration ao iniciar
+ENV NODE_ENV=production
+RUN npx prisma migrate deploy --skip-generate || true
 
 EXPOSE 3000
-ENV NODE_ENV=production
 
 CMD ["node", "dist/index.js"]

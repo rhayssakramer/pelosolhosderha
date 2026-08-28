@@ -1,0 +1,35 @@
+<div class="sidebar-widget widget-newsletter">
+  <h3 class="widget-title">Newsletter</h3>
+  <p class="newsletter-text">Receba as novidades do blog diretamente no seu email!</p>
+  
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="newsletter-form">
+    <div class="form-group">
+      <input 
+        type="email" 
+        placeholder="Seu email" 
+        formControlName="email"
+        class="newsletter-input"
+        [class.error]="submitted && form.get('email')?.invalid"
+      >
+      @if (submitted && form.get('email')?.invalid) {
+        <span class="error-message">Email inválido</span>
+      }
+    </div>
+    
+    <button 
+      type="submit" 
+      class="newsletter-button"
+      [disabled]="loading"
+    >
+      @if (loading) {
+        <span>Inscrever...</span>
+      } @else {
+        <span>Inscrever</span>
+      }
+    </button>
+  </form>
+
+  <p class="newsletter-disclaimer">
+    Não fazemos spam. Você pode desinscrever-se a qualquer momento.
+  </p>
+</div>

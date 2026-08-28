@@ -7,10 +7,11 @@ import { InstagramService } from '../../services/instagram.service';
 import { YouTubeService } from '../../services/youtube.service';
 import { Post } from '../../models/post.model';
 import { PostCardComponent } from './post-card/post-card';
+import { NewsletterComponent } from '../newsletter/newsletter';
 
 @Component({
   selector: 'app-blog',
-  imports: [CommonModule, RouterLink, PostCardComponent],
+  imports: [CommonModule, RouterLink, PostCardComponent, NewsletterComponent],
   templateUrl: './blog.html',
   styleUrl: './blog.css'
 })

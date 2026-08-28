@@ -1,0 +1,127 @@
+<div class="newsletter-manager-container">
+  <div class="manager-header">
+    <h2>Gerenciador de Newsletter</h2>
+    <div class="header-actions">
+      <button class="btn btn-export" (click)="exportToCSV()" [disabled]="filteredNewsletters.length === 0">
+        📥 Exportar CSV
+      </button>
+    </div>
+  </div>
+
+  @if (stats) {
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number">{{ stats.total }}</div>
+        <div class="stat-label">Total de Inscritos</div>
+      </div>
+      <div class="stat-card active">
+        <div class="stat-number">{{ stats.active }}</div>
+        <div class="stat-label">Ativos</div>
+      </div>
+      <div class="stat-card unsubscribed">
+        <div class="stat-number">{{ stats.unsubscribed }}</div>
+        <div class="stat-label">Desinscritos</div>
+      </div>
+      <div class="stat-card bounced">
+        <div class="stat-number">{{ stats.bounced }}</div>
+        <div class="stat-label">Devolvidos</div>
+      </div>
+    </div>
+  }
+
+  <div class="manager-controls">
+    <div class="search-box">
+      <input 
+        type="text" 
+        placeholder="Buscar por email..." 
+        [(ngModel)]="searchTerm"
+        class="search-input"
+      >
+      <span class="search-icon">🔍</span>
+    </div>
+
+    <div class="filter-box">
+      <label>Filtrar por status:</label>
+      <select [(ngModel)]="selectedStatus" class="status-select">
+        <option value="">Todos os statuses</option>
+        @for (status of filterStatuses; track status) {
+          <option [value]="status">{{ getStatusLabel(status) }}</option>
+        }
+      </select>
+    </div>
+  </div>
+
+  <div class="newsletters-table-wrapper">
+    @if (loading) {
+      <div class="loading">
+        <span class="spinner"></span>
+        Carregando inscritos...
+      </div>
+    } @else if (filteredNewsletters.length === 0) {
+      <div class="empty-state">
+        <p>Nenhum inscrito encontrado</p>
+      </div>
+    } @else {
+      <div class="table-responsive">
+        <table class="newsletters-table">
+          <thead>
+            <tr>
+              <th>Email</th>
+              <th>Status</th>
+              <th>Data de Inscrição</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (newsletter of filteredNewsletters; track newsletter.id) {
+              <tr>
+                <td class="email-cell">{{ newsletter.email }}</td>
+                <td class="status-cell">
+                  <span 
+                    class="status-badge"
+                    [style.background-color]="getStatusColor(newsletter.status) + '20'"
+                    [style.color]="getStatusColor(newsletter.status)"
+                  >
+                    {{ getStatusLabel(newsletter.status) }}
+                  </span>
+                </td>
+                <td class="date-cell">{{ formatDate(newsletter.createdAt) }}</td>
+                <td class="actions-cell">
+                  @if (newsletter.status !== 'active') {
+                    <button 
+                      class="action-btn btn-activate"
+                      (click)="updateStatus(newsletter, 'active')"
+                      title="Ativar"
+                    >
+                      ✓ Ativar
+                    </button>
+                  }
+                  @if (newsletter.status !== 'unsubscribed') {
+                    <button 
+                      class="action-btn btn-unsubscribe"
+                      (click)="updateStatus(newsletter, 'unsubscribed')"
+                      title="Desinscrever"
+                    >
+                      ✕ Desinscrever
+                    </button>
+                  }
+                  <button 
+                    class="action-btn btn-delete"
+                    (click)="deleteNewsletter(newsletter)"
+                    title="Deletar"
+                  >
+                    🗑️ Remover
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="table-info">
+        Mostrando {{ filteredNewsletters.length }} de {{ newsletters.length }} inscritos
+      </div>
+    }
+  </div>
+</div>

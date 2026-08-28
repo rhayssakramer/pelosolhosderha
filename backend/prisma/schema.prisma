@@ -111,3 +111,14 @@ model PostTag {
 
   @@id([postId, tagId])
 }
+
+model Newsletter {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  status    String   @default("active")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+}

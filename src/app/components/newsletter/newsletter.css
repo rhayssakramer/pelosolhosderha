@@ -1,0 +1,123 @@
+.widget-newsletter {
+  border-radius: 16px;
+  padding: 1.25rem;
+  width: 100%;
+  background-color: #fafafa;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  border: 1px solid #8c6add;
+}
+
+.widget-title {
+  display: block;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #8c6add;
+  letter-spacing: 0.5px;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+}
+
+.newsletter-text {
+  font-size: 0.88rem;
+  color: #555;
+  margin-bottom: 1rem;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.newsletter-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.form-group {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.newsletter-input {
+  padding: 0.6rem 0.9rem;
+  border: 1px solid #d8b4fe;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  color: #333;
+  background: #fff;
+
+  &::placeholder {
+    color: #999;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: #8c6add;
+    box-shadow: 0 0 0 2px rgba(140, 106, 221, 0.1);
+  }
+
+  &:hover:not(:disabled) {
+    border-color: #8c6add;
+  }
+
+  &.error {
+    border-color: #ef4444;
+    background-color: #fef2f2;
+  }
+}
+
+.error-message {
+  font-size: 0.75rem;
+  color: #ef4444;
+  margin-top: 0.25rem;
+}
+
+.newsletter-button {
+  padding: 0.75rem 1rem;
+  background: linear-gradient(135deg, #8c6add 0%, #7c5bb3 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, #7c5bb3 0%, #6c4a99 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(140, 106, 221, 0.3);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.newsletter-disclaimer {
+  font-size: 0.75rem;
+  color: #999;
+  margin-top: 0.75rem;
+  text-align: center;
+  line-height: 1.4;
+}
+
+@media (max-width: 768px) {
+  .widget-newsletter {
+    padding: 1rem;
+  }
+
+  .newsletter-input,
+  .newsletter-button {
+    font-size: 16px;
+  }
+}
