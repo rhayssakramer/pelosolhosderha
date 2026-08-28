@@ -2,20 +2,6 @@
   "buildCommand": "npm run build",
   "installCommand": "npm install",
   "framework": "@angular/cli",
-  "env": {
-    "NODE_ENV": {
-      "default": "development"
-    },
-    "DATABASE_URL": {
-      "default": ""
-    },
-    "JWT_SECRET": {
-      "default": ""
-    },
-    "API_URL": {
-      "default": ""
-    }
-  },
   "git": {
     "deploymentEnabled": {
       "main": true,
