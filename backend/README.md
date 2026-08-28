@@ -397,12 +397,6 @@ Isso:
 npm run db:seed
 ```
 
-Cria usuário admin padrão:
-- Email: `admin@pelosolhosderha.com.br`
-- Senha: `admin123`
-
-> ⚠️ **Troque a senha imediatamente em produção!**
-
 ### 7. Verificar Setup
 
 ```bash
@@ -457,35 +451,6 @@ npm run build:analysis   # Build com análise de tamanho
 | --- | --- | --- | --- | --- |
 | POST | `/api/auth/login` | Login e obtenção JWT | ❌ | 5/min |
 | GET | `/api/auth/me` | Dados do usuário | ✅ | 60/min |
-
-**Login Example:**
-
-```bash
-curl -X POST http://localhost:3000/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "admin@pelosolhosderha.com.br",
-    "password": "admin123"
-  }'
-```
-
-**Response:**
-
-```json
-{
-  "success": true,
-  "data": {
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-    "user": {
-      "id": "550e8400-e29b-41d4-a716-446655440000",
-      "email": "admin@pelosolhosderha.com.br",
-      "name": "Rha Kramer",
-      "role": "admin",
-      "createdAt": "2026-08-28T10:00:00Z"
-    }
-  }
-}
-```
 
 ### Posts — `GET|POST|PUT|DELETE /api/posts`
 
@@ -570,15 +535,6 @@ curl -X POST http://localhost:3000/api/auth/login \
 8. Se válido: injeta userId em request
    Se inválido: retorna 401
 ```
-
-### Usuários Padrão
-
-| Email | Senha | Criado em |
-| --- | --- | --- |
-| admin@pelosolhosderha.com.br | admin123 | Seed |
-| rhakramer@gmail.com | admin123 | Seed |
-
-⚠️ **Troque imediatamente em produção!**
 
 ### Boas Práticas
 
@@ -670,12 +626,11 @@ O backend permite requisições de origens específicas:
 ```javascript
 // src/index.ts
 const ALLOWED_ORIGINS = [
-  'http://localhost:4200',                      // Frontend development
-  'http://localhost:3000',                      // Backend development
-  'https://pelosolhosderha.vercel.app',         // Frontend production
-  'https://pelosolhosderha-homolog.vercel.app', // Frontend homologação
-  'https://www.pelosolhosderha.com.br',         // Domain production
-  'https://pelosolhosderhastore.z20.web.core.windows.net' // Azure static web app
+  'http://localhost:4200',           // Frontend development
+  'http://localhost:3000',           // Backend development
+  'https://your-frontend.vercel.app',    // Frontend staging
+  'https://your-domain.com',         // Domain production
+  'https://your-static-web-app.azurewebsites.net' // Azure static web app
 ];
 ```
 
@@ -718,7 +673,7 @@ DATABASE_URL="postgresql://user:password@ep-xxx.neon.tech/database?sslmode=requi
 # DATABASE_URL="postgresql://user:password@localhost:5432/pelosolhos"
 
 # ===== AUTENTICAÇÃO JWT =====
-JWT_SECRET="sua-chave-secreta-com-minimo-32-caracteres-aleatorios-e-forte"
+JWT_SECRET="your-secret-key-minimum-32-characters-random-and-strong"
 JWT_EXPIRY=7d
 
 # ===== UPLOAD DE ARQUIVOS =====
@@ -726,7 +681,7 @@ UPLOAD_DIR="./uploads"
 MAX_FILE_SIZE=10485760
 
 # ===== CORS =====
-ALLOWED_ORIGINS="http://localhost:4200,http://localhost:3000,https://pelosolhosderha.vercel.app"
+ALLOWED_ORIGINS="http://localhost:4200,http://localhost:3000,https://your-frontend.com"
 FRONTEND_URL="http://localhost:4200"
 
 # ===== OPTIONAL - INSTAGRAM =====
@@ -739,10 +694,10 @@ AZURE_STORAGE_ACCOUNT_KEY=""
 AZURE_STORAGE_CONTAINER_NAME="uploads"
 
 # ===== OPTIONAL - EMAIL =====
-SMTP_HOST="smtp.gmail.com"
+SMTP_HOST="smtp.example.com"
 SMTP_PORT=587
-SMTP_USER="seu-email@gmail.com"
-SMTP_PASSWORD="sua-senha-app"
+SMTP_USER="your-email@example.com"
+SMTP_PASSWORD="your-app-password"
 ```
 
 ### Validação
@@ -985,7 +940,7 @@ curl -X POST http://localhost:3000/api/auth/login \
 
 # Teste com novo token
 curl http://localhost:3000/api/auth/me \
-  -H "Authorization: Bearer <novo-token>"
+  -H "Authorization: Bearer your-jwt-token-here"
 
 # Verifique token em jwt.io
 ```
@@ -1004,8 +959,8 @@ Access to XMLHttpRequest blocked by CORS policy
 # 2. Adicione seu frontend em ALLOWED_ORIGINS
 
 const ALLOWED_ORIGINS = [
-  'http://localhost:4200',       // Seu URL aqui
-  'https://seu-frontend.com'
+  'http://localhost:4200',       // Your frontend URL
+  'https://your-frontend.com'
 ];
 
 # 3. Reinicie servidor
@@ -1260,21 +1215,14 @@ npm run db:seed
 | POST | `/api/auth/login` | Login (retorna JWT) | ❌ |
 | GET | `/api/auth/me` | Dados do usuário logado | ✅ |
 
-**Exemplo de login:**
-```bash
-curl -X POST http://localhost:3000/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email": "admin@pelosolhosderha.com.br", "password": "admin123"}'
-```
-
 **Resposta:**
 ```json
 {
-  "token": "eyJhbGciOiJIUzI1NiIs...",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
   "user": {
-    "id": "uuid",
-    "name": "Rha",
-    "email": "admin@pelosolhosderha.com.br",
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "name": "Admin User",
+    "email": "admin@example.com",
     "role": "admin"
   }
 }
@@ -1420,15 +1368,6 @@ O sistema utiliza **JWT (JSON Web Tokens)** com validade de **7 dias**.
    ```
 5. Middleware `authMiddleware` valida o token e injeta `userId` na request
 
-### Usuário padrão (seed)
-
-| Email | Senha | Role |
-|-------|-------|------|
-| `admin@pelosolhosderha.com.br` | `admin123` | admin |
-| `rhakramer@gmail.com` | `admin123` | admin |
-
-> ⚠️ **Troque as senhas em produção!**
-
 ---
 
 ## 📐 Modelos de Dados
@@ -1546,20 +1485,20 @@ NODE_ENV=development
 PORT=3000
 
 # Banco de dados (Neon PostgreSQL)
-DATABASE_URL="postgresql://user:password@host/database?sslmode=require"
+DATABASE_URL="postgresql://username:password@endpoint.neon.tech/database?sslmode=require"
 
 # Autenticação
-JWT_SECRET="sua-chave-secreta-com-minimo-32-caracteres"
+JWT_SECRET="your-secret-key-minimum-32-characters-long-and-random"
 
 # Upload
 UPLOAD_DIR="./uploads"
 
 # Instagram (opcional)
-INSTAGRAM_TOKEN="seu-token-aqui"
+INSTAGRAM_TOKEN="your-instagram-token"
 
 # Azure Blob Storage (opcional - para uploads em produção)
-AZURE_STORAGE_ACCOUNT_NAME="seu-storage-account"
-AZURE_STORAGE_ACCOUNT_KEY="sua-chave-de-acesso"
+AZURE_STORAGE_ACCOUNT_NAME="your-storage-account"
+AZURE_STORAGE_ACCOUNT_KEY="your-storage-key"
 AZURE_STORAGE_CONTAINER_NAME="uploads"
 ```
 
@@ -1577,8 +1516,8 @@ docker build -t pelosolhosderha-backend .
 
 ```bash
 docker run -p 3000:3000 \
-  -e DATABASE_URL="postgresql://..." \
-  -e JWT_SECRET="sua-chave" \
+  -e DATABASE_URL="postgresql://username:password@endpoint.neon.tech/database?sslmode=require" \
+  -e JWT_SECRET="your-secret-key-minimum-32-characters" \
   -e FRONTEND_URL="http://localhost:4200" \
   -v $(pwd)/uploads:/app/uploads \
   pelosolhosderha-backend
