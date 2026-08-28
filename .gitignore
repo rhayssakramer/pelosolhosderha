@@ -57,3 +57,6 @@ setup-dev.sh
 setup-dev.ps1
 backend/prisma/schema.dev.prisma.backup
 backend/prisma/schema.prod.prisma.backup
+backend/add-missing-columns.mjs
+backend/check-columns.mjs
+backend/fix-comment-email.js

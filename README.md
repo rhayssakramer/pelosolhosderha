@@ -4,19 +4,39 @@
 
 **Blog Pessoal & Portfólio Criativo**
 
-Pelos Olhos de Rha é um blog pessoal e portfólio criativo que combina escrita, fotografia e conteúdo visual. Uma plataforma para compartilhar experiências, reflexões e criações artísticas com o mundo — tudo isso através de uma interface moderna e intuitiva.
+Pelos Olhos de Rha é um blog pessoal e portfólio criativo que combina escrita, fotografia e conteúdo visual. Uma plataforma moderna para compartilhar experiências, reflexões e criações artísticas com o mundo através de uma arquitetura full-stack escalável e otimizada.
 
-[![Backend](https://img.shields.io/badge/Backend-Node.js%20%2B%20Express-339933?style=for-the-badge&logo=nodedotjs)](https://nodejs.org)
+[![Backend](https://img.shields.io/badge/Backend-Node.js%2020%2B%20Express%205-339933?style=for-the-badge&logo=nodedotjs)](https://nodejs.org)
 [![Frontend](https://img.shields.io/badge/Frontend-Angular%2020-DD0031?style=for-the-badge&logo=angular)](https://angular.dev)
-[![Database](https://img.shields.io/badge/Database-PostgreSQL%20(Neon)-4169E1?style=for-the-badge&logo=postgresql)](https://neon.tech)
+[![Database](https://img.shields.io/badge/Database-PostgreSQL%20Neon-4169E1?style=for-the-badge&logo=postgresql)](https://neon.tech)
 [![Deploy Backend](https://img.shields.io/badge/Deploy-Azure%20Container%20Apps-0078D4?style=for-the-badge&logo=microsoftazure)](https://azure.microsoft.com)
 [![Deploy Frontend](https://img.shields.io/badge/Deploy-Vercel-000000?style=for-the-badge&logo=vercel)](https://vercel.com)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
+
+**Status:** ✅ Em Produção | **Versão:** 2.0.0 | **Última Atualização:** Agosto 2026
 
 </div>
 
 ---
 
 ## 📋 Índice
+
+- [Sobre o Projeto](#-sobre-o-projeto)
+- [Funcionalidades](#-funcionalidades)
+- [Tecnologias](#-tecnologias)
+- [Arquitetura](#-arquitetura)
+- [Pré-requisitos](#-pré-requisitos)
+- [Instalação](#-instalação)
+- [Executando o Projeto](#-executando-o-projeto)
+- [Estrutura do Repositório](#-estrutura-do-repositório)
+- [API Endpoints](#-api-endpoints)
+- [Autenticação e Segurança](#-autenticação-e-segurança)
+- [Upload de Imagens](#-upload-de-imagens)
+- [Variáveis de Ambiente](#-variáveis-de-ambiente)
+- [Deploy e Infraestrutura](#-deploy-e-infraestrutura)
+- [Desenvolvimento](#-desenvolvimento)
+- [Troubleshooting](#-troubleshooting)
+- [Créditos](#-créditos)
 
 - [Sobre o Projeto](#-sobre-o-projeto)
 - [Funcionalidades](#-funcionalidades)
@@ -118,10 +138,11 @@ Components  →  Services  →  HTTP Client  →  Backend API
 
 ### Banco de Dados
 
-| Ambiente | Banco de Dados |
-|----------|----------------|
-| Homolog | PostgreSQL (Neon) |
-| Production | PostgreSQL (Neon) |
+| Ambiente | Banco de Dados | Conexão |
+|----------|----------------|---------|
+| Development | SQLite (local) | `file:./dev.db` |
+| Homologação | PostgreSQL (Neon) | Branch `homolog` |
+| Production | PostgreSQL (Neon) | Branch `production` |
 
 ---
 
@@ -155,13 +176,14 @@ Components  →  Services  →  HTTP Client  →  Backend API
 
 ### DevOps & Infraestrutura
 
-| Serviço | Finalidade |
-|---------|-----------|
-| Azure Container Apps | Deploy do backend (Docker) |
-| Vercel | Deploy do frontend (SPA Angular) |
-| Neon | Banco de dados PostgreSQL serverless |
-| GitHub | Controle de versão |
-| Azure Pipelines | CI/CD |
+| Serviço | Propósito | Ambientes |
+|---------|----------|-----------|
+| Vercel | Deploy frontend | Development, Homologação |
+| Azure Container Apps | Deploy backend | Production |
+| Neon | PostgreSQL serverless | Development, Homologação, Production |
+| GitHub | Controle de versão | Branches: dev, homolog, main |
+| Azure Pipelines | CI/CD Production | Production |
+| Azure Static Web App | Frontend alternativo | Production |
 
 ---
 
@@ -394,11 +416,6 @@ Endpoints marcados com ✅ requerem o header:
 
 O sistema usa **JWT (JSON Web Tokens)** com validade de **7 dias**.
 
-**Credenciais padrão (seed):**
-- Email: `admin@pelosolhosderha.com.br` ou `rhakramer@gmail.com`
-- Senha: `admin123`
-
-> ⚠️ **Troque as senhas em produção!**
 
 **Fluxo:**
 1. Login: `POST /api/auth/login` com email + senha
@@ -425,19 +442,45 @@ O sistema usa **JWT (JSON Web Tokens)** com validade de **7 dias**.
 
 ## 🔐 Variáveis de Ambiente
 
+### Estrutura Multi-Ambiente
+
+O projeto suporta **três ambientes independentes**:
+
+| Ambiente | Frontend | Backend | Database | URL |
+|----------|----------|---------|----------|-----|
+| **Development** | Localhost:4200 | Localhost:3000 | SQLite (local) | http://localhost:4200 |
+| **Homologação** | Vercel (homolog) | Vercel (homolog) | PostgreSQL Neon (homolog branch) | pelosolhosderha-homolog.vercel.app |
+| **Production** | Azure Static Web App (main) | Azure Container Apps (main) | PostgreSQL Neon (production branch) | www.pelosolhosderha.com.br |
+
+Cada ambiente tem seu próprio `.env.{environment}` com configurações específicas.
+
 ### Backend
 
-| Variável | Descrição | Obrigatória |
-|----------|-----------|-------------|
-| `DATABASE_URL` | URL de conexão PostgreSQL (Neon) | ✅ |
-| `JWT_SECRET` | Chave secreta para assinatura JWT (mín. 32 caracteres) | ✅ |
-| `PORT` | Porta do servidor (default: 3000) | ❌ |
-| `NODE_ENV` | Ambiente (`development`, `homolog`, `production`) | ❌ |
-| `UPLOAD_DIR` | Diretório de uploads (default: `./uploads`) | ❌ |
-| `INSTAGRAM_TOKEN` | Token de acesso da API do Instagram | ❌ |
-| `AZURE_STORAGE_ACCOUNT_NAME` | Conta de armazenamento Azure (produção) | ❌ |
-| `AZURE_STORAGE_ACCOUNT_KEY` | Chave de acesso Azure (produção) | ❌ |
-| `AZURE_STORAGE_CONTAINER_NAME` | Container Azure para uploads (produção) | ❌ |
+| Variável | Descrição | Obrigatória | Ambientes |
+|----------|-----------|-------------|-----------|
+| `DATABASE_URL` | URL de conexão PostgreSQL (Neon) ou SQLite | ✅ | dev, homolog, prod |
+| `JWT_SECRET` | Chave secreta para JWT (mín. 32 caracteres aleatórios) | ✅ | dev, homolog, prod |
+| `NODE_ENV` | Ambiente (`development`, `homolog`, `production`) | ✅ | dev, homolog, prod |
+| `PORT` | Porta do servidor (default: 3000) | ❌ | dev, homolog, prod |
+| `FRONTEND_URL` | URL do frontend para CORS | ✅ | dev, homolog, prod |
+| `API_URL` | URL pública da API | ✅ | dev, homolog, prod |
+| `UPLOAD_DIR` | Diretório de uploads locais (default: `./uploads`) | ❌ | dev |
+| `INSTAGRAM_TOKEN` | Token de acesso da API Instagram | ❌ | homolog, prod |
+| `AZURE_STORAGE_CONNECTION_STRING` | Conexão Azure Blob Storage | ❌ | homolog, prod |
+| `AZURE_STORAGE_CONTAINER` | Container para uploads (default: `uploads`) | ❌ | homolog, prod |
+| `EMAIL_SERVICE` | Serviço de email (ex: gmail) | ❌ | dev, homolog, prod |
+| `EMAIL_USER` | Email para envio | ❌ | homolog, prod |
+| `EMAIL_PASSWORD` | Senha de app email | ❌ | homolog, prod |
+
+### Frontend
+
+| Variável | Descrição | Obrigatória | Ambientes |
+|----------|-----------|-------------|-----------|
+| `apiUrl` | URL base da API backend | ✅ | dev, homolog, prod |
+| `siteUrl` | URL pública do site | ✅ | dev, homolog, prod |
+| `googleClientId` | Client ID Google OAuth | ✅ | dev, homolog, prod |
+
+Configuradas em `src/environments/environment.{environment}.ts`
 
 **Veja também:** [Backend — Variáveis de Ambiente](./backend/README.md#-variáveis-de-ambiente)
 
@@ -445,45 +488,80 @@ O sistema usa **JWT (JSON Web Tokens)** com validade de **7 dias**.
 
 ## 🚢 Deploy
 
-### Backend — Azure Container Apps (Docker)
+### Ambientes de Deploy
 
-O backend é containerizado e deployado no **Azure Container Apps**.
+Este projeto está configurado para **três ambientes independentes** com automação e isolamento completo:
+
+#### 🔧 Development
+- **Frontend:** Localhost (Angular - porta 4200)
+- **Backend:** Localhost (Node.js - porta 3000)
+- **Database:** SQLite (arquivo local `dev.db`)
+- **URLs:**
+  - Frontend: `http://localhost:4200`
+  - Backend: `http://localhost:3000/api`
+- **Como usar:** `npm start` (frontend) + `npm run dev` (backend)
+- **Deploy:** Não requer git push - tudo roda localmente
+
+#### 🧪 Homologação
+- **Frontend:** Vercel (Branch `homolog`)
+- **Backend:** Vercel (Branch `homolog` - serverless functions)
+- **Database:** PostgreSQL (Neon - branch `homolog`)
+- **URLs:**
+  - Frontend: `https://pelosolhosderha-homolog.vercel.app`
+  - Backend: `https://pelosolhosderha-homolog.vercel.app/api` (mesma origem)
+- **Auto-deploy:** Sim, ao fazer push na branch `homolog`
+
+#### 🚀 Production
+- **Frontend:** Azure Static Web App (Branch `main`)
+- **Backend:** Azure Container Apps (Branch `main` - Docker)
+- **Backend:** Azure Container Apps (Docker)
+- **Database:** PostgreSQL (Neon - branch `production`)
+- **URL:** www.pelosolhosderha.com.br
+- **Auto-deploy:** Sim via Azure Pipeline
+
+### Backend — Production (Azure Container Apps)
 
 ```bash
 # Build da imagem Docker
 cd backend
 docker build -t pelosolhosderha-backend .
 
-# Build para produção
-npm run build
+# Push para Azure Container Registry
+az acr build --registry pelosolhosderhaacr --image pelosolhosderha-backend:latest .
+
+# Deploy no Container Apps
+az containerapp create \
+  --name pelosolhosderha-api \
+  --resource-group seu-resource-group \
+  --image pelosolhosderhaacr.azurecr.io/pelosolhosderha-backend:latest
 ```
 
-O pipeline de CI/CD está configurado em [`azure/deploy.yml`](azure/deploy.yml).
+Pipeline de CI/CD configurado em `azure/deploy.yml`.
 
 ### Frontend — Vercel
 
-O frontend é deployado automaticamente na **Vercel** a cada push na branch `main`.
-
-A configuração está em [`vercel.json`](vercel.json):
-- **Build command:** `npx ng build --configuration production`
-- **Output directory:** `dist/pelosolhosderha/browser`
-
-#### Build Manual
+Deployment automático configurado em `vercel.json`:
 
 ```bash
-# Build para produção
-npm run build
+# Build para qualquer ambiente
+ng build --configuration [development|homolog|production]
 
-# Teste local do SSR
-npm run serve:ssr:pelosolhosderha
+# Ou usar scripts npm
+npm run build                  # Production
+npm run build:homolog          # Homologação
 ```
 
-### URLs dos Ambientes
+**Build automático:** Toda atualização em `dev` e `homolog` branches é deployada automaticamente no Vercel.
 
-| Ambiente | Backend | Frontend |
-|----------|---------|---------|
-| Development | `http://localhost:3000` | `http://localhost:4200` |
-| Production | Azure Container Apps | `https://pelosolhosderha.vercel.app` |
+### Configuração de Ambientes
+
+Para mais detalhes sobre configuração multi-ambiente, veja [DEPLOYMENT_STRATEGY.md](DEPLOYMENT_STRATEGY.md)
+
+| Ambiente | Branch Git | Variáveis | Scripts |
+|----------|-----------|-----------|---------|
+| Development | `dev` | `.env.development` | `npm run dev` |
+| Homologação | `homolog` | `.env.homolog` | `npm run build:homolog` |
+| Production | `main` | `.env.production` | `npm run build` |
 
 ---
 
@@ -574,7 +652,7 @@ npm run serve:ssr:pelosolhosderha
 #### 🐛 Correções
 
 - Resolvido erro 401 no upload de imagens (CORS)
-- CORS agora permite staging e preview environments
+- CORS configurável para múltiplos ambientes (development, homologação, production)
 - Token JWT validado e documentado
 
 #### 📚 Documentação

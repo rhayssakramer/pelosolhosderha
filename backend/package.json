@@ -7,15 +7,18 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development node setup-schema.js && tsx watch src/index.ts",
     "setup:dev": "cross-env NODE_ENV=development node setup-schema.js",
+    "setup:homolog": "cross-env NODE_ENV=homolog node setup-schema.js",
     "setup:prod": "cross-env NODE_ENV=production node setup-schema.js",
     "build": "npm run setup:prod && tsc",
+    "build:homolog": "npm run setup:homolog && tsc",
     "start": "node dist/index.js",
     "db:generate": "prisma generate",
     "db:migrate:dev": "npm run setup:dev && cross-env NODE_ENV=development prisma migrate dev",
-    "db:migrate:homolog": "npm run setup:prod && cross-env NODE_ENV=homolog prisma migrate deploy",
+    "db:migrate:homolog": "npm run setup:homolog && cross-env NODE_ENV=homolog prisma migrate deploy",
     "db:migrate:prod": "npm run setup:prod && cross-env NODE_ENV=production node migrate-prod.js",
     "db:seed": "npm run setup:dev && cross-env NODE_ENV=development tsx src/seed.ts",
     "migrate:urls:dev": "npm run setup:dev && cross-env NODE_ENV=development tsx src/scripts/migrate-urls-production.ts development",
+    "migrate:urls:homolog": "npm run setup:homolog && cross-env NODE_ENV=homolog tsx src/scripts/migrate-urls-production.ts homolog",
     "migrate:urls:prod": "npm run setup:prod && cross-env NODE_ENV=production tsx src/scripts/migrate-urls-production.ts production"
   },
   "dependencies": {
