@@ -12,6 +12,7 @@ import { statsRoutes } from './routes/stats.routes.js';
 import { pinRoutes } from './routes/pin.routes.js';
 import { googleAuthRoutes } from './routes/google-auth.routes.js';
 import { newsletterRoutes } from './routes/newsletter.routes.js';
+import { contactRoutes } from './routes/contact.routes.js';
 
 const app = express();
 
@@ -58,6 +59,7 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/stats', statsRoutes);
 app.use('/api/pin', pinRoutes);
 app.use('/api/newsletter', newsletterRoutes);
+app.use('/api/contact', contactRoutes);
 
 // Proxy para imagens de avatar do Google (evita problema de CORS)
 app.get('/api/proxy-image', async (req, res) => {

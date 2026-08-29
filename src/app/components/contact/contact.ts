@@ -6,12 +6,14 @@ import { BlogService } from '../../services/blog.service';
 import { StatsService } from '../../services/stats.service';
 import { InstagramService } from '../../services/instagram.service';
 import { YouTubeService } from '../../services/youtube.service';
+import { ContactService } from '../../services/contact.service';
+import { NewsletterComponent } from '../newsletter/newsletter';
 import { Post } from '../../models/post.model';
 
 @Component({
   selector: 'app-contact',
   standalone: true,
-  imports: [CommonModule, RouterLink, UpperCasePipe, FormsModule],
+  imports: [CommonModule, RouterLink, UpperCasePipe, FormsModule, NewsletterComponent],
   templateUrl: './contact.html',
   styleUrl: './contact.css'
 })
@@ -27,6 +29,7 @@ export class ContactComponent {
   message = '';
   sent = false;
   sending = false;
+  error = '';
 
   @HostListener('window:scroll')
   onScroll() {
@@ -37,7 +40,8 @@ export class ContactComponent {
     public blog: BlogService,
     private stats: StatsService,
     public instagram: InstagramService,
-    public youtube: YouTubeService
+    public youtube: YouTubeService,
+    private contactService: ContactService
   ) {}
 
   onSearch(event: Event) {
@@ -72,23 +76,50 @@ export class ContactComponent {
   }
 
   sendMessage() {
-    if (!this.name || !this.email || !this.subject || !this.message) return;
+    // Validar campos
+    if (!this.name || !this.email || !this.subject || !this.message) {
+      this.error = 'Por favor, preencha todos os campos';
+      return;
+    }
+
+    // Validar email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(this.email)) {
+      this.error = 'Email inválido';
+      return;
+    }
+
+    // Validar comprimento mínimo da mensagem
+    if (this.message.trim().length < 10) {
+      this.error = 'Mensagem deve ter pelo menos 10 caracteres';
+      return;
+    }
 
     this.sending = true;
+    this.error = '';
 
-    const mailtoLink = `mailto:rhakramer@gmail.com?subject=${encodeURIComponent(this.subject)}&body=${encodeURIComponent(
-      `Nome: ${this.name}\nE-mail: ${this.email}\n\nMensagem:\n${this.message}`
-    )}`;
-
-    window.location.href = mailtoLink;
-
-    this.sending = false;
-    this.sent = true;
-    this.name = '';
-    this.email = '';
-    this.subject = '';
-    this.message = '';
-
-    setTimeout(() => this.sent = false, 5000);
+    this.contactService.sendMessage({
+      name: this.name,
+      email: this.email,
+      subject: this.subject,
+      message: this.message
+    }).subscribe({
+      next: () => {
+        this.sending = false;
+        this.sent = true;
+        this.name = '';
+        this.email = '';
+        this.subject = '';
+        this.message = '';
+        this.error = '';
+        
+        // Limpar mensagem de sucesso após 5 segundos
+        setTimeout(() => this.sent = false, 5000);
+      },
+      error: (err) => {
+        this.sending = false;
+        this.error = err.error?.error || 'Erro ao enviar mensagem. Tente novamente.';
+        console.error('Erro ao enviar mensagem de contato:', err);
+      }
+    });
   }
-}

@@ -112,3 +112,36 @@ export const getReplyNotificationEmail = (
     </div>
   `;
 };
+
+export const getNewPostNotificationEmail = (
+  postTitle: string,
+  postExcerpt: string,
+  postUrl: string,
+  authorName: string
+): string => {
+  return `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <h2>✨ Novo post publicado!</h2>
+      <p>Olá,</p>
+      <p><strong>${authorName}</strong> publicou um novo post no Pelos Olhos de Rha:</p>
+      
+      <div style="background-color: #f5f5f5; padding: 15px; border-left: 4px solid #8c6add; margin: 20px 0;">
+        <h3 style="margin-top: 0; color: #333;">${postTitle}</h3>
+        <p>${postExcerpt}</p>
+      </div>
+      
+      <p>
+        <a href="${postUrl}" style="background-color: #8c6add; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">
+          Ler post completo
+        </a>
+      </p>
+      
+      <hr style="margin-top: 30px; border: none; border-top: 1px solid #ccc;">
+      <p style="font-size: 12px; color: #999;">
+        Você está recebendo este email porque está inscrito no newsletter de Pelos Olhos de Rha.
+        <br/>
+        <a href="${config.appUrl}/unsubscribe" style="color: #8c6add; text-decoration: none;">Desinscrever-se</a>
+      </p>
+    </div>
+  `;
+};

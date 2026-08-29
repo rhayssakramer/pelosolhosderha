@@ -2,6 +2,8 @@ import { Router, Request, Response } from 'express';
 import { prisma } from '../config/database.js';
 import { authMiddleware, AuthRequest } from '../middleware/auth.middleware.js';
 import { normalizeImageUrlsInHtml, normalizeImageUrl } from '../utils/urlNormalizer.js';
+import { sendNotificationEmail, getNewPostNotificationEmail } from '../config/email.js';
+import { config } from '../config/env.js';
 
 export const postRoutes = Router();
 
@@ -154,10 +156,30 @@ postRoutes.post('/', authMiddleware, async (req: AuthRequest, res: Response) => 
       include: {
         tags: { include: { tag: true } },
         photos: true,
+        author: { select: { name: true } },
       },
     });
 
     console.log(`[POST CREATE] Post criado com sucesso. ID: ${post.id}`);
+
+    // Send newsletter notifications if post is published
+    if (published) {
+      console.log(`[POST CREATE] Post is published, sending newsletter notifications...`);
+      const subscribers = await prisma.newsletter.findMany({ where: { status: 'active' } });
+      
+      if (subscribers.length > 0) {
+        const postUrl = `${config.appUrl}/blog/${post.id}`;
+        const emailHtml = getNewPostNotificationEmail(post.title, post.excerpt, postUrl, post.author.name);
+        
+        // Send emails asynchronously without blocking the response
+        subscribers.forEach((subscriber) => {
+          sendNotificationEmail(subscriber.email, `✨ Novo post: ${post.title}`, emailHtml)
+            .then(() => console.log(`[POST CREATE] Newsletter email sent to ${subscriber.email}`))
+            .catch((error) => console.error(`[POST CREATE] Failed to send newsletter email to ${subscriber.email}:`, error));
+        });
+      }
+    }
+
     res.status(201).json(post);
   } catch (error) {
     console.error(`[POST CREATE] Erro ao criar post:`, error);
@@ -169,6 +191,12 @@ postRoutes.post('/', authMiddleware, async (req: AuthRequest, res: Response) => 
 postRoutes.put('/:id', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const { title, content, excerpt, coverImage, published, tags, photos } = req.body;
+
+    // Get current post to check if it's being published for the first time
+    const currentPost = await prisma.post.findUnique({
+      where: { id: req.params.id as string },
+      select: { published: true, publishedAt: true, author: { select: { name: true } } },
+    });
 
     // Remove existing tags
     await prisma.postTag.deleteMany({ where: { postId: req.params.id as string } });
@@ -207,15 +235,8 @@ postRoutes.put('/:id', authMiddleware, async (req: AuthRequest, res: Response) =
     };
 
     // Se está sendo publicado e ainda não tem publishedAt, preencher com data/hora atual
-    if (published === true) {
-      const currentPost = await prisma.post.findUnique({
-        where: { id: req.params.id as string },
-        select: { publishedAt: true },
-      });
-      
-      if (!currentPost?.publishedAt) {
-        updateData.publishedAt = new Date();
-      }
+    if (published === true && !currentPost?.publishedAt) {
+      updateData.publishedAt = new Date();
     }
 
     const post = await prisma.post.update({
@@ -224,8 +245,27 @@ postRoutes.put('/:id', authMiddleware, async (req: AuthRequest, res: Response) =
       include: {
         tags: { include: { tag: true } },
         photos: true,
+        author: { select: { name: true } },
       },
     });
+
+    // Send newsletter notifications if post was just published
+    if (published === true && !currentPost?.published) {
+      console.log(`[POST UPDATE] Post is being published for the first time, sending newsletter notifications...`);
+      const subscribers = await prisma.newsletter.findMany({ where: { status: 'active' } });
+      
+      if (subscribers.length > 0) {
+        const postUrl = `${config.appUrl}/blog/${post.id}`;
+        const emailHtml = getNewPostNotificationEmail(post.title, post.excerpt, postUrl, post.author.name);
+        
+        // Send emails asynchronously without blocking the response
+        subscribers.forEach((subscriber) => {
+          sendNotificationEmail(subscriber.email, `✨ Novo post: ${post.title}`, emailHtml)
+            .then(() => console.log(`[POST UPDATE] Newsletter email sent to ${subscriber.email}`))
+            .catch((error) => console.error(`[POST UPDATE] Failed to send newsletter email to ${subscriber.email}:`, error));
+        });
+      }
+    }
 
     res.json(post);
   } catch (error) {

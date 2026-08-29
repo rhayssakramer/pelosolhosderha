@@ -5,12 +5,13 @@ import { BlogService } from '../../services/blog.service';
 import { StatsService } from '../../services/stats.service';
 import { InstagramService } from '../../services/instagram.service';
 import { YouTubeService } from '../../services/youtube.service';
+import { NewsletterComponent } from '../newsletter/newsletter';
 import { Post } from '../../models/post.model';
 
 @Component({
   selector: 'app-about',
   standalone: true,
-  imports: [CommonModule, RouterLink, UpperCasePipe],
+  imports: [CommonModule, RouterLink, UpperCasePipe, NewsletterComponent],
   templateUrl: './about.html',
   styleUrl: './about.css'
 })

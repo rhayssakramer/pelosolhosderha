@@ -7,6 +7,7 @@ import { BlogService } from '../../services/blog.service';
 import { StatsService } from '../../services/stats.service';
 import { InstagramService } from '../../services/instagram.service';
 import { YouTubeService } from '../../services/youtube.service';
+import { NewsletterComponent } from '../newsletter/newsletter';
 import { GoogleAuthService, GoogleUser } from '../../services/google-auth.service';
 import { Post } from '../../models/post.model';
 import { VideoEmbedPipe } from '../../pipes/video-embed.pipe';
@@ -18,7 +19,7 @@ declare var google: any;
 
 @Component({
   selector: 'app-post-detail',
-  imports: [CommonModule, RouterLink, VideoEmbedPipe, FormsModule, CommentThreadComponent],
+  imports: [CommonModule, RouterLink, VideoEmbedPipe, FormsModule, CommentThreadComponent, NewsletterComponent],
   templateUrl: './post-detail.html',
   styleUrl: './post-detail.css',
   encapsulation: ViewEncapsulation.None

@@ -16,6 +16,7 @@ export const config = {
   uploadDir: process.env.UPLOAD_DIR || './uploads',
   frontendUrl: process.env.FRONTEND_URL || 'http://localhost:4200',
   apiUrl: process.env.API_URL || 'http://localhost:3000/api',
+  appUrl: process.env.APP_URL || process.env.FRONTEND_URL || 'http://localhost:4200',
   azureStorageConnectionString: process.env.AZURE_STORAGE_CONNECTION_STRING || '',
   azureStorageContainer: process.env.AZURE_STORAGE_CONTAINER || 'uploads',
   instagramToken: process.env.INSTAGRAM_TOKEN || '',

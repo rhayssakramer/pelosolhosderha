@@ -90,6 +90,12 @@
           </div>
         }
 
+        @if (error) {
+          <div class="error-message">
+            ❌ {{ error }}
+          </div>
+        }
+
         <form class="contact-form" (ngSubmit)="sendMessage()">
           <input type="text" placeholder="Seu nome" [(ngModel)]="name" name="name" required>
           <input type="email" placeholder="Seu e-mail" [(ngModel)]="email" name="email" required>
@@ -103,6 +109,8 @@
     </div>
 
     <aside class="sidebar">
+      <app-newsletter></app-newsletter>
+      
       <div class="sidebar-widget widget-about">
         <div class="about-photo">
           <img src="/profile.png" alt="Foto da blogueira">
