@@ -7,6 +7,9 @@ export const createEmailTransporter = () => {
   // Se não houver configuração de email, retorna null
   if (!config.emailService || !config.emailUser || !config.emailPassword) {
     console.log('⚠️  Email service not configured. Notifications disabled.');
+    console.log(`   - emailService: ${config.emailService || 'NOT SET'}`);
+    console.log(`   - emailUser: ${config.emailUser || 'NOT SET'}`);
+    console.log(`   - emailPassword: ${config.emailPassword ? 'SET' : 'NOT SET'}`);
     return null;
   }
 
