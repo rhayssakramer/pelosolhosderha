@@ -2,7 +2,7 @@ import { Router, Request, Response } from 'express';
 import { prisma } from '../config/database.js';
 import { authMiddleware, AuthRequest } from '../middleware/auth.middleware.js';
 import { normalizeImageUrlsInHtml, normalizeImageUrl } from '../utils/urlNormalizer.js';
-import { sendNotificationEmail, getNewPostNotificationEmail } from '../config/email.js';
+import { sendBatchNotificationEmails, getNewPostNotificationEmail } from '../config/email.js';
 import { config } from '../config/env.js';
 
 export const postRoutes = Router();
@@ -164,19 +164,28 @@ postRoutes.post('/', authMiddleware, async (req: AuthRequest, res: Response) => 
 
     // Send newsletter notifications if post is published
     if (published) {
-      console.log(`[POST CREATE] Post is published, sending newsletter notifications...`);
-      const subscribers = await prisma.newsletter.findMany({ where: { status: 'active' } });
+      console.log(`[POST CREATE] Post is published, fetching newsletter subscribers...`);
+      const subscribers = await prisma.newsletter.findMany({ 
+        where: { status: 'active' },
+        select: { email: true }
+      });
       
       if (subscribers.length > 0) {
+        console.log(`[POST CREATE] Found ${subscribers.length} active subscribers. Sending notifications...`);
         const postUrl = `${config.appUrl}/blog/${post.id}`;
         const emailHtml = getNewPostNotificationEmail(post.title, post.excerpt, postUrl, post.author.name);
+        const subscriberEmails = subscribers.map(s => s.email);
         
-        // Send emails asynchronously without blocking the response
-        subscribers.forEach((subscriber) => {
-          sendNotificationEmail(subscriber.email, `✨ Novo post: ${post.title}`, emailHtml)
-            .then(() => console.log(`[POST CREATE] Newsletter email sent to ${subscriber.email}`))
-            .catch((error) => console.error(`[POST CREATE] Failed to send newsletter email to ${subscriber.email}:`, error));
-        });
+        // Send emails without blocking the response
+        sendBatchNotificationEmails(subscriberEmails, `✨ Novo post: ${post.title}`, emailHtml)
+          .then((result) => {
+            console.log(`[POST CREATE] Newsletter notifications sent: ${result.sent} successful, ${result.failed} failed`);
+          })
+          .catch((error) => {
+            console.error(`[POST CREATE] Error sending newsletter notifications:`, error);
+          });
+      } else {
+        console.log(`[POST CREATE] No active subscribers found for newsletter`);
       }
     }
 
@@ -251,19 +260,28 @@ postRoutes.put('/:id', authMiddleware, async (req: AuthRequest, res: Response) =
 
     // Send newsletter notifications if post was just published
     if (published === true && !currentPost?.published) {
-      console.log(`[POST UPDATE] Post is being published for the first time, sending newsletter notifications...`);
-      const subscribers = await prisma.newsletter.findMany({ where: { status: 'active' } });
+      console.log(`[POST UPDATE] Post is being published for the first time, fetching newsletter subscribers...`);
+      const subscribers = await prisma.newsletter.findMany({ 
+        where: { status: 'active' },
+        select: { email: true }
+      });
       
       if (subscribers.length > 0) {
+        console.log(`[POST UPDATE] Found ${subscribers.length} active subscribers. Sending notifications...`);
         const postUrl = `${config.appUrl}/blog/${post.id}`;
         const emailHtml = getNewPostNotificationEmail(post.title, post.excerpt, postUrl, post.author.name);
+        const subscriberEmails = subscribers.map(s => s.email);
         
-        // Send emails asynchronously without blocking the response
-        subscribers.forEach((subscriber) => {
-          sendNotificationEmail(subscriber.email, `✨ Novo post: ${post.title}`, emailHtml)
-            .then(() => console.log(`[POST UPDATE] Newsletter email sent to ${subscriber.email}`))
-            .catch((error) => console.error(`[POST UPDATE] Failed to send newsletter email to ${subscriber.email}:`, error));
-        });
+        // Send emails without blocking the response
+        sendBatchNotificationEmails(subscriberEmails, `✨ Novo post: ${post.title}`, emailHtml)
+          .then((result) => {
+            console.log(`[POST UPDATE] Newsletter notifications sent: ${result.sent} successful, ${result.failed} failed`);
+          })
+          .catch((error) => {
+            console.error(`[POST UPDATE] Error sending newsletter notifications:`, error);
+          });
+      } else {
+        console.log(`[POST UPDATE] No active subscribers found for newsletter`);
       }
     }
 

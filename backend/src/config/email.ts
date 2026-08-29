@@ -31,7 +31,8 @@ export const sendNotificationEmail = async (
     const transporter = createEmailTransporter();
     
     if (!transporter) {
-      console.log('⚠️  Email transporter not configured');
+      console.warn(`⚠️  [EMAIL] Email transporter not configured - cannot send to ${to}`);
+      console.warn(`⚠️  [EMAIL] Make sure these env vars are set: EMAIL_SERVICE, EMAIL_USER, EMAIL_PASSWORD`);
       return false;
     }
 
@@ -43,12 +44,47 @@ export const sendNotificationEmail = async (
     };
 
     await transporter.sendMail(mailOptions);
-    console.log(`✅ Email sent successfully to ${to}`);
+    console.log(`✅ [EMAIL] Email sent successfully to ${to}`);
     return true;
   } catch (error) {
-    console.error('❌ Error sending email:', error);
+    console.error(`❌ [EMAIL] Error sending email to ${to}:`, error);
     return false;
   }
+};
+
+// Batch send emails to newsletter subscribers
+export const sendBatchNotificationEmails = async (
+  emails: string[],
+  subject: string,
+  htmlContent: string
+): Promise<{ sent: number; failed: number }> => {
+  console.log(`[EMAIL] Starting batch send to ${emails.length} subscribers...`);
+  
+  let sent = 0;
+  let failed = 0;
+
+  // Send emails in parallel with a concurrency limit
+  const batchSize = 5; // Send 5 emails at a time to avoid overwhelming the server
+  
+  for (let i = 0; i < emails.length; i += batchSize) {
+    const batch = emails.slice(i, i + batchSize);
+    
+    const results = await Promise.allSettled(
+      batch.map(email => sendNotificationEmail(email, subject, htmlContent))
+    );
+
+    results.forEach((result, index) => {
+      if (result.status === 'fulfilled' && result.value) {
+        sent++;
+      } else {
+        failed++;
+        console.error(`[EMAIL] Failed to send to ${batch[index]}`);
+      }
+    });
+  }
+
+  console.log(`[EMAIL] Batch send complete: ${sent} sent, ${failed} failed`);
+  return { sent, failed };
 };
 
 export const getCommentNotificationEmail = (
