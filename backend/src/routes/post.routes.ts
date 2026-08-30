@@ -173,7 +173,8 @@ postRoutes.post('/', authMiddleware, async (req: AuthRequest, res: Response) => 
       if (subscribers.length > 0) {
         console.log(`[POST CREATE] Found ${subscribers.length} active subscribers. Sending notifications...`);
         const postUrl = `${config.appUrl}/blog/${post.id}`;
-        const emailHtml = getNewPostNotificationEmail(post.title, post.excerpt, postUrl, post.author.name);
+        const normalizedCoverImage = post.coverImage ? normalizeImageUrl(post.coverImage) : undefined;
+        const emailHtml = getNewPostNotificationEmail(post.title, post.excerpt, postUrl, post.author.name, normalizedCoverImage);
         const subscriberEmails = subscribers.map(s => s.email);
         
         // Send emails without blocking the response
@@ -269,7 +270,8 @@ postRoutes.put('/:id', authMiddleware, async (req: AuthRequest, res: Response) =
       if (subscribers.length > 0) {
         console.log(`[POST UPDATE] Found ${subscribers.length} active subscribers. Sending notifications...`);
         const postUrl = `${config.appUrl}/blog/${post.id}`;
-        const emailHtml = getNewPostNotificationEmail(post.title, post.excerpt, postUrl, post.author.name);
+        const normalizedCoverImage = post.coverImage ? normalizeImageUrl(post.coverImage) : undefined;
+        const emailHtml = getNewPostNotificationEmail(post.title, post.excerpt, postUrl, post.author.name, normalizedCoverImage);
         const subscriberEmails = subscribers.map(s => s.email);
         
         // Send emails without blocking the response
