@@ -174,6 +174,7 @@ postRoutes.post('/', authMiddleware, async (req: AuthRequest, res: Response) => 
         console.log(`[POST CREATE] Found ${subscribers.length} active subscribers. Sending notifications...`);
         const postUrl = `${config.appUrl}/blog/${post.id}`;
         const normalizedCoverImage = post.coverImage ? normalizeImageUrl(post.coverImage) : undefined;
+        console.log(`[POST CREATE] Email data: title=${post.title}, excerpt=${post.excerpt}, author=${post.author.name}, coverImage=${normalizedCoverImage}`);
         const emailHtml = getNewPostNotificationEmail(post.title, post.excerpt, postUrl, post.author.name, normalizedCoverImage);
         const subscriberEmails = subscribers.map(s => s.email);
         
@@ -205,7 +206,7 @@ postRoutes.put('/:id', authMiddleware, async (req: AuthRequest, res: Response) =
     // Get current post to check if it's being published for the first time
     const currentPost = await prisma.post.findUnique({
       where: { id: req.params.id as string },
-      select: { published: true, publishedAt: true, author: { select: { name: true } } },
+      select: { published: true, publishedAt: true, coverImage: true, author: { select: { name: true } } },
     });
 
     // Remove existing tags
@@ -271,6 +272,7 @@ postRoutes.put('/:id', authMiddleware, async (req: AuthRequest, res: Response) =
         console.log(`[POST UPDATE] Found ${subscribers.length} active subscribers. Sending notifications...`);
         const postUrl = `${config.appUrl}/blog/${post.id}`;
         const normalizedCoverImage = post.coverImage ? normalizeImageUrl(post.coverImage) : undefined;
+        console.log(`[POST UPDATE] Email data: title=${post.title}, excerpt=${post.excerpt}, author=${post.author.name}, coverImage=${normalizedCoverImage}`);
         const emailHtml = getNewPostNotificationEmail(post.title, post.excerpt, postUrl, post.author.name, normalizedCoverImage);
         const subscriberEmails = subscribers.map(s => s.email);
         
