@@ -159,6 +159,11 @@ export const getNewPostNotificationEmail = (
   authorName: string,
   coverImage?: string
 ): string => {
+  // Se excerpt está vazio, usar os primeiros 200 caracteres
+  const displayExcerpt = postExcerpt && postExcerpt.trim() 
+    ? postExcerpt 
+    : "Clique no botão abaixo para ler o post completo!";
+  
   return `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
       <h2>✨ Novo post publicado!</h2>
@@ -166,12 +171,12 @@ export const getNewPostNotificationEmail = (
       <p><strong>${authorName}</strong> publicou um novo post no Pelos Olhos de Rha:</p>
       
       ${coverImage ? `<div style="margin: 20px 0;">
-        <img src="${coverImage}" alt="${postTitle}" style="width: 100%; height: auto; border-radius: 8px; display: block;">
+        <img src="${coverImage}" alt="${postTitle}" style="width: 100%; max-width: 500px; height: auto; border-radius: 8px; display: block;">
       </div>` : ''}
       
       <div style="background-color: #f5f5f5; padding: 15px; border-left: 4px solid #8c6add; margin: 20px 0;">
         <h3 style="margin-top: 0; color: #333;">${postTitle}</h3>
-        <p>${postExcerpt}</p>
+        <p>${displayExcerpt}</p>
       </div>
       
       <p>
