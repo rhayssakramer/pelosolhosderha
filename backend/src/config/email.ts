@@ -157,12 +157,25 @@ export const getNewPostNotificationEmail = (
   postExcerpt: string,
   postUrl: string,
   authorName: string,
-  coverImage?: string
+  coverImage?: string,
+  postContent?: string
 ): string => {
-  // Se excerpt está vazio, usar os primeiros 200 caracteres
-  const displayExcerpt = postExcerpt && postExcerpt.trim() 
-    ? postExcerpt 
-    : "Clique no botão abaixo para ler o post completo!";
+  // Se excerpt está vazio, extrair do conteúdo
+  let displayExcerpt = postExcerpt && postExcerpt.trim() ? postExcerpt : '';
+  
+  if (!displayExcerpt && postContent) {
+    // Remove HTML tags
+    const cleanContent = postContent.replace(/<[^>]*>/g, '').trim();
+    // Pega os primeiros 250 caracteres e adiciona "..."
+    displayExcerpt = cleanContent.length > 250 
+      ? cleanContent.substring(0, 250) + '...' 
+      : cleanContent;
+  }
+  
+  // Se ainda estiver vazio, usar mensagem padrão
+  if (!displayExcerpt) {
+    displayExcerpt = "Clique no botão abaixo para ler o post completo!";
+  }
   
   return `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">

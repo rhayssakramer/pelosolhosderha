@@ -175,7 +175,7 @@ postRoutes.post('/', authMiddleware, async (req: AuthRequest, res: Response) => 
         const postUrl = `${config.appUrl}/blog/${post.id}`;
         const normalizedCoverImage = post.coverImage ? normalizeImageUrl(post.coverImage) : undefined;
         console.log(`[POST CREATE] Email data: title=${post.title}, excerpt=${post.excerpt}, author=${post.author.name}, coverImage=${normalizedCoverImage}`);
-        const emailHtml = getNewPostNotificationEmail(post.title, post.excerpt, postUrl, post.author.name, normalizedCoverImage);
+        const emailHtml = getNewPostNotificationEmail(post.title, post.excerpt, postUrl, post.author.name, normalizedCoverImage, post.content);
         const subscriberEmails = subscribers.map(s => s.email);
         
         // Send emails without blocking the response
@@ -273,7 +273,7 @@ postRoutes.put('/:id', authMiddleware, async (req: AuthRequest, res: Response) =
         const postUrl = `${config.appUrl}/blog/${post.id}`;
         const normalizedCoverImage = post.coverImage ? normalizeImageUrl(post.coverImage) : undefined;
         console.log(`[POST UPDATE] Email data: title=${post.title}, excerpt=${post.excerpt}, author=${post.author.name}, coverImage=${normalizedCoverImage}`);
-        const emailHtml = getNewPostNotificationEmail(post.title, post.excerpt, postUrl, post.author.name, normalizedCoverImage);
+        const emailHtml = getNewPostNotificationEmail(post.title, post.excerpt, postUrl, post.author.name, normalizedCoverImage, post.content);
         const subscriberEmails = subscribers.map(s => s.email);
         
         // Send emails without blocking the response
