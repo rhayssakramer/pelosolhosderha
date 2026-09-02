@@ -299,7 +299,8 @@ npm install
 
 # Configurar variáveis de ambiente
 cp .env.example .env
-# Edite o .env com suas configurações (DATABASE_URL, JWT_SECRET, etc.)
+# Edite o .env com seus valores (banco de dados, JWT, etc.)
+# **⚠️ Nunca commite .env com credenciais reais**
 
 # Gerar o Prisma Client
 npm run db:generate
@@ -458,19 +459,19 @@ Cada ambiente tem seu próprio `.env.{environment}` com configurações específ
 
 | Variável | Descrição | Obrigatória | Ambientes |
 |----------|-----------|-------------|-----------|
-| `DATABASE_URL` | URL de conexão PostgreSQL (Neon) ou SQLite | ✅ | dev, homolog, prod |
-| `JWT_SECRET` | Chave secreta para JWT (mín. 32 caracteres aleatórios) | ✅ | dev, homolog, prod |
+| `DATABASE_URL` | URL de conexão do banco (PostgreSQL Neon ou SQLite) | ✅ | dev, homolog, prod |
+| `JWT_SECRET` | Chave secreta para JWT (mín. 32 caracteres, aleatória e forte) | ✅ | dev, homolog, prod |
 | `NODE_ENV` | Ambiente (`development`, `homolog`, `production`) | ✅ | dev, homolog, prod |
 | `PORT` | Porta do servidor (default: 3000) | ❌ | dev, homolog, prod |
 | `FRONTEND_URL` | URL do frontend para CORS | ✅ | dev, homolog, prod |
 | `API_URL` | URL pública da API | ✅ | dev, homolog, prod |
 | `UPLOAD_DIR` | Diretório de uploads locais (default: `./uploads`) | ❌ | dev |
 | `INSTAGRAM_TOKEN` | Token de acesso da API Instagram | ❌ | homolog, prod |
-| `AZURE_STORAGE_CONNECTION_STRING` | Conexão Azure Blob Storage | ❌ | homolog, prod |
+| `AZURE_STORAGE_CONNECTION_STRING` | String de conexão Azure Blob Storage | ❌ | homolog, prod |
 | `AZURE_STORAGE_CONTAINER` | Container para uploads (default: `uploads`) | ❌ | homolog, prod |
-| `EMAIL_SERVICE` | Serviço de email (ex: gmail) | ❌ | dev, homolog, prod |
-| `EMAIL_USER` | Email para envio | ❌ | homolog, prod |
-| `EMAIL_PASSWORD` | Senha de app email | ❌ | homolog, prod |
+| `EMAIL_SERVICE` | Serviço de email configurado | ❌ | homolog, prod |
+| `EMAIL_USER` | Email de sistema (não usar email pessoal) | ❌ | homolog, prod |
+| `EMAIL_PASSWORD` | Senha de app email (usar app-specific passwords) | ❌ | homolog, prod |
 
 ### Frontend
 
@@ -527,13 +528,13 @@ cd backend
 docker build -t pelosolhosderha-backend .
 
 # Push para Azure Container Registry
-az acr build --registry pelosolhosderhaacr --image pelosolhosderha-backend:latest .
+az acr build --registry [seu-registry] --image pelosolhosderha-backend:latest .
 
 # Deploy no Container Apps
 az containerapp create \
   --name pelosolhosderha-api \
-  --resource-group seu-resource-group \
-  --image pelosolhosderhaacr.azurecr.io/pelosolhosderha-backend:latest
+  --resource-group [seu-resource-group] \
+  --image [seu-registry].azurecr.io/pelosolhosderha-backend:latest
 ```
 
 Pipeline de CI/CD configurado em `azure/deploy.yml`.
@@ -554,8 +555,6 @@ npm run build:homolog          # Homologação
 **Build automático:** Toda atualização em `dev` e `homolog` branches é deployada automaticamente no Vercel.
 
 ### Configuração de Ambientes
-
-Para mais detalhes sobre configuração multi-ambiente, veja [DEPLOYMENT_STRATEGY.md](DEPLOYMENT_STRATEGY.md)
 
 | Ambiente | Branch Git | Variáveis | Scripts |
 |----------|-----------|-----------|---------|
@@ -625,7 +624,35 @@ Para mais detalhes sobre configuração multi-ambiente, veja [DEPLOYMENT_STRATEG
 
 ---
 
-## � Últimas Mudanças
+## 📝 Últimas Mudanças
+
+### Setembro 2, 2026
+
+#### 🔐 Melhorias de Segurança
+
+**Documentação:**
+- ✅ Remoção de exemplos com credenciais sensíveis de todos os READMEs
+- ✅ Substituição de valores reais por placeholders em `.env` exemplo
+- ✅ Removidos emails de exemplo de documentação
+- ✅ Adicionado aviso sobre `.gitignore` para arquivos `.env`
+- ✅ Melhoria de instrução de segurança em variáveis de ambiente
+
+**Backend:**
+- ✅ Exemplos de cURL com dados sanitizados
+- ✅ Documentação de JWT sem expor segredos
+
+**Frontend:**
+- ✅ Variáveis de ambiente documentadas sem valores sensíveis
+- ✅ Orientações de segurança para credenciais adicionadas
+
+**Boas Práticas:**
+- ✅ Recomendação de usar `app-specific passwords` para email
+- ✅ Alertas sobre não usar emails pessoais em variáveis de ambiente
+- ✅ Limpeza de comentários com dados sensíveis
+
+---
+
+## 📊 Histórico de Mudanças Anteriores
 
 ### Julho 30, 2026
 
@@ -664,7 +691,7 @@ Para mais detalhes sobre configuração multi-ambiente, veja [DEPLOYMENT_STRATEG
 
 ---
 
-## �👥 Créditos
+## 👥 Créditos
 
 <p><strong>Veja o mundo pelos olhos de Rha.</strong></p>
 

@@ -348,10 +348,10 @@ Edite `.env`:
 
 ```env
 # Banco de Dados
-DATABASE_URL="postgresql://user:password@localhost:5432/pelosolhos"
+DATABASE_URL=postgresql://[usuario]:[senha]@[host]/[banco]
 
-# JWT
-JWT_SECRET="sua-chave-secreta-com-minimo-32-caracteres-aleatorios"
+# JWT (mínimo 32 caracteres aleatórios)
+JWT_SECRET=[sua_chave_secreta_forte]
 
 # Servidor
 PORT=3000
@@ -365,8 +365,11 @@ MAX_FILE_SIZE=10485760
 ALLOWED_ORIGINS="http://localhost:4200,http://localhost:3000"
 
 # Opcional
-INSTAGRAM_TOKEN=""
+INSTAGRAM_TOKEN=
+AZURE_STORAGE_CONNECTION_STRING=
 ```
+
+**⚠️ Segurança:** Nunca commite o arquivo `.env` com credenciais reais. Use `.gitignore` para ignorar este arquivo.
 
 ### 4. Gerar Prisma Client
 
@@ -844,7 +847,7 @@ npm install
 
 # 3. Configure .env
 cp .env.example .env
-# Edite com suas credenciais
+# Edite com seus valores (banco de dados, JWT, etc)
 
 # 4. Inicie dev server
 npm run dev
@@ -915,10 +918,10 @@ npm run test:db-connection
 
 # Se usar local:
 # 1. Verifique se PostgreSQL está rodando
-# 2. Credenciais estão corretas?
-# 3. Banco existe?
+# 2. Confirme as credenciais no .env
+# 3. Verifique se o banco existe
 
-psql -U postgres -c "CREATE DATABASE pelosolhos;"
+# Crie o banco com seu gerenciador de preferência
 ```
 
 ### 2. Token JWT Inválido (401)
@@ -931,18 +934,18 @@ psql -U postgres -c "CREATE DATABASE pelosolhos;"
 **Solução:**
 
 ```bash
-# Fazer login novamente
+# Fazer login novamente com suas credenciais
 curl -X POST http://localhost:3000/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email": "admin@pelosolhosderha.com.br", "password": "admin123"}'
+  -d '{"email": "[seu_email]", "password": "[sua_senha]"}'
 
-# Copie token da resposta
+# Copie o token JWT da resposta
 
-# Teste com novo token
+# Teste com o novo token
 curl http://localhost:3000/api/auth/me \
-  -H "Authorization: Bearer your-jwt-token-here"
+  -H "Authorization: Bearer [seu_jwt_token]"
 
-# Verifique token em jwt.io
+# Para validar um token JWT, use jwt.io
 ```
 
 ### 3. Erro CORS
@@ -1563,8 +1566,6 @@ Abre interface visual em `http://localhost:5555` para explorar e editar dados.
 
 ---
 
----
-
 ## 🔧 Troubleshooting
 
 ### Erro 401 (Unauthorized) no Upload
@@ -1591,10 +1592,18 @@ Abre interface visual em `http://localhost:5555` para explorar e editar dados.
 
 ---
 
-<div align="center">
+## 👩🏼‍💻 Autora:
+<table style="border=0">
+  <tr>
+    <td align="left">
+      <a href="https://github.com/rhayssakramer">
+        <span><b>Rhayssa Kramer</b></span>
+      </a>
+      <br>
+      <span>Sr. Assoc, Full-Stack Development</span>
+    </td>
+  </tr>
+</table>
+<div align="center"><p>© 2026 Pelos Olhos de Rha. Todos os direitos reservados.</p></div>
 
-**Pelos Olhos de Rha** — Backend API
-
-Desenvolvido por [Rhayssa Kramer](https://github.com/rhayssakramer)
-
-</div>
+<div align="center"><a href="https://github.com/rhayssakramer"><img src="https://github.com/rhayssakramer/rhayssakramer/blob/main/img/rodape.png"></a></div>
